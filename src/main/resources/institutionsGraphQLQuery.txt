@@ -1,0 +1,53 @@
+{"query": "{query:
+  Repository(id: \"<id>\") {
+    id
+    type
+    identifier
+    latitude
+    longitude
+    descriptions {
+      languageCode
+      name
+      identifier
+      addresses {
+        addressName
+        contactPerson
+        street
+        municipality
+        firstdem
+        countryCode
+        postalCode
+        email
+        telephone
+        fax
+        webpage
+      }
+      typeOfEntity
+      history
+      geoculturalContext
+      mandates
+      administrativeStructure
+      records
+      buildings
+      holdings
+      findingAids
+      openingTimes
+      conditions
+      accessibility
+      researchServices
+      reproductionServices
+      publicAreas
+      rulesAndConventions
+      status
+      datesOfDescriptions
+      maintenanceNotes
+      otherFormsOfName
+      parallelFormsOfName
+      languages
+      scripts
+      sources
+    }
+    country {
+      id
+    }
+  } }" }

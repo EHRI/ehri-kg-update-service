@@ -1,0 +1,17 @@
+PREFIX : <http://example.com/>
+STREAM ehri_sse <https://portal.ehri-project-stage.eu/admin/monitor/_events>
+ITERATOR event <jsonpath: $> {
+    FIELD event <event>
+    FIELD id <id>
+    FIELD datetime <data.datetime>
+    FIELD ids <data.ids>
+}
+
+EXPRESSION events <ehri_sse.event>
+
+:ehri_event :[events.id] {
+    a :Event ;
+    :eventType [events.event] ;
+    :date [events.datetime] ;
+    :ids [events.ids] ;
+}

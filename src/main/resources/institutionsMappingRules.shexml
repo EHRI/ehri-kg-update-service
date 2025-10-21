@@ -1,0 +1,423 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+PREFIX ehri_regions: <http://lod.ehri-project-test.eu/regions/>
+PREFIX ehri_cities: <http://lod.ehri-project-test.eu/cities/>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Transformers.scala>
+FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Validators.scala>
+MATCHER langcode_two_digit_equivalent <aar AS aa & 
+abk AS ab & 
+afr AS af & 
+aka AS ak & 
+alb  AS sq & 
+sqi  AS sq & 
+amh AS am & 
+ara AS ar & 
+arg AS an & 
+arm  AS hy & 
+hye  AS hy & 
+asm AS "as" & 
+ava AS av & 
+ave AS ae & 
+aym AS ay & 
+aze AS az & 
+bak AS ba & 
+bam AS bm & 
+baq  AS eu & 
+eus  AS eu & 
+bel AS be & 
+ben AS bn & 
+bis AS bi & 
+tib  AS bo & 
+bod  AS bo & 
+bos AS bs & 
+bre AS br & 
+bul AS bg & 
+bur  AS my & 
+mya  AS my & 
+cat AS ca & 
+cze  AS cs & 
+ces  AS cs & 
+cha AS ch & 
+che AS ce & 
+chi  AS zh & 
+zho  AS zh & 
+chu AS cu & 
+chv AS cv & 
+cor AS kw & 
+cos AS co & 
+cre AS cr & 
+wel  AS cy & 
+cym  AS cy & 
+cze  AS cs & 
+ces  AS cs & 
+dan AS da & 
+ger  AS de & 
+deu  AS de & 
+div AS dv & 
+dut  AS nl & 
+nld  AS nl & 
+dzo AS dz & 
+gre  AS el & 
+ell  AS el & 
+eng AS en & 
+epo AS eo & 
+est AS et & 
+baq  AS eu & 
+eus  AS eu & 
+ewe AS ee & 
+fao AS fo & 
+per  AS fa & 
+fas  AS fa & 
+fij AS fj & 
+fin AS fi & 
+fre  AS fr & 
+fra  AS fr & 
+fre  AS fr & 
+fra  AS fr & 
+fry AS fy & 
+ful AS ff & 
+geo  AS ka & 
+kat  AS ka & 
+ger  AS de & 
+deu  AS de & 
+gla AS gd & 
+gle AS ga & 
+glg AS gl & 
+glv AS gv & 
+gre  AS el & 
+ell  AS el & 
+grn AS gn & 
+guj AS gu & 
+hat AS ht & 
+hau AS ha & 
+heb AS he & 
+her AS hz & 
+hin AS hi & 
+hmo AS ho & 
+hrv AS hr & 
+hun AS hu & 
+arm  AS hy & 
+hye  AS hy & 
+ibo AS ig & 
+ice  AS is & 
+isl  AS is & 
+ido AS io & 
+iii AS ii & 
+iku AS iu & 
+ile AS ie & 
+ina AS ia & 
+ind AS id & 
+ipk AS ik & 
+ice  AS is & 
+isl  AS is & 
+ita AS it & 
+jav AS jv & 
+jpn AS ja & 
+kal AS kl & 
+kan AS kn & 
+kas AS ks & 
+geo  AS ka & 
+kat  AS ka & 
+kau AS kr & 
+kaz AS kk & 
+khm AS km & 
+kik AS ki & 
+kin AS rw & 
+kir AS ky & 
+kom AS kv & 
+kon AS kg & 
+kor AS ko & 
+kua AS kj & 
+kur AS ku & 
+lao AS lo & 
+lat AS la & 
+lav AS lv & 
+lim AS li & 
+lin AS ln & 
+lit AS lt & 
+ltz AS lb & 
+lub AS lu & 
+lug AS lg & 
+mac  AS mk & 
+mkd  AS mk & 
+mah AS mh & 
+mal AS ml & 
+mao  AS mi & 
+mri  AS mi & 
+mar AS mr & 
+may  AS ms & 
+msa  AS ms & 
+mac  AS mk & 
+mkd  AS mk & 
+mlg AS mg & 
+mlt AS mt & 
+mon AS mn & 
+mao  AS mi & 
+mri  AS mi & 
+may  AS ms & 
+msa  AS ms & 
+bur  AS my & 
+mya  AS my & 
+nau AS na & 
+nav AS nv & 
+nbl AS nr & 
+nde AS nd & 
+ndo AS ng & 
+nep AS ne & 
+dut  AS nl & 
+nld  AS nl & 
+nno AS nn & 
+nob AS nb & 
+nor AS no & 
+nya AS ny & 
+oci AS oc & 
+oji AS oj & 
+ori AS or & 
+orm AS om & 
+oss AS os & 
+pan AS pa & 
+per  AS fa & 
+fas  AS fa & 
+pli AS pi & 
+pol AS pl & 
+por AS pt & 
+pus AS ps & 
+que AS qu & 
+roh AS rm & 
+rum  AS ro & 
+ron  AS ro & 
+rum  AS ro & 
+ron  AS ro & 
+run AS rn & 
+rus AS ru & 
+sag AS sg & 
+san AS sa & 
+sin AS si & 
+slo  AS sk & 
+slk  AS sk & 
+slo  AS sk & 
+slk  AS sk & 
+slv AS sl & 
+sme AS se & 
+smo AS sm & 
+sna AS sn & 
+snd AS sd & 
+som AS so & 
+sot AS st & 
+spa AS es & 
+alb  AS sq & 
+sqi  AS sq & 
+srd AS sc & 
+srp AS sr & 
+ssw AS ss & 
+sun AS su & 
+swa AS sw & 
+swe AS sv & 
+tah AS ty & 
+tam AS ta & 
+tat AS tt & 
+tel AS te & 
+tgk AS tg & 
+tgl AS tl & 
+tha AS th & 
+tib  AS bo & 
+bod  AS bo & 
+tir AS ti & 
+ton AS to & 
+tsn AS tn & 
+tso AS ts & 
+tuk AS tk & 
+tur AS tr & 
+twi AS tw & 
+uig AS ug & 
+ukr AS uk & 
+urd AS ur & 
+uzb AS uz & 
+ven AS ve & 
+vie AS vi & 
+vol AS vo & 
+wel  AS cy & 
+cym  AS cy & 
+wln AS wa & 
+wol AS wo & 
+xho AS xh & 
+yid AS yi & 
+yor AS yo & 
+zha AS za & 
+chi  AS zh & 
+zho  AS zh & 
+zul AS zu>
+SOURCE repositories <stdin>
+ITERATOR repositories_iterator <jsonpath: $.data.query> {
+	PUSHED_FIELD id <id>
+  	FIELD type <type>
+	FIELD identifier <identifier>
+	PUSHED_FIELD lat <latitude>
+	PUSHED_FIELD long <longitude>
+	FIELD countryId <country.id>
+	ITERATOR descriptions <descriptions[*]> {
+		FIELD languageCode <languageCode>
+		FIELD name <name>
+		FIELD identifier <identifier>
+		FIELD typeOfEntity <typeOfEntity>
+		FIELD history <history>
+		FIELD geoculturalContext <geoculturalContext>
+		FIELD mandates <mandates>
+		FIELD administrativeStructure <administrativeStructure>
+		FIELD records <records>
+		FIELD buildings <buildings>
+		FIELD holdings <holdings>
+		FIELD findingAids <findingAids>
+		FIELD openingTimes <openingTimes>
+		FIELD conditions <conditions>
+		FIELD accessibility <accessibility>
+		FIELD researchServices <researchServices>
+		FIELD reproductionServices <reproductionServices>
+		FIELD publicAreas <publicAreas>
+		FIELD rulesAndConventions <rulesAndConventions>
+		FIELD status <status>
+		FIELD datesOfDescription <datesOfDescription>
+		FIELD maintenanceNotes <maintenanceNotes>
+		FIELD languages <languages>
+		FIELD scripts <scripts>
+		FIELD sources <sources>
+		POPPED_FIELD repository_id <id>
+		ITERATOR addresses <addresses[*]> {
+			FIELD contactPerson <contactPerson>
+			FIELD addressName <addressName>
+			FIELD street <street>
+			FIELD municipality <municipality>
+			FIELD region <firstdem>
+			FIELD countryCode <countryCode>
+			FIELD postalCode <postalCode>
+			FIELD email <email>
+			FIELD telephone <telephone>
+			FIELD fax <fax>
+			FIELD webpage <webpage>
+			POPPED_FIELD lat <lat>
+			POPPED_FIELD long <long>
+			POPPED_FIELD repository_id <id>
+		}
+		ITERATOR otherFormsOfName <otherFormsOfName> {
+			FIELD name<[*]>
+        	POPPED_FIELD repository_id <id>
+		}
+		ITERATOR parallelFormsOfName <parallelFormsOfName> {
+			FIELD name<[*]>
+        	POPPED_FIELD repository_id <id>
+		}
+	}
+}
+
+EXPRESSION organization <repositories.repositories_iterator>
+EXPRESSION parallel_name_id <repositories.repositories_iterator.descriptions.parallelFormsOfName.repository_id + "/parallelNames/" + repositories.repositories_iterator.descriptions.parallelFormsOfName.name>
+EXPRESSION other_name_id <repositories.repositories_iterator.descriptions.otherFormsOfName.repository_id + "/otherNames/" + repositories.repositories_iterator.descriptions.otherFormsOfName.name>
+
+
+####################
+### Repositories ###
+####################
+
+ehri:Institution ehri_institutions:[organization.id] {
+	a ehri:Institution ;
+  	rico:name [organization.descriptions.name] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:history [organization.descriptions.history] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	schema:openingHours [organization.descriptions.openingTimes] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:generalDescription [organization.descriptions.holdings] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:conditionsOfAccess [organization.descriptions.conditions] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:reproductionServices [organization.descriptions.reproductionServices] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:generalContext [organization.descriptions.geoculturalContext] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:administrativeStructure [organization.descriptions.administrativeStructure] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:recordsManagementAndCollectingPolicies [organization.descriptions.records] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:buildings [organization.descriptions.buildings] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:accessibility [organization.descriptions.accessibility] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:researchServices [organization.descriptions.researchServices] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:publicAreas [organization.descriptions.publicAreas] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rdfs:seeAlso [organization.descriptions.addresses.webpage] ;
+	ehri:findingAids [organization.descriptions.findingAids] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:sources [organization.descriptions.sources] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+  	rico:agentHasOrHadLocation @ehri:InstitutionLocation ;
+	rico:hasOrHadAgentName @ehri:AgentParallelName ;
+	rico:hasOrHadAgentName @ehri:AgentOtherName ;
+	rico:authorizedBy @ehri:Mandate ;
+}
+
+ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
+	a rico:Place ;
+	rico:isOrWasContainedBy @ehri:Region ;
+	rico:isOrWasContainedBy @ehri:City ;
+	rico:isOrWasContainedBy ehri_countries:[organization.countryId] ;
+	rico:hasOrHadPhysicalLocation @ehri:InstitutionAddress ;
+}
+ 
+ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
+	a ehri:InstitutionAddress ;
+	rico:hasOrHadCoordinates @ehri:Coordinates ;
+	schema:postalCode [organization.descriptions.addresses.postalCode] ;
+	rico:name [organization.descriptions.addresses.street] ;
+	schema:faxNumber [organization.descriptions.addresses.fax] ;
+  	schema:telephone [organization.descriptions.addresses.telephone] ;
+	schema:email [organization.descriptions.addresses.email] ;
+	ehri:contactPerson [organization.descriptions.addresses.contactPerson] ;
+	schema:contactType [organization.descriptions.addresses.addressName] ;
+	rico:isOrWasPhysicalLocationOf ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ;
+}
+
+ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id)] {
+	a rico:Coordinates ;
+	rico:latitude [organization.descriptions.addresses.lat] ;
+	rico:longitude [organization.descriptions.addresses.long] ;
+	rico:isOrWasCoordinatesOf ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ; 
+}
+
+ehri:Region ehri_regions:[organization.descriptions.addresses.region] {
+	a ehri:Region ;
+	rico:name [organization.descriptions.addresses.region] ;
+	rico:isOrWasContainedBy ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] ;
+	rico:containsOrContained ehri_cities:[organization.descriptions.addresses.municipality] ;
+	# To be implemented owl:sameAs
+}
+
+ehri:City ehri_cities:[organization.descriptions.addresses.municipality] {
+	a ehri:City ;
+	rico:name [organization.descriptions.addresses.municipality] ;
+	rico:isOrWasContainedBy ehri_regions:[organization.descriptions.addresses.region] ;
+	rico:isOrWasContainedBy ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] ;
+	# To be implemented owl:sameAs
+}
+
+ehri:AgentParallelName ehri_institutions:[parallel_name_id] {
+	a ehri:ParallelAgentName ;
+	rico:name [organization.descriptions.parallelFormsOfName.name] ;
+	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.parallelFormsOfName.repository_id] ;
+}
+
+ehri:AgentOtherName ehri_institutions:[other_name_id] { 
+	a ehri:AlternateAgentName ;
+	rico:name [organization.descriptions.otherFormsOfName.name] ;
+	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.otherFormsOfName.repository_id] ;
+}
+
+ehri:Mandate ehri_institutions:[transformers.combinedPathInstitutionMandates(organization.id) IF validators.nonEmpty(organization.descriptions.mandates)] {
+	a rico:Mandate ;
+	rico:generalDescription [organization.descriptions.mandates] @[organization.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:authorizes ehri_institutions:[organization.descriptions.repository_id] ;
+}
+
+ehri:Country ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] { 
+	a ehri:Country ;
+	rico:isOrWasLocationOfAgent ehri_institutions:[organization.descriptions.addresses.repository_id] ;
+	rico:containsOrContained ehri_regions:[organization.descriptions.addresses.region] ;
+	rico:containsOrContained ehri_cities:[organization.descriptions.addresses.municipality] ;
+}
