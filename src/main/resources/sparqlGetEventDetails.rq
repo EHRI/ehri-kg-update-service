@@ -1,8 +1,12 @@
 PREFIX : <http://example.com/>
 
-SELECT ?eventType ?id ?date WHERE {
-    ?event a :Event ;
+SELECT ?eventId ?eventType ?date ?ids ?types WHERE {
+    ?eventId a :Event ;
         :eventType ?eventType ;
-        :ids ?id ;
-        :date ?date
+        :date ?date ;
+        :hasTypedIds [
+            a :TypedId ;
+            :id ?ids ;
+            :type ?types
+        ]
 }

@@ -14,7 +14,12 @@ data class EHRIUpdateReport(
 }
 
 @Serializable
-data class EHRIEvent(val id: String, val eventType: String, val datetime: String)
+data class EHRIEvent(
+    val eventId: String,
+    val eventType: String,
+    val datetime: String,
+    val id: String,
+    val type: String)
 
 enum class EHRITypes {
     COUNTRY, INSTITUTION, ARCHIVAL_DESCRIPTION

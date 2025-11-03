@@ -4,14 +4,32 @@ ITERATOR event <jsonpath: $> {
     FIELD event <event>
     FIELD id <id>
     FIELD datetime <data.datetime>
-    FIELD ids <data.ids>
+    ITERATOR ids <data.ids> {
+        FIELD value <[*]>
+    }
+    ITERATOR entitiesTypes <data.types> {
+        FIELD value <[*]>
+   }
 }
+AUTOINCREMENT internalTypeRef <1>
+AUTOINCREMENT internalIdRef <1>
 
 EXPRESSION events <ehri_sse.event>
 
-:ehri_event :[events.id] {
+:EhriEvent :[events.id] {
     a :Event ;
     :eventType [events.event] ;
     :date [events.datetime] ;
-    :ids [events.ids] ;
+    :hasTypedIds @:Id ;
+    :hasTypedIds @:Type
+}
+
+:Id :[internalIdRef] {
+    a :TypedId ;
+    :id [events.ids.value] ;
+}
+
+:Type :[internalTypeRef] {
+    a :TypedId ;
+    :type [events.entitiesTypes.value] ;
 }
