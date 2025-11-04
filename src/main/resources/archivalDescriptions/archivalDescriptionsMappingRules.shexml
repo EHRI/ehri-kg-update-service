@@ -1,0 +1,420 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://data.ehri-project.eu/vocabularies/ehri-terms/>
+PREFIX ehri_languages: <http://lod.ehri-project-test.eu/languages/>
+PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
+PREFIX ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/>
+PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
+PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#>
+PREFIX ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#>
+FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Transformers.scala>
+FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Validators.scala>
+MATCHER langcode_two_digit_equivalent <aar AS aa &
+abk AS ab &
+afr AS af &
+aka AS ak &
+alb  AS sq &
+sqi  AS sq &
+amh AS am &
+ara AS ar &
+arg AS an &
+arm  AS hy &
+hye  AS hy &
+asm AS "as" &
+ava AS av &
+ave AS ae &
+aym AS ay &
+aze AS az &
+bak AS ba &
+bam AS bm &
+baq  AS eu &
+eus  AS eu &
+bel AS be &
+ben AS bn &
+bis AS bi &
+tib  AS bo &
+bod  AS bo &
+bos AS bs &
+bre AS br &
+bul AS bg &
+bur  AS my &
+mya  AS my &
+cat AS ca &
+cze  AS cs &
+ces  AS cs &
+cha AS ch &
+che AS ce &
+chi  AS zh &
+zho  AS zh &
+chu AS cu &
+chv AS cv &
+cor AS kw &
+cos AS co &
+cre AS cr &
+wel  AS cy &
+cym  AS cy &
+cze  AS cs &
+ces  AS cs &
+dan AS da &
+ger  AS de &
+deu  AS de &
+div AS dv &
+dut  AS nl &
+nld  AS nl &
+dzo AS dz &
+gre  AS el &
+ell  AS el &
+eng AS en &
+epo AS eo &
+est AS et &
+baq  AS eu &
+eus  AS eu &
+ewe AS ee &
+fao AS fo &
+per  AS fa &
+fas  AS fa &
+fij AS fj &
+fin AS fi &
+fre  AS fr &
+fra  AS fr &
+fre  AS fr &
+fra  AS fr &
+fry AS fy &
+ful AS ff &
+geo  AS ka &
+kat  AS ka &
+ger  AS de &
+deu  AS de &
+gla AS gd &
+gle AS ga &
+glg AS gl &
+glv AS gv &
+gre  AS el &
+ell  AS el &
+grn AS gn &
+guj AS gu &
+hat AS ht &
+hau AS ha &
+heb AS he &
+her AS hz &
+hin AS hi &
+hmo AS ho &
+hrv AS hr &
+hun AS hu &
+arm  AS hy &
+hye  AS hy &
+ibo AS ig &
+ice  AS is &
+isl  AS is &
+ido AS io &
+iii AS ii &
+iku AS iu &
+ile AS ie &
+ina AS ia &
+ind AS id &
+ipk AS ik &
+ice  AS is &
+isl  AS is &
+ita AS it &
+jav AS jv &
+jpn AS ja &
+kal AS kl &
+kan AS kn &
+kas AS ks &
+geo  AS ka &
+kat  AS ka &
+kau AS kr &
+kaz AS kk &
+khm AS km &
+kik AS ki &
+kin AS rw &
+kir AS ky &
+kom AS kv &
+kon AS kg &
+kor AS ko &
+kua AS kj &
+kur AS ku &
+lao AS lo &
+lat AS la &
+lav AS lv &
+lim AS li &
+lin AS ln &
+lit AS lt &
+ltz AS lb &
+lub AS lu &
+lug AS lg &
+mac  AS mk &
+mkd  AS mk &
+mah AS mh &
+mal AS ml &
+mao  AS mi &
+mri  AS mi &
+mar AS mr &
+may  AS ms &
+msa  AS ms &
+mac  AS mk &
+mkd  AS mk &
+mlg AS mg &
+mlt AS mt &
+mon AS mn &
+mao  AS mi &
+mri  AS mi &
+may  AS ms &
+msa  AS ms &
+bur  AS my &
+mya  AS my &
+nau AS na &
+nav AS nv &
+nbl AS nr &
+nde AS nd &
+ndo AS ng &
+nep AS ne &
+dut  AS nl &
+nld  AS nl &
+nno AS nn &
+nob AS nb &
+nor AS no &
+nya AS ny &
+oci AS oc &
+oji AS oj &
+ori AS or &
+orm AS om &
+oss AS os &
+pan AS pa &
+per  AS fa &
+fas  AS fa &
+pli AS pi &
+pol AS pl &
+por AS pt &
+pus AS ps &
+que AS qu &
+roh AS rm &
+rum  AS ro &
+ron  AS ro &
+rum  AS ro &
+ron  AS ro &
+run AS rn &
+rus AS ru &
+sag AS sg &
+san AS sa &
+sin AS si &
+slo  AS sk &
+slk  AS sk &
+slo  AS sk &
+slk  AS sk &
+slv AS sl &
+sme AS se &
+smo AS sm &
+sna AS sn &
+snd AS sd &
+som AS so &
+sot AS st &
+spa AS es &
+alb  AS sq &
+sqi  AS sq &
+srd AS sc &
+srp AS sr &
+ssw AS ss &
+sun AS su &
+swa AS sw &
+swe AS sv &
+tah AS ty &
+tam AS ta &
+tat AS tt &
+tel AS te &
+tgk AS tg &
+tgl AS tl &
+tha AS th &
+tib  AS bo &
+bod  AS bo &
+tir AS ti &
+ton AS to &
+tsn AS tn &
+tso AS ts &
+tuk AS tk &
+tur AS tr &
+twi AS tw &
+uig AS ug &
+ukr AS uk &
+urd AS ur &
+uzb AS uz &
+ven AS ve &
+vie AS vi &
+vol AS vo &
+wel  AS cy &
+cym  AS cy &
+wln AS wa &
+wol AS wo &
+xho AS xh &
+yid AS yi &
+yor AS yo &
+zha AS za &
+chi  AS zh &
+zho  AS zh &
+zul AS zu>
+SOURCE holdings <stdin>
+ITERATOR components_iterator <jsonpath: $.data.query> {
+	PUSHED_FIELD holding_id <id>
+	FIELD parentId <parent.id>
+	FIELD identifier <identifier>
+	FIELD itemCount <itemCount>
+	FIELD repositoryId <repository.id>
+	ITERATOR descriptions <descriptions[*]> {
+		PUSHED_FIELD languageCode <languageCode>
+		FIELD name <name>
+		FIELD identifier <identifier>
+		FIELD archivistNote <archivistNote>
+		FIELD archivalHistory <archivalHistory>
+		FIELD acquisition <acquisition>
+		FIELD appraisal <appraisal>
+		FIELD accruals <accruals>
+		FIELD biographicalHistory <biographicalHistory>
+		FIELD conditionsOfUse <conditionsOfUse>
+		FIELD conditionsOfAccess <conditionsOfAccess>
+		FIELD conditionsOfReproduction <conditionsOfReproduction>
+		FIELD datesOfDescription <datesOfDescription>
+		FIELD extentAndMedium <extentAndMedium>
+		FIELD levelOfDescription <levelOfDescription>
+		FIELD relatedUnitsOfDescription <relatedUnitsOfDescription>
+		FIELD physicalCharacteristics <physicalCharacteristics>
+		FIELD publicationNote <publicationNote>
+		FIELD ref <ref>
+		FIELD rulesAndConventions <rulesAndConventions>
+		FIELD scopeAndContent <scopeAndContent>
+		FIELD separatedUnitsOfDescription <separatedUnitsOfDescription>
+		FIELD systemOfArrangement <systemOfArrangement>
+		FIELD findingAids <findingAids>
+		FIELD sources <sources>
+		FIELD unitDates <unitDates>
+		FIELD locationOfOriginals <locationOfOriginals>
+		FIELD locationOfCopies <locationOfCopies>
+		FIELD physicalLocation <physicalLocation>
+		FIELD notes <notes>
+		ITERATOR languageOfMaterial <languageOfMaterial> {
+			FIELD lang <[*]>
+		}
+		ITERATOR dates <dates[*]> {
+			FIELD startDate <startDate>
+			FIELD endDate <endDate>
+			POPPED_FIELD holding_id <holding_id>
+		}
+		ITERATOR scriptOfMaterial <scriptOfMaterial> {
+			FIELD script <[*]>
+			POPPED_FIELD holding_id <holding_id>
+		}
+		ITERATOR parallelFormsOfName <parallelFormsOfName> {
+			FIELD name <[*]>
+			POPPED_FIELD holding_id <holding_id>
+			POPPED_FIELD langCode <languageCode>
+		}
+    }
+	ITERATOR otherIdentifiers <otherIdentifiers> {
+		FIELD identifier <[*]>
+		POPPED_FIELD holding_id <holding_id>
+	}
+}
+
+EXPRESSION holding <holdings.components_iterator>
+EXPRESSION parallel_name_id <holdings.components_iterator.descriptions.parallelFormsOfName.holding_id + "/parallelNames/" + holdings.components_iterator.descriptions.parallelFormsOfName.name>
+
+#########################
+### Documentary Units ###
+#########################
+
+ehri:Holding ehri_units:[holding.holding_id] { # common shape
+	a ehri:RecordSet ;
+	rico:hasOrHadSomeMembersWithLanguage @ehri:Language ;
+	rico:hasRecordSetType ric_rst:[transformers.getRecordSetType(holding.descriptions.levelOfDescription) IF validators.isRecordSetTypeDefinedInRiC(holding.descriptions.levelOfDescription)] ;
+	rico:hasRecordSetType ehri_rst:[transformers.getEHRIDefinedRecordSetType(holding.descriptions.levelOfDescription) IF validators.isRecordSetTypeDefinedInEHRI(holding.descriptions.levelOfDescription)] ;
+	rico:title [holding.descriptions.name] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:hasOrHadTitle @ehri:HoldingParralelFormOfName ;
+	rico:scopeAndContent [holding.descriptions.scopeAndContent] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:recordResourceExtent [holding.descriptions.extentAndMedium] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:recordResourceStructure [holding.descriptions.systemOfArrangement] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:date [holding.descriptions.datesOfDescription] ;
+	rico:date [holding.descriptions.unitDates] ;
+	rico:hasBeginningDate @ehri:HoldingBeginningDate ;
+	rico:hasEndDate @ehri:HoldingEndDate ;
+	rico:isOrWasIncludedIn ehri_units:[holding.parentId] ;
+	rico:resultsOrResultedFrom @ehri:Acquisition ;
+	rico:identifier [holding.identifier] ;
+	rico:history [holding.descriptions.biographicalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:history [holding.descriptions.archivalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:appraisal [holding.descriptions.appraisal] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:accruals [holding.descriptions.accruals] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:conditionsOfAccess [holding.descriptions.conditionsOfAccess] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:conditionsOfUse [holding.descriptions.conditionsOfUse] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:conditionsOfUse [holding.descriptions.conditionsOfReproduction] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:hasOrHadScript @ehri:MaterialScript ;
+	ehri:physicalCharacterisiticsAndTechnicalRequirements [holding.descriptions.physicalCharacteristics] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:otherFindingAids [holding.descriptions.findingAids] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:locationOfOriginals [holding.descriptions.locationOfOriginals] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:locationOfCopies [holding.descriptions.locationOfCopies] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:publicationNote [holding.descriptions.publicationNote] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:sources [holding.descriptions.sources] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:notes [holding.descriptions.notes] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:archivistNote [holding.descriptions.archivistNote] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:relatedMaterial [holding.descriptions.relatedUnitsOfDescription] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:separatedMaterial [holding.descriptions.separatedUnitsOfDescription] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:hasOrHadHolder ehri_institutions:[holding.repositoryId] ;
+	rdfs:seeAlso [holding.descriptions.ref IF validators.isURL(holding.descriptions.ref)] ;
+	rico:hasOrHadIdentifier @ehri:AlternateIds ;
+}
+
+ehri:Institution ehri_institutions:[holding.repositoryId] {
+	rico:isOrWasHolderOf ehri_units:[holding.holding_id] ;
+}
+
+ehri:HoldingParralelFormOfName ehri_units:[parallel_name_id] {
+	a rico:Title ;
+	rico:name [holding.descriptions.parallelFormsOfName.name] @[holding.descriptions.parallelFormsOfName.langCode MATCHING langcode_two_digit_equivalent] ;
+	rico:isOrWasTitleOf ehri_units:[holding.descriptions.parallelFormsOfName.holding_id] ;
+}
+
+ehri:HoldingBeginningDate ehri_dates:[holding.descriptions.dates.startDate] {
+	a rico:Date ;
+	rico:normalizedDateValue [holding.descriptions.dates.startDate] ;
+	rico:isBeginningDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
+}
+
+ehri:HoldingEndDate ehri_dates:[holding.descriptions.dates.endDate] {
+	a rico:Date ;
+	rico:normalizedDateValue [holding.descriptions.dates.endDate] ;
+	rico:isEndDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
+}
+
+ehri:ArchiveComponent ehri_units:[holding.parentId] {
+	rico:includesOrIncluded ehri_units:[holding.holding_id] ;
+}
+
+ehri:Language ehri_languages:[holding.descriptions.languageOfMaterial.lang] {
+   	a rico:Language ;
+   	rico:name [holding.descriptions.languageOfMaterial.lang] ;
+}
+
+ehri:Acquisition ehri_units:[transformers.combinedPathHoldingAcquisition(holding.holding_id) IF validators.nonEmpty(holding.descriptions.acquisition)] {
+	a rico:Activity ;
+	rico:hasActivityType ehri:AcquisitionType ;
+	rico:generalDescription [holding.descriptions.acquisition] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+}
+
+ehri:MaterialScript ehri_material_script:[holding.descriptions.scriptOfMaterial.script] {
+	a ehri:MaterialScript ;
+	rico:name [holding.descriptions.scriptOfMaterial.script] ;
+	ehri:isOrWasScriptOf ehri_units:[holding.descriptions.scriptOfMaterial.holding_id] ;
+}
+
+ehri:AlternateIds ehri_units:[transformers.combinedPathHoldingAlternateIDs(holding.otherIdentifiers.holding_id, holding.otherIdentifiers.holding_id.index()) IF validators.nonEmpty(holding.otherIdentifiers.identifier)] {
+	a rico:Identifier ;
+	rico:textualValue [holding.otherIdentifiers.identifier] ;
+	rico:isOrWasIdentifierOf ehri_units:[holding.otherIdentifiers.holding_id] ;
+}

@@ -1,0 +1,14 @@
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+
+DELETE {
+    ?s ?p ?o .
+} WHERE {
+    ?s ?p ?o .
+    FILTER(?s = ehri_units:<$entityId>
+        && ?p != rico:hasOrHadSubject
+        && ?p != ehri:isCopyOf
+        && ?p != ehri:hasCopy
+        && ?p != rico:hasCreator)
+}

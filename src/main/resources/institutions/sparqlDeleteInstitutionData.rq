@@ -1,5 +1,6 @@
 PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 
 DELETE {
     ?s ?p ?o .
@@ -7,6 +8,6 @@ DELETE {
     ?s ?p ?o .
     FILTER(?s = ehri_institutions:<$entityId>
         && ?p != rico:isOrWasHolderOf
-        && ?p != rico:isCopyOf
-        && ?p != rico:hasCopy)
+        && ?p != ehri:isCopyOf
+        && ?p != ehri:hasCopy)
 }

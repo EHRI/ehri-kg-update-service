@@ -1,0 +1,5 @@
+CONSTRUCT {
+  <http://lod.ehri-project-test.eu/units/<$entityId>> ?p ?o .
+} WHERE {
+  <http://lod.ehri-project-test.eu/units/<$entityId>> ?p ?o .
+}

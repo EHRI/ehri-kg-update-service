@@ -1,0 +1,57 @@
+{"query": "{query:
+  DocumentaryUnit(id: \"<id>\") {
+    id
+    type
+    identifier
+    otherIdentifiers
+    descriptions {
+      languageCode
+      name
+      identifier
+      accessPoints {
+        id
+        name
+        type
+      }
+      dates {
+        startDate
+        endDate
+      }
+      archivistNote
+      archivalHistory
+      acquisition
+      appraisal
+      accruals
+      biographicalHistory
+      conditionsOfAccess
+      conditionsOfReproduction
+      datesOfDescriptions
+      extentAndMedium
+      levelOfDescription
+      relatedUnitsOfDescription
+      physicalCharacteristics
+      publicationNote
+      ref
+      rulesAndConventions
+      scopeAndContent
+      separatedUnitsOfDescription
+      systemOfArrangement
+      findingAids
+      languageOfMaterial
+      locationOfOriginals
+      locationOfCopies
+      parallelFormsOfName
+      physicalLocation
+      notes
+      scriptOfMaterial
+      sources
+      unitDates
+    }
+    parent {
+      id
+    }
+    itemCount
+    repository {
+      id
+    }
+  } }" }

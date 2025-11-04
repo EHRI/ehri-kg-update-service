@@ -30,13 +30,19 @@ object UpdatesProcessorFactory {
                     Config.get("countriesConstructSparqlQuery")
                 )
             EHRITypes.INSTITUTION ->
-                InstitutionsUpdatesProcessor(
+                CountriesUpdatesProcessor(
                     Config.get("institutionsGraphQLQuery"),
                     Config.get("institutionsShexmlMappingRules"),
                     Config.get("institutionsDeleteSparqlQuery"),
                     Config.get("institutionsConstructSparqlQuery")
                 )
-            EHRITypes.ARCHIVAL_DESCRIPTION -> error("Not implemented")
+            EHRITypes.ARCHIVAL_DESCRIPTION ->
+                ArchivalDescriptionsUpdatesProcessor(
+                    Config.get("archivalDescriptionsGraphQLQuery"),
+                    Config.get("archivalDescriptionsShexmlMappingRules"),
+                    Config.get("archivalDescriptionsDeleteSparqlQuery"),
+                    Config.get("archivalDescriptionsConstructSparqlQuery")
+                )
         }
     }
 
@@ -134,6 +140,13 @@ class InstitutionsUpdatesProcessor(
 ) : UpdatesProcessor()
 
 class CountriesUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String
+) : UpdatesProcessor()
+
+class ArchivalDescriptionsUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
