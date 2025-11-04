@@ -15,7 +15,7 @@ import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.riot.RDFLanguages
 import java.io.ByteArrayOutputStream
 
-object UpdatesProcessorFactory {
+class UpdatesProcessorFactory(val config: Config) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -24,40 +24,43 @@ object UpdatesProcessorFactory {
         return when(type) {
             EHRITypes.COUNTRY ->
                 InstitutionsUpdatesProcessor(
-                    Config.get("countriesGraphQLQuery"),
-                    Config.get("countriesShexmlMappingRules"),
-                    Config.get("countriesDeleteSparqlQuery"),
-                    Config.get("countriesConstructSparqlQuery")
+                    config.get("countriesGraphQLQuery"),
+                    config.get("countriesShexmlMappingRules"),
+                    config.get("countriesDeleteSparqlQuery"),
+                    config.get("countriesConstructSparqlQuery"),
+                    config
                 )
             EHRITypes.INSTITUTION ->
                 CountriesUpdatesProcessor(
-                    Config.get("institutionsGraphQLQuery"),
-                    Config.get("institutionsShexmlMappingRules"),
-                    Config.get("institutionsDeleteSparqlQuery"),
-                    Config.get("institutionsConstructSparqlQuery")
+                    config.get("institutionsGraphQLQuery"),
+                    config.get("institutionsShexmlMappingRules"),
+                    config.get("institutionsDeleteSparqlQuery"),
+                    config.get("institutionsConstructSparqlQuery"),
+                    config
                 )
             EHRITypes.ARCHIVAL_DESCRIPTION ->
                 ArchivalDescriptionsUpdatesProcessor(
-                    Config.get("archivalDescriptionsGraphQLQuery"),
-                    Config.get("archivalDescriptionsShexmlMappingRules"),
-                    Config.get("archivalDescriptionsDeleteSparqlQuery"),
-                    Config.get("archivalDescriptionsConstructSparqlQuery")
+                    config.get("archivalDescriptionsGraphQLQuery"),
+                    config.get("archivalDescriptionsShexmlMappingRules"),
+                    config.get("archivalDescriptionsDeleteSparqlQuery"),
+                    config.get("archivalDescriptionsConstructSparqlQuery"),
+                    config
                 )
         }
     }
 
 }
 
-abstract class UpdatesProcessor {
+abstract class UpdatesProcessor(config: Config) {
     abstract val graphQLQuery: String
     abstract val shexmlMappingRules: String
     abstract val deleteSparqlQuery: String
     abstract val constructSparqlQuery: String
 
-    val graphQLEndpoint = Config.get("graphQLEndpoint")
-    val querySparqlEndpoint = Config.get("querySparqlEndpoint")
-    val updateSparqlEndpoint = Config.get("updateSparqlEndpoint")
-    val insertSparqlQuery = Config.get("insertSparqlQuery")
+    val graphQLEndpoint = config.get("graphQLEndpoint")
+    val querySparqlEndpoint = config.get("querySparqlEndpoint")
+    val updateSparqlEndpoint = config.get("updateSparqlEndpoint")
+    val insertSparqlQuery = config.get("insertSparqlQuery")
 
     private val logger = KotlinLogging.logger {}
 
@@ -136,19 +139,22 @@ class InstitutionsUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
-    override val constructSparqlQuery: String
-) : UpdatesProcessor()
+    override val constructSparqlQuery: String,
+    config: Config
+) : UpdatesProcessor(config)
 
 class CountriesUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
-    override val constructSparqlQuery: String
-) : UpdatesProcessor()
+    override val constructSparqlQuery: String,
+    config: Config
+) : UpdatesProcessor(config)
 
 class ArchivalDescriptionsUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
-    override val constructSparqlQuery: String
-) : UpdatesProcessor()
+    override val constructSparqlQuery: String,
+    config: Config
+) : UpdatesProcessor(config)

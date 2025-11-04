@@ -7,10 +7,9 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.Observable
 import org.apache.jena.query.Dataset
 
-import java.io.File
 
-class EHRISSEConsumer {
-    val mappingRules: String = SourceHelper.readFile("src/main/resources/ehri_sse_mapping.shexml")
+class EHRISSEConsumer(mappingRulesPath: String) {
+    val mappingRules: String = SourceHelper.readFile(mappingRulesPath)
 
     fun processEvents(): Single<Observable<Dataset>> {
         return ReactiveConverters.convertToRxJava(

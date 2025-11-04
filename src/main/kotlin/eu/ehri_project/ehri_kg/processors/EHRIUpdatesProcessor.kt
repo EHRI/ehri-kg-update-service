@@ -9,13 +9,15 @@ import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.flow.asFlow
 import org.apache.jena.query.Dataset
-import java.io.File
 
-class EHRIUpdatesProcessor {
+class EHRIUpdatesProcessor(val config: Config) {
 
-    val eventDetailsSparqlQuery = Config.get("eventDetailsSparqlQuery")
+    val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
+
+    init {
+        org.apache.jena.query.ARQ.init()
+    }
 
     private val logger = KotlinLogging.logger {}
 
@@ -24,7 +26,7 @@ class EHRIUpdatesProcessor {
             it.map {
                 getEventTypeAndId(it).map {
                     try {
-                        with(UpdatesProcessorFactory.createUpdateProcessor(selectEntityTypeCase(it.type))) {
+                        with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(it.type))) {
                             val graphQLContent = downloadContents(it)
                             val dataBefore = getDataStatus(it)
                             val turtleResult = transformToRDF(graphQLContent)
