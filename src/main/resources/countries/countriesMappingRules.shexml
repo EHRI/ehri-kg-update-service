@@ -1,0 +1,37 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SOURCE countries <stdin>
+
+ITERATOR countries_iterator <jsonpath: $.data.query> {
+	FIELD id <id>
+  FIELD type <type>
+  FIELD identifier <identifier>
+  FIELD name <name>
+  FIELD history <history>
+  FIELD situation <situation>
+  FIELD summary <summary>
+  FIELD extensive <extensive>
+}
+
+EXPRESSION country <countries.countries_iterator>
+
+
+ehri:Country ehri_countries:[country.id] {
+	a ehri:Country ;
+  rico:name [country.name] @en ;
+	owl:sameAs dbr:[country.name] ; #this is a direct correlation but it may be better to create matchers for the countries against DBpedia, Geonames and Wikidata.
+	ehri:archivalHistory [country.history] @en ;
+	ehri:archivalSituation [country.situation] @en ;
+	ehri:researchSummary [country.summary] @en ;
+	ehri:researchExtensive [country.extensive] @en ;
+}

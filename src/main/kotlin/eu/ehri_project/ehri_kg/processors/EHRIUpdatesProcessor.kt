@@ -34,7 +34,7 @@ class EHRIUpdatesProcessor {
                             EHRIUpdateReport(it, executedQueries, dataDiff)
                         }
                     } catch (e: Exception) {
-                        EHRIUpdateReport(it, emptyList(), emptyList(), e.toString())
+                        EHRIUpdateReport(it, emptyList(), emptyList(), e.stackTraceToString())
                     }
                 }.ifEmpty { listOf(EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())) }
             }

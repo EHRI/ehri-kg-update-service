@@ -22,7 +22,13 @@ object UpdatesProcessorFactory {
     fun createUpdateProcessor(type: EHRITypes): UpdatesProcessor {
         logger.info { "Detected entity type $type" }
         return when(type) {
-            EHRITypes.COUNTRY -> error("Not implemented")
+            EHRITypes.COUNTRY ->
+                InstitutionsUpdatesProcessor(
+                    Config.get("countriesGraphQLQuery"),
+                    Config.get("countriesShexmlMappingRules"),
+                    Config.get("countriesDeleteSparqlQuery"),
+                    Config.get("countriesConstructSparqlQuery")
+                )
             EHRITypes.INSTITUTION ->
                 InstitutionsUpdatesProcessor(
                     Config.get("institutionsGraphQLQuery"),
@@ -121,6 +127,13 @@ abstract class UpdatesProcessor {
 }
 
 class InstitutionsUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String
+) : UpdatesProcessor()
+
+class CountriesUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,

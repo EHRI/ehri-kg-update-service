@@ -1,0 +1,11 @@
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+
+DELETE {
+    ?s ?p ?o .
+} WHERE {
+    ?s ?p ?o .
+    FILTER(?s = ehri_countries:<$entityId>
+        && ?p != rico:containsOrContained
+        && ?p != rico:isOrWasLocationOfAgent)
+}

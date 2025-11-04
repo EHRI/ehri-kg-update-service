@@ -1,0 +1,11 @@
+{"query": "{query:
+  Country(id: \"<id>\") {
+    id
+    type
+    identifier
+    name
+    history
+    situation
+    summary
+    extensive
+  } }" }
