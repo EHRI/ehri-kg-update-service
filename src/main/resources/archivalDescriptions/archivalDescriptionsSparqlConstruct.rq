@@ -1,5 +1,25 @@
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+
 CONSTRUCT {
-  <http://lod.ehri-project-test.eu/units/<$entityId>> ?p ?o .
+  ?s ?p ?o .
 } WHERE {
-  <http://lod.ehri-project-test.eu/units/<$entityId>> ?p ?o .
+  {
+    ?s ?p ?o .
+    FILTER(?s = ehri_units:<$entityId>)
+  }
+  UNION
+  {
+    ?s ?p ?o ;
+      a ?connectedClasses ;
+      ?inverseProperty ?unit .
+      VALUES ?connectedClasses { rico:Title rico:Activity rico:Identifier }
+      FILTER(?unit = ehri_units:<$entityId>)
+  }
+  UNION
+  {
+    ?s ?p ?o .
+    FILTER(?o = ehri_units:<$entityId>)
+  }
 }

@@ -5,9 +5,36 @@ PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 DELETE {
     ?s ?p ?o .
 } WHERE {
-    ?s ?p ?o .
-    FILTER(?s = ehri_institutions:<$entityId>
-        && ?p != rico:isOrWasHolderOf
-        && ?p != ehri:isCopyOf
-        && ?p != ehri:hasCopy)
+    {
+        # All the main triples where the institution is the subject except those that are generated as part of other set of mapping rules
+        ?s ?p ?o .
+        FILTER(?s = ehri_institutions:<$entityId>
+            && ?p != rico:isOrWasHolderOf
+            && ?p != ehri:isCopyOf
+            && ?p != ehri:hasCopy)
+    }
+    UNION
+    {
+        # Connected instances that can be completely removed as they are only bound to the institution
+        ?s ?p ?o ;
+            a ?connectedClasses ;
+            ?inverseProperty ?institution .
+        VALUES ?connectedClasses { ehri:InstitutionAddress rico:Coordinates ehri:ParallelAgentName ehri:AlternateAgentName rico:Mandate }
+        FILTER(?institution = ehri_institutions:<$entityId>)
+    }
+    UNION
+    {
+        # Other instance that need to be completely removed
+        ?s ?p ?o ;
+            a rico:Place ;
+            rico:hasOrHadPhysicalLocation/rico:isOrWasPhysicalLocationOf ?institution .
+        FILTER(?institution = ehri_institutions:<$entityId>)
+    }
+    UNION
+    {
+        # Other triples that need to be cleaned up on a per-case basis
+        ?s ?p ?o .
+        VALUES ?p { rico:isOrWasLocationOfAgent }
+        FILTER(?o = ehri_institutions:<$entityId>)
+    }
 }

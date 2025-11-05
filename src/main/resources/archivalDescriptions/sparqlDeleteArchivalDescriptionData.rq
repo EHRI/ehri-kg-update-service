@@ -5,10 +5,29 @@ PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 DELETE {
     ?s ?p ?o .
 } WHERE {
-    ?s ?p ?o .
-    FILTER(?s = ehri_units:<$entityId>
-        && ?p != rico:hasOrHadSubject
-        && ?p != ehri:isCopyOf
-        && ?p != ehri:hasCopy
-        && ?p != rico:hasCreator)
+    {
+        # All the main triples where the unit is the subject except those that are generated as part of other set of mapping rules
+        ?s ?p ?o .
+        FILTER(?s = ehri_units:<$entityId>
+            && ?p != rico:hasOrHadSubject
+            && ?p != ehri:isCopyOf
+            && ?p != ehri:hasCopy
+            && ?p != rico:hasCreator)
+    }
+    UNION
+    {
+        # Connected instances that can be completely removed as they are only bound to the unit
+        ?s ?p ?o ;
+            a ?connectedClasses ;
+            ?inverseProperty ?unit .
+         VALUES ?connectedClasses { rico:Title rico:Activity rico:Identifier }
+         FILTER(?unit = ehri_units:<$entityId>)
+    }
+    UNION
+    {
+        # Other triples that need to be cleaned up on a per-case basis
+        ?s ?p ?o .
+        VALUES ?p { rico:isOrWasHolderOf rico:isOrWasTitleOf rico:isBeginningDateOf rico:isEndDateOf rico:includesOrIncluded ehri:isOrWasScriptOf rico:isOrWasIdentifierOf }
+        FILTER(?o = ehri_units:<$entityId>)
+    }
 }
