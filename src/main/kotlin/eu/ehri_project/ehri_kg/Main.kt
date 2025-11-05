@@ -23,10 +23,10 @@ class EhriKgUpdateService : CliktCommand() {
     val logger = KotlinLogging.logger {}
 
     val mappingFile by option("-m", "--mapping",
-            help="The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml (embedded in the library)")
+            help="The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml")
         .default("conf/ehri_sse_mapping.shexml")
     val entitiesConfig by option("-c", "--conf",
-            help="The properties file with the entities configurations. Default: conf/config.properties (embedded in the library)")
+            help="The properties file with the entities configurations. Default: conf/config.properties")
         .default("conf/config.properties")
     val outputToFile by option("-o", "--output",
             help="File path where to store the reports of this service. Example: output.jsonl")
