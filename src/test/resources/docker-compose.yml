@@ -1,0 +1,6 @@
+services:
+  oxigraph:
+    image: oxigraph/oxigraph
+    container_name: oxigraph
+    ports:
+      - "7878:7878"

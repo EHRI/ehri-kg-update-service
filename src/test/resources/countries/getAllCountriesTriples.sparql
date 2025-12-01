@@ -1,0 +1,9 @@
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+
+CONSTRUCT {
+  ?s ?p ?o .
+} WHERE {
+  ?s ?p ?o .
+  FILTER(?s = ehri_countries:<$entityId>)
+}
