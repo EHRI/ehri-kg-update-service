@@ -5,8 +5,8 @@ import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
-import eu.ehri_project.ehri_kg.sparql.SparqlEndpointQueryProcessor
 import org.apache.jena.atlas.lib.DateTimeUtils
+import org.apache.jena.query.Dataset
 import org.apache.jena.rdf.model.Statement
 import org.apache.jena.riot.RDFDataMgr
 import org.junit.jupiter.api.AfterEach
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 
-class CountryTest {
+class CountryTest : TestSparqlService {
 
     val config = Config("conf/config.properties")
     val queryEndpoint = config.get("querySparqlEndpoint")
@@ -23,6 +23,7 @@ class CountryTest {
     val ukData = RDFDataMgr.loadDataset("src/test/resources/countries/uk.ttl")
     val ukDataUpdated = RDFDataMgr.loadDataset("src/test/resources/countries/ukUpdated.ttl")
     val nlData = RDFDataMgr.loadDataset("src/test/resources/countries/nl.ttl")
+    val ukJsonGraphQLData = SourceHelper.readFile("src/test/resources/countries/ukJsonGraphQL.json")
     val countryUpdatesProcessor =
         UpdatesProcessorFactory(config)
             .createUpdateProcessor(EHRITypes.COUNTRY)
@@ -96,6 +97,17 @@ class CountryTest {
     @Test
     @DisplayName("Update of one country is satisfactory")
     fun testUpdate() {
+        doTestUpdate(ukDataUpdated)
+    }
+
+    @Test
+    @DisplayName("Update of one country with JSON data is satisfactory")
+    fun testUpdateWithGraphQLData() {
+        val updatedData = countryUpdatesProcessor.transformToRDF(ukJsonGraphQLData)
+        doTestUpdate(updatedData)
+    }
+
+    private fun doTestUpdate(data: Dataset) {
         Assertions.assertFalse { retrieveCountryTriples("gb").toList().find {
             it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#researchSummary"
         }!!.literal.string.startsWith("[Test update]") }
@@ -106,7 +118,7 @@ class CountryTest {
             DateTimeUtils.nowAsString(),
             "gb",
             "Country"
-        ), ukDataUpdated)
+        ), data)
 
         val persitedUkUpdatedData = retrieveCountryTriples("gb")
 
@@ -134,20 +146,19 @@ class CountryTest {
         nlData.defaultModel.listStatements().toList().forEach {
             Assertions.assertTrue { nlPersistedData.contains(it) }
         }
+        nlData.defaultModel.listStatements().toList().size == nlPersistedData.size
     }
 
     fun retrieveCountryTriples(countryCode: String): List<Statement> {
-        val query = SourceHelper
-            .readFile("src/test/resources/countries/getAllCountriesTriples.sparql")
-            .replaceFirst("<\$entityId>", countryCode)
-        val resultSet = SparqlEndpointQueryProcessor(queryEndpoint).construct(query)
-        return resultSet.listStatements().toList()
+        return retrieveEntityTriples(
+            queryEndpoint,
+            "src/test/resources/countries/getAllCountriesTriples.rq",
+            countryCode
+        )
     }
 
     fun retrieveAllCountriesIds(): List<String> {
-        val query = SourceHelper.readFile("src/test/resources/countries/getAllCountriesIds.sparql")
-        val resultSet = SparqlEndpointQueryProcessor(queryEndpoint).query(query)
-        return resultSet.asSequence().map { it.get("s").toString() }.toList()
+        return retrieveAllEntityIds(queryEndpoint, "src/test/resources/countries/getAllCountriesIds.rq")
     }
 
 }
