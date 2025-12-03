@@ -1,0 +1,83 @@
+@base          <http://lod.ehri-project-test.eu/> .
+@prefix geonames: <http://www.geonames.org/ontology#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema-org: <http://schema.org/> .
+@prefix bio:   <http://purl.org/vocab/bio/0.1/> .
+@prefix conf:  <http://lodview.it/conf#> .
+@prefix metalex: <http://www.metalex.eu/metalex/2008-05-02#> .
+@prefix ocd:   <http://dati.camera.it/ocd/> .
+@prefix rel:   <http://purl.org/vocab/relationship/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dbpprop: <http://dbpedia.org/property/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix bbc:   <http://www.bbc.co.uk/ontologies/> .
+@prefix void:  <http://rdfs.org/ns/void#> .
+@prefix dbpedia-owl: <http://dbpedia.org/ontology/> .
+@prefix dbpedia: <http://dbpedia.org/resource/> .
+@prefix frbr:  <http://purl.org/vocab/frbr/core#> .
+@prefix dwc:   <http://rs.tdwg.org/dwc/terms/> .
+@prefix claros: <http://purl.org/NET/Claros/vocab#> .
+@prefix crm-owl: <http://purl.org/NET/crm-owl#> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix meta:  <http://example.org/metadata#> .
+@prefix bmuseum: <http://collection.britishmuseum.org/id/ontology/> .
+@prefix ods:   <http://lod.xdams.org/ontologies/ods/> .
+@prefix gml:   <http://www.opengis.net/gml/> .
+@prefix muninn: <http://rdf.muninn-project.org/ontologies/documents#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix yago:  <http://dbpedia.org/class/yago/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units: <http://dbpedia.org/units/> .
+@prefix rso:   <http://www.researchspace.org/ontology/> .
+@prefix geo:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix oad:   <http://lod.xdams.org/reload/oad/> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix crm120111: <http://erlangen-crm.org/120111/> .
+@prefix cdoc:  <http://www.cidoc-crm.org/cidoc-crm#> .
+@prefix bibleontology: <http://bibleontology.com/property#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix crm:   <http://erlangen-crm.org/current/> .
+@prefix cc:    <http://creativecommons.org/ns#> .
+@prefix shoah: <http://dati.cdec.it/lod/shoah/> .
+@prefix npg:   <http://ns.nature.com/terms/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix gn:    <http://www.geonames.org/ontology#> .
+@prefix ibc:   <http://dati.ibc.it/ibc/> .
+@prefix aemetonto: <http://aemet.linkeddata.es/ontology/> .
+@prefix skos-xl: <http://www.w3.org/2008/05/skos-xl#> .
+@prefix lgdo:  <http://linkedgeodata.org/ontology/capital> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix eac-cpf: <http://archivi.ibc.regione.emilia-romagna.it/ontology/eac-cpf/> .
+@prefix bibo:  <http://purl.org/ontology/bibo/> .
+@prefix time:  <http://www.w3.org/2006/time#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+@prefix prism21: <http://prismstandard.org/namespaces/basic/2.1/> .
+@prefix po:    <http://purl.org/ontology/po/> .
+
+<units/be-002157-kd_00017>
+        a                             ehri:RecordSet ;
+        rdfs:seeAlso                  <https://beeldbank.kazernedossin.eu/portal/media/11743115b4a74ce79c33dec3b737838934c2f0eb43d94673b31f8e9ed46efa47> ;
+        ehri:locationOfCopies         "Yad Vashem and the USHMM (RG-65.024/2014.13)"@en ;
+        ehri:locationOfOriginals      "State Archives, Brussels and other institutes or collections"@en ;
+        ehri:otherFindingAids         "The name index of the Give Them a Face portrait collection is accessible at the Kazerne Dossin documentation center. It was also published in : ADRIAENS Ward e.a., Mecheln-Auschwitz, 1942-1944. List of names of the deportees, vol. IV, Brussels, 2009."@en , "Er zijn gedetailleerde toegangen voorhanden; opzoekingen gebeuren echter best in samenwerking met de archivarissen."@nl ;
+        ehri:physicalCharacterisiticsAndTechnicalRequirements
+                "Digitally stored at Kazerne Dossin"@en ;
+        ehri:publicationNote          "ADRIAENS Ward e.a., Mecheln-Auschwitz, 1942-1944. The destruction of Jews and gypsies from Belgium, 4 volumes, Brussels, 2009."@en ;
+        ehri:relatedMaterial          "95% of all photos in the Give them a Face portrait collection were retrieved from the immigration file of the deportees, kept by the immigration authorities and currently stored at the State Archives, Brussels. The complete files were digitised by the Jewish Museum of Deportation and Resistance, and are catalogued as collection KD_00014. A second important source are the Relics, documents left behind at the SS-Sammellager Mecheln by the deportees which were deported via transports XX to XXVI, digitised by Kazerne Dossin and catalogued as collection KD_00005."@en ;
+        rico:accruals                 "Newly found pictures will be added upon digitisation."@en ;
+        rico:conditionsOfAccess       "Contact Kazerne Dossin Documentation Centre: info@kazernedossin.eu"@en ;
+        rico:conditionsOfUse          "State Archives, Brussels - digitised by Kazerne Dossin"@en ;
+        rico:date                     "20ste eeuw" ;
+        rico:hasBeginningDate         <dates/1880-01-01> ;
+        rico:hasEndDate               <dates/1945-12-31> ;
+        rico:hasOrHadHolder           <institutions/be-002157> ;
+        rico:hasOrHadSubject          <vocabularies/ehri-terms/505> , <vocabularies/ehri-terms/1226> , <vocabularies/ehri-terms/904> , <vocabularies/ehri-terms/700> , <vocabularies/ehri-terms/204> , <vocabularies/ehri-terms/518> , <vocabularies/ehri-terms/519> ;
+        rico:hasRecordSetType         <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#Fonds> , <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#Collection> ;
+        rico:history                  "In 2005 honorary curator Ward Adriaens launched the Give Them a Face archival project. After negotiations with several ministries and the immigration authorities, the Jewish Museum of Deportation and Resistance (JMDR) received permission from Minister of Internal Affairs Patrick Dewael to digitise certain photos from immigration files, drafted by the immigration authorities. The portraits of all Jewish, Roma and Sinti deportees which passed through the SS-Sammellager Mecheln (Dossin barracks) in 1942-1944, were scanned to create the “Give Them a Face” portrait collection. Patricia Ramet, daughter of president Sir Natan Ramet, became project leader. Under her care more than 18,500 photos of deportees were digitized. In 2009, all of these were published in the four volume commemoration book\"Mecheln-Auschwitz, 1942-194\". Since then, the JMDR and Kazerne Dossin were able to add more than 1,000 new photos, digging into other archival sources : municipal records, private and family collections, researchers, the index cards of the Sicherheitspolizei-Sicherheitsdienst (Sipo-SD), Yad Vashem, the USHMM, the Relics collection stored at Kazerne Dossin… All photos in the Give Them a Face portrait collection are part of the commemoration wall which is part of the permanent exhibition at the Kazerne Dossin museum."@en , "The Jewish Museum of Deportation and Resistance (JMDR), predecessor of Kazerne Dossin, opened its doors in 1996. The museum was the result of a collaboration between the Jewish Central Consistory of Belgium and the Union of Jewish Deportees. Sir Natan Ramet, survivor of Auschwitz, the death marches and Dachau, was appointed president of the new museum. Apart from its commemorative, museological and educational assignment, the JMDR also had a historical assignment : to digitise all archival collections related to the Holocaust in Belgium and to make these documents available to the public. In 2008 the Jewish Museum of Deportation and Resistance was reorganised and became, in 2012, Kazerne Dossin - Memorial, Museum and Documentation Center on Holocaust and Human Rights."@en ;
+        rico:identifier               "KD_00017" ;
+        rico:recordResourceExtent     "ca. 19000 afbeeldingen."@nl , "over 19,650 digitised images (individual photos)"@en ;
+        rico:recordResourceStructure  "Numerical per transport"@en ;
+        rico:resultsOrResultedFrom    <units/be-002157-kd_00017/acquisitions/1> ;
+        rico:scopeAndContent          "This collection contains over 19,650 portraits of Roma, Sinti and Jewish men, women and children from Belgium and the north of France, whom have been deported from the SS-Sammellager Mecheln (Dossin barracks) to Auschwitz-Birkenau, Buchenwald, Ravensbrück, Bergen-Belsen and Vittel between August 1942 and July 1944."@en , "In deze verzameling vinden we foto’s van Joden en Roma uit België en Noord-Frankrijk die tussen 1942-1944 gedeporteerd werden vanuit de Kazerne Dossin. Ze werden verzameld naar aanleiding van het project Geef ze een gezicht (2005-2009), ter voorbereiding van het boek Mecheln-Auschwitz. De foto’s zelf zijn afkomstig uit verschillende archieven, zoals de individuele vreemdelingendossiers, de collectie Relieken, privéverzamelingen, … De collectie bevat intussen al meer foto’s dan in het boek gepubliceerd werden."@nl ;
+        rico:title                    "Give Them a Face portrait collection. Collection"@en , "“Geef ze een gezicht”-verzameling."@nl .

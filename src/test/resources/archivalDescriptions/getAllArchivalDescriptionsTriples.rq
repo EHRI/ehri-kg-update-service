@@ -1,6 +1,6 @@
-PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
-PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 
 CONSTRUCT {
   ?s ?p ?o .

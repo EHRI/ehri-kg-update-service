@@ -1,4 +1,6 @@
 # EHRI KG Update Service
+[![Kotlin CI](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml/badge.svg)](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml)
+
 This service aims to maintain the [EHRI-KG](https://lod.ehri-project-test.eu/) synchronised to the EHRI Portal data.
 For achieving this purpose, it listens for change events coming from the EHRI Portal and processes them deleting, 
 creating and updating the concerned entities in the designated triple store.

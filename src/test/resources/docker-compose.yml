@@ -1,3 +1,5 @@
+name: ehri-kg-update-service-test
+
 services:
   oxigraph:
     image: oxigraph/oxigraph
