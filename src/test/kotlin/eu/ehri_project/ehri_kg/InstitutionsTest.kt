@@ -66,20 +66,21 @@ class InstitutionsTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 1 }
 
         val kdPersistedData = retrieveEntityTriples("be-002157")
+        val kdDataStatements = kdData.defaultModel.listStatements().toList()
 
         //These should have been deleted
-        kdData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#isOrWasHolderOf" &&
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#isCopyOf" &&
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#hasCopy"
-        }.forEach { Assertions.assertFalse { kdPersistedData.contains(it) } }
+        assertStatementsNotExist(kdDataStatements, kdPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#isOrWasHolderOf",
+            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
+            "http://lod.ehri-project-test.eu/ontology#hasCopy"
+        ))
 
         //These should have been preserved
-        kdData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#isOrWasHolderOf" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#isCopyOf" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#hasCopy"
-        }.forEach { Assertions.assertTrue { kdPersistedData.contains(it) } }
+        assertStatementsExist(kdDataStatements, kdPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#isOrWasHolderOf",
+            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
+            "http://lod.ehri-project-test.eu/ontology#hasCopy"
+        ))
     }
 
     @Test
@@ -106,10 +107,10 @@ class InstitutionsTest : EntityTest() {
     }
 
     private fun doTestUpdate(data: Dataset) {
-        retrieveEntityTriples("gb-003348").toList().filter {
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#accessibility"
-        }.forEach { Assertions.assertFalse { it.literal.string.startsWith("[Test update]") } }
+        assertNotStartingWith(retrieveEntityTriples("gb-003348"), listOf(
+            "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess",
+            "http://lod.ehri-project-test.eu/ontology#accessibility"
+        ), "[Test update]")
 
         updatesProcessor.update(EHRIEvent(
             "dummy",
@@ -120,16 +121,17 @@ class InstitutionsTest : EntityTest() {
         ), data)
 
         val persitedWienerLibraryUpdatedData = retrieveEntityTriples("gb-003348")
+        val wienerLibraryDataStatements = wienerLibraryData.defaultModel.listStatements().toList()
 
-        wienerLibraryData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess" &&
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#accessibility"
-        }.forEach { Assertions.assertTrue { persitedWienerLibraryUpdatedData.contains(it) } }
+        assertStatementsExcluding(wienerLibraryDataStatements, persitedWienerLibraryUpdatedData, listOf(
+            "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess",
+            "http://lod.ehri-project-test.eu/ontology#accessibility"
+        ))
 
-        persitedWienerLibraryUpdatedData.toList().filter {
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#accessibility"
-        }.forEach { Assertions.assertTrue { it.literal.string.startsWith("[Test update]") } }
+        assertStartingWith(persitedWienerLibraryUpdatedData, listOf(
+            "http://lod.ehri-project-test.eu/ontology#conditionsOfAccess",
+            "http://lod.ehri-project-test.eu/ontology#accessibility"
+        ), "[Test update]")
 
         Assertions.assertTrue { retrieveAllEntityIds().size == 2 }
     }
@@ -142,12 +144,12 @@ class InstitutionsTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 3 }
 
         val niodPersistedData = retrieveEntityTriples("nl-002896")
+        val niodDataStatements = niodData.defaultModel.listStatements().toList()
 
         //Everything should be identical
-        niodData.defaultModel.listStatements().toList().forEach {
-            Assertions.assertTrue { niodPersistedData.contains(it) }
-        }
-        niodData.defaultModel.listStatements().toList().size == niodPersistedData.size
+        assertStatementsExist(niodDataStatements, niodPersistedData)
+
+        niodDataStatements.size == niodPersistedData.size
     }
 
 }

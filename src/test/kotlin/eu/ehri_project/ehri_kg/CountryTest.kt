@@ -66,18 +66,19 @@ class CountryTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 1 }
 
         val bePersistedData = retrieveEntityTriples("be")
+        val beDataStatements = beData.defaultModel.listStatements().toList()
 
         //These should have been deleted
-        beData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#containsOrContained" &&
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
-        }.forEach { Assertions.assertFalse { bePersistedData.contains(it) } }
+        assertStatementsNotExist(beDataStatements, bePersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#containsOrContained",
+            "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
+        ))
 
         //These should have been preserved
-        beData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#containsOrContained" ||
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
-        }.forEach { Assertions.assertTrue { bePersistedData.contains(it) } }
+        assertStatementsExist(beDataStatements, bePersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#containsOrContained",
+            "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
+        ))
     }
 
     @Test
@@ -94,9 +95,9 @@ class CountryTest : EntityTest() {
     }
 
     private fun doTestUpdate(data: Dataset) {
-        Assertions.assertFalse { retrieveEntityTriples("gb").toList().find {
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#researchSummary"
-        }!!.literal.string.startsWith("[Test update]") }
+        assertNotStartingWith(retrieveEntityTriples("gb"), listOf(
+            "http://lod.ehri-project-test.eu/ontology#researchSummary"
+        ), "[Test update]")
 
         updatesProcessor.update(EHRIEvent(
             "dummy",
@@ -107,14 +108,15 @@ class CountryTest : EntityTest() {
         ), data)
 
         val persitedUkUpdatedData = retrieveEntityTriples("gb")
+        val ukDataStatements = ukData.defaultModel.listStatements().toList()
 
-        ukData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#researchSummary"
-        }.forEach { Assertions.assertTrue { persitedUkUpdatedData.contains(it) } }
+        assertStatementsExcluding(ukDataStatements, persitedUkUpdatedData, listOf(
+            "http://lod.ehri-project-test.eu/ontology#researchSummary"
+        ))
 
-        Assertions.assertTrue { persitedUkUpdatedData.toList().find {
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#researchSummary"
-        }!!.literal.string.startsWith("[Test update]") }
+        assertStartingWith(persitedUkUpdatedData, listOf(
+            "http://lod.ehri-project-test.eu/ontology#researchSummary"
+        ), "[Test update]")
 
         Assertions.assertTrue { retrieveAllEntityIds().size == 2 }
     }
@@ -127,12 +129,12 @@ class CountryTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 3 }
 
         val nlPersistedData = retrieveEntityTriples("nl")
+        val nlDataStatements = nlData.defaultModel.listStatements().toList()
 
         //Everything should be identical
-        nlData.defaultModel.listStatements().toList().forEach {
-            Assertions.assertTrue { nlPersistedData.contains(it) }
-        }
-        nlData.defaultModel.listStatements().toList().size == nlPersistedData.size
+        assertStatementsExist(nlDataStatements, nlPersistedData)
+
+        nlDataStatements.size == nlPersistedData.size
     }
 
 }

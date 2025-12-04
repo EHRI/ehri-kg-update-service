@@ -66,22 +66,23 @@ class ArchivalDescriptionsTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 1 }
 
         val kdCollectionPersistedData = retrieveEntityTriples("be-002157-kd_00017")
+        val kdCollectionDataStatements = kdCollectionData.defaultModel.listStatements().toList()
 
         //These should have been deleted
-        kdCollectionData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject" &&
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#isCopyOf" &&
-            it.predicate.uri != "http://lod.ehri-project-test.eu/ontology#hasCopy" &&
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#hasCreator"
-        }.forEach { Assertions.assertFalse { kdCollectionPersistedData.contains(it) } }
+        assertStatementsNotExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
+            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
+            "http://lod.ehri-project-test.eu/ontology#hasCopy",
+            "https://www.ica.org/standards/RiC/ontology#hasCreator"
+        ))
 
         //These should have been preserved
-        kdCollectionData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#isCopyOf" ||
-            it.predicate.uri == "http://lod.ehri-project-test.eu/ontology#hasCopy" ||
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#hasCreator"
-        }.forEach { Assertions.assertTrue { kdCollectionPersistedData.contains(it) } }
+        assertStatementsExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
+            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
+            "http://lod.ehri-project-test.eu/ontology#hasCopy",
+            "https://www.ica.org/standards/RiC/ontology#hasCreator"
+        ))
     }
 
     @Test
@@ -98,17 +99,15 @@ class ArchivalDescriptionsTest : EntityTest() {
     }
 
     private fun doTestUpdate(data: Dataset) {
-        retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#scopeAndContent"
-        }.forEach { Assertions.assertFalse { it.literal.string.startsWith("[Test update]") } }
+        val statementsBeforeUpdate = retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList()
 
-        Assertions.assertTrue { retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#history"
-        }.size == 1 }
+        assertNotStartingWith(statementsBeforeUpdate, listOf(
+            "https://www.ica.org/standards/RiC/ontology#scopeAndContent"
+        ), "[Test update]")
 
-        Assertions.assertTrue { retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList().none {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#accruals"
-        } }
+        assertExistenceOfOnlyOne(statementsBeforeUpdate, "https://www.ica.org/standards/RiC/ontology#history")
+
+        assertNonExistence(statementsBeforeUpdate, "https://www.ica.org/standards/RiC/ontology#accruals")
 
         updatesProcessor.update(EHRIEvent(
             "dummy",
@@ -118,26 +117,26 @@ class ArchivalDescriptionsTest : EntityTest() {
             "Repository"
         ), data)
 
-        val persitedWienerLibraryUpdatedData = retrieveEntityTriples("gb-003348-wl3000_9_1-1")
+        val persistedWienerLibraryUpdatedData = retrieveEntityTriples("gb-003348-wl3000_9_1-1")
+        val wienerLibraryCollectionDataStatements = wienerLibraryCollectionData.defaultModel.listStatements().toList()
+        val statementsAfterUpdate = retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList()
 
-        retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#scopeAndContent"
-        }.forEach { Assertions.assertTrue { it.literal.string.startsWith("[Test update]") } }
+        assertStartingWith(statementsAfterUpdate, listOf(
+            "https://www.ica.org/standards/RiC/ontology#scopeAndContent"
+        ), "[Test update]")
 
-        retrieveEntityTriples("gb-003348-wl3000_9_1-1").toList().filter {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#accruals"
-        }.forEach { Assertions.assertTrue { it.literal.string.equals("Test update") } }
+        assertStartingWith(statementsAfterUpdate, listOf(
+            "https://www.ica.org/standards/RiC/ontology#accruals"
+        ), "Test update")
 
-        Assertions.assertTrue { retrieveEntityTriples("gb-003348-wl3000_9_1-1").none {
-            it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#history"
-        } }
+        assertNonExistence(statementsAfterUpdate, "https://www.ica.org/standards/RiC/ontology#history")
 
         // The rest of the properties should be identical
-        wienerLibraryCollectionData.defaultModel.listStatements().toList().filter {
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#scopeAndContent" &&
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#accruals" &&
-            it.predicate.uri != "https://www.ica.org/standards/RiC/ontology#history"
-        }.forEach { Assertions.assertTrue { persitedWienerLibraryUpdatedData.contains(it) } }
+        assertStatementsExcluding(wienerLibraryCollectionDataStatements, persistedWienerLibraryUpdatedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#scopeAndContent",
+            "https://www.ica.org/standards/RiC/ontology#accruals",
+            "https://www.ica.org/standards/RiC/ontology#history"
+        ))
 
         Assertions.assertTrue { retrieveAllEntityIds().size == 2 }
     }
@@ -150,11 +149,11 @@ class ArchivalDescriptionsTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 3 }
 
         val niodCollectionPersistedData = retrieveEntityTriples("nl-002896-mf1014417")
+        val niodCollectionDataStatements = niodCollectionData.defaultModel.listStatements().toList()
 
         //Everything should be identical
-        niodCollectionData.defaultModel.listStatements().toList().forEach {
-            Assertions.assertTrue { niodCollectionPersistedData.contains(it) }
-        }
+        assertStatementsExist(niodCollectionDataStatements, niodCollectionPersistedData)
+
         niodCollectionData.defaultModel.listStatements().toList().size == niodCollectionPersistedData.size
     }
 

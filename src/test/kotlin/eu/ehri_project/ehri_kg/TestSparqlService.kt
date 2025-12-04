@@ -2,10 +2,8 @@ package eu.ehri_project.ehri_kg
 
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
-import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessor
 import eu.ehri_project.ehri_kg.sparql.SparqlEndpointQueryProcessor
-import org.apache.jena.atlas.lib.DateTimeUtils
 import org.apache.jena.rdf.model.Statement
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -25,6 +23,52 @@ interface TestSparqlService {
         val query = SourceHelper.readFile(pathToQuery)
         val resultSet = SparqlEndpointQueryProcessor(queryEndpoint).query(query)
         return resultSet.asSequence().map { it.get("s").toString() }.toList()
+    }
+
+    fun assertStatementsNotExist(original: List<Statement>, modified: List<Statement>, predicatesToOmit: List<String>) {
+        original.filter {
+            predicatesToOmit.none { o -> o == it.predicate.uri }
+        }.forEach { Assertions.assertFalse { modified.contains(it) } }
+    }
+
+    fun assertStatementsExist(original: List<Statement>, modified: List<Statement>, predicatesToInclude: List<String>) {
+        original.filter {
+            predicatesToInclude.contains(it.predicate.uri)
+        }.forEach { Assertions.assertTrue { modified.contains(it) } }
+    }
+
+    fun assertStatementsExcluding(original: List<Statement>, modified: List<Statement>, predicatesToOmit: List<String>) {
+        original.filter {
+            predicatesToOmit.none { o -> o == it.predicate.uri }
+        }.forEach { Assertions.assertTrue { modified.contains(it) } }
+    }
+
+    fun assertStartingWith(statements: List<Statement>, predicatesToTest: List<String>, prefix: String) {
+        statements.toList().filter {
+            predicatesToTest.contains(it.predicate.uri)
+        }.forEach { Assertions.assertTrue(it.literal.string.startsWith(prefix)) }
+    }
+
+    fun assertNotStartingWith(statements: List<Statement>, predicatesToTest: List<String>, prefix: String) {
+        statements.toList().filter {
+            predicatesToTest.contains(it.predicate.uri)
+        }.forEach { Assertions.assertFalse { (it.literal.string.startsWith(prefix)) } }
+    }
+
+    fun assertStatementsExist(original: List<Statement>, modified: List<Statement>) {
+        original.forEach { Assertions.assertTrue { modified.contains(it) } }
+    }
+
+    fun assertExistenceOfOnlyOne(statements: List<Statement>, predicateToTest: String) {
+        Assertions.assertTrue { statements.filter {
+            it.predicate.uri == predicateToTest
+        }.size == 1 }
+    }
+
+    fun assertNonExistence(statements: List<Statement>, predicateToTest: String) {
+        Assertions.assertTrue { statements.none {
+            it.predicate.uri == predicateToTest
+        } }
     }
 }
 
