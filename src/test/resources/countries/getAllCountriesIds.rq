@@ -5,5 +5,5 @@ SELECT DISTINCT ?s WHERE {
   ?s ?p ?o ;
     a ehri:Country .
   # this avoids conflicts with data created by the institution mapping rules
-  FILTER(?p != rico:containsOrContained && ?p != rico:isOrWasLocationOfAgent)
+  FILTER(?p != rico:containsTransitive && ?p != rico:isOrWasLocationOfAgent)
 }
