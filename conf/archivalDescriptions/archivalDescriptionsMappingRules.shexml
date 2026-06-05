@@ -301,6 +301,7 @@ ITERATOR components_iterator <jsonpath: $.data.query> {
 		FIELD notes <notes>
 		ITERATOR languageOfMaterial <languageOfMaterial> {
 			FIELD lang <[*]>
+			POPPED_FIELD holding_id <holding_id>
 		}
 		ITERATOR dates <dates[*]> {
 			FIELD startDate <startDate>
@@ -347,21 +348,21 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:isOrWasIncludedIn ehri_units:[holding.parentId] ;
 	rico:resultsOrResultedFrom @ehri:Acquisition ;
 	rico:identifier [holding.identifier] ;
-	rico:history [holding.descriptions.biographicalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	rico:history [holding.descriptions.archivalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:biographicalHistory [holding.descriptions.biographicalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:archivalHistory [holding.descriptions.archivalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:appraisal [holding.descriptions.appraisal] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:accruals [holding.descriptions.accruals] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:conditionsOfAccess [holding.descriptions.conditionsOfAccess] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:conditionsOfUse [holding.descriptions.conditionsOfUse] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:conditionsOfUse [holding.descriptions.conditionsOfReproduction] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:hasOrHadScript @ehri:MaterialScript ;
-	ehri:physicalCharacterisiticsAndTechnicalRequirements [holding.descriptions.physicalCharacteristics] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	ehri:physicalCharacteristicsAndTechnicalRequirements [holding.descriptions.physicalCharacteristics] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:otherFindingAids [holding.descriptions.findingAids] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:locationOfOriginals [holding.descriptions.locationOfOriginals] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:locationOfCopies [holding.descriptions.locationOfCopies] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:publicationNote [holding.descriptions.publicationNote] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	ehri:sources [holding.descriptions.sources] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	ehri:notes [holding.descriptions.notes] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:recordResourceSourceOfInformation [holding.descriptions.sources] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
+	rico:note [holding.descriptions.notes] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:archivistNote [holding.descriptions.archivistNote] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:relatedMaterial [holding.descriptions.relatedUnitsOfDescription] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:separatedMaterial [holding.descriptions.separatedUnitsOfDescription] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
@@ -399,6 +400,7 @@ ehri:ArchiveComponent ehri_units:[holding.parentId] {
 ehri:Language ehri_languages:[holding.descriptions.languageOfMaterial.lang] {
    	a rico:Language ;
    	rico:name [holding.descriptions.languageOfMaterial.lang] ;
+   	rico:isOrWasLanguageOfSomeMembersOf ehri_units:[holding.descriptions.languageOfMaterial.holding_id] ;
 }
 
 ehri:Acquisition ehri_units:[transformers.combinedPathHoldingAcquisition(holding.holding_id) IF validators.nonEmpty(holding.descriptions.acquisition)] {

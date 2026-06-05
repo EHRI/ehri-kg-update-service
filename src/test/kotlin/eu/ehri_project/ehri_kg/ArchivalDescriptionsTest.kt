@@ -71,16 +71,16 @@ class ArchivalDescriptionsTest : EntityTest() {
         //These should have been deleted
         assertStatementsNotExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
             "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
-            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
-            "http://lod.ehri-project-test.eu/ontology#hasCopy",
+            "https://www.ica.org/standards/RiC/ontology#thingIsTargetOfRelation",
+            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation",
             "https://www.ica.org/standards/RiC/ontology#hasCreator"
         ))
 
         //These should have been preserved
         assertStatementsExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
             "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
-            "http://lod.ehri-project-test.eu/ontology#isCopyOf",
-            "http://lod.ehri-project-test.eu/ontology#hasCopy",
+            "https://www.ica.org/standards/RiC/ontology#thingIsTargetOfRelation",
+            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation",
             "https://www.ica.org/standards/RiC/ontology#hasCreator"
         ))
     }
@@ -105,7 +105,7 @@ class ArchivalDescriptionsTest : EntityTest() {
             "https://www.ica.org/standards/RiC/ontology#scopeAndContent"
         ), "[Test update]")
 
-        assertExistenceOfOnlyOne(statementsBeforeUpdate, "https://www.ica.org/standards/RiC/ontology#history")
+        assertExistenceOfOnlyOne(statementsBeforeUpdate, "http://lod.ehri-project-test.eu/ontology#biographicalHistory")
 
         assertNonExistence(statementsBeforeUpdate, "https://www.ica.org/standards/RiC/ontology#accruals")
 
@@ -129,13 +129,13 @@ class ArchivalDescriptionsTest : EntityTest() {
             "https://www.ica.org/standards/RiC/ontology#accruals"
         ), "Test update")
 
-        assertNonExistence(statementsAfterUpdate, "https://www.ica.org/standards/RiC/ontology#history")
+        assertNonExistence(statementsAfterUpdate, "http://lod.ehri-project-test.eu/ontology#biographicalHistory")
 
         // The rest of the properties should be identical
         assertStatementsExcluding(wienerLibraryCollectionDataStatements, persistedWienerLibraryUpdatedData, listOf(
             "https://www.ica.org/standards/RiC/ontology#scopeAndContent",
             "https://www.ica.org/standards/RiC/ontology#accruals",
-            "https://www.ica.org/standards/RiC/ontology#history"
+            "http://lod.ehri-project-test.eu/ontology#biographicalHistory"
         ))
 
         Assertions.assertTrue { retrieveAllEntityIds().size == 2 }
