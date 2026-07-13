@@ -15,7 +15,9 @@ import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.riot.RDFLanguages
 import java.io.ByteArrayOutputStream
 
-class UpdatesProcessorFactory(val config: Config) {
+class UpdatesProcessorFactory(val config: Config,
+                              val querySparqlEndpoint: String = config.get("querySparqlEndpoint"),
+                              val updateSparqlEndpoint: String = config.get("updateSparqlEndpoint")) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -28,7 +30,9 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("countriesShexmlMappingRules"),
                     config.get("countriesDeleteSparqlQuery"),
                     config.get("countriesConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
             EHRITypes.INSTITUTION ->
                 CountriesUpdatesProcessor(
@@ -36,7 +40,9 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("institutionsShexmlMappingRules"),
                     config.get("institutionsDeleteSparqlQuery"),
                     config.get("institutionsConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
             EHRITypes.ARCHIVAL_DESCRIPTION ->
                 ArchivalDescriptionsUpdatesProcessor(
@@ -44,7 +50,9 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("archivalDescriptionsShexmlMappingRules"),
                     config.get("archivalDescriptionsDeleteSparqlQuery"),
                     config.get("archivalDescriptionsConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
         }
     }
@@ -56,10 +64,10 @@ abstract class UpdatesProcessor(config: Config) {
     abstract val shexmlMappingRules: String
     abstract val deleteSparqlQuery: String
     abstract val constructSparqlQuery: String
+    abstract val querySparqlEndpoint: String
+    abstract val updateSparqlEndpoint: String
 
     val graphQLEndpoint = config.get("graphQLEndpoint")
-    val querySparqlEndpoint = config.get("querySparqlEndpoint")
-    val updateSparqlEndpoint = config.get("updateSparqlEndpoint")
     val insertSparqlQuery = config.get("insertSparqlQuery")
 
     private val logger = KotlinLogging.logger {}
@@ -140,7 +148,9 @@ class InstitutionsUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)
 
 class CountriesUpdatesProcessor(
@@ -148,7 +158,9 @@ class CountriesUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)
 
 class ArchivalDescriptionsUpdatesProcessor(
@@ -156,5 +168,7 @@ class ArchivalDescriptionsUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)

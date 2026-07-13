@@ -75,7 +75,8 @@ interface TestSparqlService {
 abstract class EntityTest : TestSparqlService {
 
     protected val config = Config("conf/config.properties")
-    protected abstract val queryEndpoint: String
+    protected val queryEndpoint: String = "http://localhost:7878/query"
+    protected val updateEndpoint: String = "http://localhost:7878/update"
     protected abstract val updatesProcessor: UpdatesProcessor
     protected abstract val getTriplesSparqlPath: String
     protected abstract val getAllIdsSparqlPath: String
