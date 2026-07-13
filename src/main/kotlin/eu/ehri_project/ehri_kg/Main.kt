@@ -43,7 +43,11 @@ class EhriKgUpdateService : CliktCommand() {
                 val jsonReport = Json.encodeToString(eventReport)
                 logger.info { "Report for the processed event:\n${jsonReport}" }
                 outputToFile?.let {
-                    SourceHelper.writeToFile(it, "${jsonReport}\n")
+                    val nonEmptyEvents = eventReport.filter { it.receivedEvent.eventId.isNotEmpty() }
+                    if(nonEmptyEvents.isNotEmpty()) {
+                        val filteredJsonReport = Json.encodeToString(nonEmptyEvents)
+                        SourceHelper.writeToFile(it, "${filteredJsonReport}\n")
+                    }
                 }
                 kafkaEmitter?.sendMessage(jsonReport)
             }
