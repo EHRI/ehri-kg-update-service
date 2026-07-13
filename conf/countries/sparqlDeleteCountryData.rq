@@ -6,6 +6,6 @@ DELETE {
 } WHERE {
     ?s ?p ?o .
     FILTER(?s = ehri_countries:<$entityId>
-        && ?p != rico:containsOrContained
+        && ?p != rico:containsTransitive
         && ?p != rico:isOrWasLocationOfAgent)
 }

@@ -58,6 +58,7 @@
 <units/gb-003348-wl3000_9_1-1>
         a                          ehri:RecordSet ;
         rdfs:seeAlso               <https://wiener.soutron.net/Portal/Default/en-GB/RecordView/Index/104218> ;
+        ehri:biographicalHistory   "In the beginning of 1957 Alfred Wiener and Eva Reichmann undertook a trip to Poland. On invitation of the Comité International d’Auschwitz both participated at a conference held at the Auschwitz memorial site, and visited some related institutions and archives."@en ;
         rico:conditionsOfUse       "<strong style\"text-decoration-color: initial; box-sizing: border-box; color: #ff0000; font-family: Roboto, sans-serif; font-size: 15px; text-align: left\">This material has been digitised. Readers should book a reading room terminal to access it.</strong>"@en ;
         rico:hasBeginningDate      <dates/1957-01-30> ;
         rico:hasEndDate            <dates/1957-07-18> ;
@@ -67,7 +68,6 @@
                 <languages/eng> , <languages/deu> ;
         rico:hasOrHadSubject       <vocabularies/ehri-terms/1074> ;
         rico:hasRecordSetType      <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#Collection> ;
-        rico:history               "In the beginning of 1957 Alfred Wiener and Eva Reichmann undertook a trip to Poland. On invitation of the Comité International d’Auschwitz both participated at a conference held at the Auschwitz memorial site, and visited some related institutions and archives."@en ;
         rico:identifier            "WL3000/9/1/1" ;
         rico:isOrWasIncludedIn     <units/gb-003348-wl3000_9_1> ;
         rico:recordResourceExtent  "18 items"@en ;

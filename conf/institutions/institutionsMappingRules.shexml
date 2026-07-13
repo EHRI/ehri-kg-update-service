@@ -315,6 +315,11 @@ ITERATOR repositories_iterator <jsonpath: $.data.query> {
 		}
 		ITERATOR parallelFormsOfName <parallelFormsOfName> {
 			FIELD name<[*]>
+			POPPED_FIELD repository_id <id>
+		}
+		ITERATOR cityIfNotRegion <addresses[?(@.firstdem == null)]> {
+			FIELD municipality <municipality>
+			FIELD countryCode <countryCode>
         	POPPED_FIELD repository_id <id>
 		}
 	}
@@ -355,9 +360,7 @@ ehri:Institution ehri_institutions:[organization.id] {
 
 ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
 	a rico:Place ;
-	rico:isOrWasContainedBy @ehri:Region ;
-	rico:isOrWasContainedBy @ehri:City ;
-	rico:isOrWasContainedBy ehri_countries:[organization.countryId] ;
+	rico:isContainedByTransitive @ehri:City ;
 	rico:hasOrHadPhysicalLocation @ehri:InstitutionAddress ;
 }
  
@@ -384,16 +387,15 @@ ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordina
 ehri:Region ehri_regions:[organization.descriptions.addresses.region] {
 	a ehri:Region ;
 	rico:name [organization.descriptions.addresses.region] ;
-	rico:isOrWasContainedBy ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] ;
-	rico:containsOrContained ehri_cities:[organization.descriptions.addresses.municipality] ;
+	rico:isContainedByTransitive ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] ;
+	rico:containsTransitive ehri_cities:[organization.descriptions.addresses.municipality] ;
 	# To be implemented owl:sameAs
 }
 
 ehri:City ehri_cities:[organization.descriptions.addresses.municipality] {
 	a ehri:City ;
 	rico:name [organization.descriptions.addresses.municipality] ;
-	rico:isOrWasContainedBy ehri_regions:[organization.descriptions.addresses.region] ;
-	rico:isOrWasContainedBy ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] ;
+	rico:isContainedByTransitive ehri_regions:[organization.descriptions.addresses.region IF validators.nonEmpty(organization.descriptions.addresses.region)] ;
 	# To be implemented owl:sameAs
 }
 
@@ -418,6 +420,14 @@ ehri:Mandate ehri_institutions:[transformers.combinedPathInstitutionMandates(org
 ehri:Country ehri_countries:[transformers.toLowerCase(organization.descriptions.addresses.countryCode)] { 
 	a ehri:Country ;
 	rico:isOrWasLocationOfAgent ehri_institutions:[organization.descriptions.addresses.repository_id] ;
-	rico:containsOrContained ehri_regions:[organization.descriptions.addresses.region] ;
-	rico:containsOrContained ehri_cities:[organization.descriptions.addresses.municipality] ;
+	rico:containsTransitive ehri_regions:[organization.descriptions.addresses.region IF validators.nonEmpty(organization.descriptions.addresses.region)] ;
+}
+ehri:CountryFallback ehri_countries:[transformers.toLowerCase(organization.descriptions.cityIfNotRegion.countryCode)] { 
+	#If no region this is used as fallback
+	rico:containsTransitive ehri_cities:[organization.descriptions.cityIfNotRegion.municipality] ;
+}
+
+ehri:CityFallback ehri_cities:[organization.descriptions.cityIfNotRegion.municipality] { 
+	#If no region this is used as fallback
+	rico:isContainedByTransitive ehri_countries:[transformers.toLowerCase(organization.descriptions.cityIfNotRegion.countryCode)] ;
 }

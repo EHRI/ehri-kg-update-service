@@ -10,8 +10,8 @@ DELETE {
         ?s ?p ?o .
         FILTER(?s = ehri_units:<$entityId>
             && ?p != rico:hasOrHadSubject
-            && ?p != ehri:isCopyOf
-            && ?p != ehri:hasCopy
+            && ?p != rico:thingIsTargetOfRelation
+            && ?p != rico:thingIsSourceOfRelation
             && ?p != rico:hasCreator)
     }
     UNION

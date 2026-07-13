@@ -70,13 +70,13 @@ class CountryTest : EntityTest() {
 
         //These should have been deleted
         assertStatementsNotExist(beDataStatements, bePersistedData, listOf(
-            "https://www.ica.org/standards/RiC/ontology#containsOrContained",
+            "https://www.ica.org/standards/RiC/ontology#containsTransitive",
             "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
         ))
 
         //These should have been preserved
         assertStatementsExist(beDataStatements, bePersistedData, listOf(
-            "https://www.ica.org/standards/RiC/ontology#containsOrContained",
+            "https://www.ica.org/standards/RiC/ontology#containsTransitive",
             "https://www.ica.org/standards/RiC/ontology#isOrWasLocationOfAgent"
         ))
     }
