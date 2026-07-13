@@ -13,8 +13,9 @@ import kotlin.test.Test
 
 class InstitutionsTest : EntityTest() {
 
-    override val queryEndpoint = config.get("querySparqlEndpoint")
-    override val updatesProcessor = UpdatesProcessorFactory(config).createUpdateProcessor(EHRITypes.INSTITUTION)
+    override val updatesProcessor =
+        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+            .createUpdateProcessor(EHRITypes.INSTITUTION)
     override val getTriplesSparqlPath = "src/test/resources/institutions/getAllInstitutionsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/institutions/getAllInstitutionsIds.rq"
     val kdData = RDFDataMgr.loadDataset("src/test/resources/institutions/kd.ttl")
@@ -95,15 +96,16 @@ class InstitutionsTest : EntityTest() {
         val updatedData = updatesProcessor.transformToRDF(wienerLibraryJsonGraphQLData)
         doTestUpdate(updatedData)
         // This forces the deletion of UK's data to avoid collisions with countries tests.
-        // In particular these mapping rules generate the rft:type property again which collides with the test under CountryTest.
-        UpdatesProcessorFactory(config).createUpdateProcessor(EHRITypes.COUNTRY)
-            .delete(EHRIEvent(
-                "dummy",
-                "delete-event",
-                DateTimeUtils.nowAsString(),
-                "gb",
-                "Country"
-            ))
+        // In particular, these mapping rules generate the rdf:type property again which collides with the test under CountryTest.
+        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+            .createUpdateProcessor(EHRITypes.COUNTRY)
+                .delete(EHRIEvent(
+                    "dummy",
+                    "delete-event",
+                    DateTimeUtils.nowAsString(),
+                    "gb",
+                    "Country"
+                ))
     }
 
     private fun doTestUpdate(data: Dataset) {

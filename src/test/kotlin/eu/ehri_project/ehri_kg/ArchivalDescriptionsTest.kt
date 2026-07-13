@@ -13,8 +13,9 @@ import kotlin.test.Test
 
 class ArchivalDescriptionsTest : EntityTest() {
 
-    override val queryEndpoint = config.get("querySparqlEndpoint")
-    override val updatesProcessor = UpdatesProcessorFactory(config).createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
+    override val updatesProcessor =
+        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+            .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
     override val getTriplesSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsIds.rq"
     val kdCollectionData = RDFDataMgr.loadDataset("src/test/resources/archivalDescriptions/kdCollection.ttl")

@@ -13,8 +13,9 @@ import kotlin.test.Test
 
 class CountryTest : EntityTest() {
 
-    override val queryEndpoint = config.get("querySparqlEndpoint")
-    override val updatesProcessor = UpdatesProcessorFactory(config).createUpdateProcessor(EHRITypes.COUNTRY)
+    override val updatesProcessor =
+        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+            .createUpdateProcessor(EHRITypes.COUNTRY)
     override val getTriplesSparqlPath = "src/test/resources/countries/getAllCountriesTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/countries/getAllCountriesIds.rq"
     val beData = RDFDataMgr.loadDataset("src/test/resources/countries/be.ttl")
