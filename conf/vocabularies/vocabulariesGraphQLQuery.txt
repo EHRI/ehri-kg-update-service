@@ -1,0 +1,40 @@
+{"query": "{query:
+  CvocConcept(id: \"<id>\") {
+    id
+    type
+    identifier
+    uri
+    seeAlso
+    latitude
+    longitude
+    descriptions {
+      languageCode
+      name
+      identifier
+      altLabel
+      scopeNote
+    }
+    broader {
+      id
+      identifier
+    }
+    narrower {
+      id
+      identifier
+    }
+    links {
+      id
+      type
+      field
+      targets {
+        id
+        type
+      }
+    }
+    vocabulary {
+      id
+      type
+      identifier
+    }
+  }
+}" }

@@ -1,0 +1,16 @@
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
+
+CONSTRUCT {
+  ?s ?p ?o .
+} WHERE {
+  {
+    ?s ?p ?o .
+    FILTER(?s = ehri_vocabs:<$entityId>)
+  }
+  UNION
+  {
+    ?s ?p ?o .
+    FILTER(?o = ehri_vocabs:<$entityId>)
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "data": {
+    "query": {
+      "id": "ehri_terms-1062",
+      "type": "CvocConcept",
+      "identifier": "1062",
+      "uri": null,
+      "seeAlso": [],
+      "latitude": null,
+      "longitude": null,
+      "descriptions": [
+        {
+          "languageCode": "ukr",
+          "name": "Menšini",
+          "identifier": "Latn",
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "ukr",
+          "name": "Меншини",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "rus",
+          "name": "men'šinstva",
+          "identifier": "Latn",
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "rus",
+          "name": "меньшинства",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "nld",
+          "name": "Minderheden",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "pol",
+          "name": "mniejszości narodowe",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "hun",
+          "name": "Kisebbségek",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "fra",
+          "name": "minorité",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "ces",
+          "name": "menšiny",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "ita",
+          "name": "Minoranze",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "sh",
+          "name": "manjina",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "heb",
+          "name": "מיעוטים",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "eng",
+          "name": "Minorities",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "deu",
+          "name": "Minderheit",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        },
+        {
+          "languageCode": "spa",
+          "name": "Hola, soy una prueba",
+          "identifier": null,
+          "altLabel": [],
+          "scopeNote": []
+        }
+      ],
+      "broader": [
+        {
+          "id": "ehri_terms-637",
+          "identifier": "637"
+        }
+      ],
+      "narrower": [
+        {
+          "id": "ehri_terms-1075",
+          "identifier": "1075"
+        }
+      ],
+      "links": [
+        {
+          "id": "8297bd2c-20c1-11e9-a8fa-f76ac2bdcccf",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "de-002624-ms-0_6-ms_200_63",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            }
+          ]
+        },
+        {
+          "id": "8294fdc2-20c1-11e9-a8fa-f76ac2bdcccf",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "de-002624-ms-0_6-ms_200_301",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            }
+          ]
+        },
+        {
+          "id": "d6718a8e-50b0-11e6-8a09-55feb58d85a7",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "md-002886-112_1",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            }
+          ]
+        },
+        {
+          "id": "8319f893-ccbd-11e4-afa9-ffeff5dca60b",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            }
+          ]
+        },
+        {
+          "id": "5ae76c82-c3f4-11e4-8dfe-3f6566224d11",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "hu-002739-mnl_ol_k_28",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            }
+          ]
+        },
+        {
+          "id": "8374610e-20c1-11e9-a8fa-f76ac2bdcccf",
+          "type": "Link",
+          "field": null,
+          "targets": [
+            {
+              "id": "ehri_terms-1062",
+              "type": "CvocConcept"
+            },
+            {
+              "id": "de-002624-staatlakt-0_0-12-11-ma_21_1",
+              "type": "DocumentaryUnit"
+            }
+          ]
+        }
+      ],
+      "vocabulary": {
+        "id": "ehri_terms",
+        "type": "CvocVocabulary",
+        "identifier": "ehri-terms"
+      }
+    }
+  }
+}

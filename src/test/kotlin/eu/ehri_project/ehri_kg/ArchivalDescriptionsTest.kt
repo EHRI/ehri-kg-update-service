@@ -155,7 +155,7 @@ class ArchivalDescriptionsTest : EntityTest() {
         //Everything should be identical
         assertStatementsExist(niodCollectionDataStatements, niodCollectionPersistedData)
 
-        niodCollectionData.defaultModel.listStatements().toList().size == niodCollectionPersistedData.size
+        Assertions.assertTrue { niodCollectionData.defaultModel.listStatements().toList().size == niodCollectionPersistedData.size }
     }
 
 }
