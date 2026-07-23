@@ -151,7 +151,7 @@ class InstitutionsTest : EntityTest() {
         //Everything should be identical
         assertStatementsExist(niodDataStatements, niodPersistedData)
 
-        niodDataStatements.size == niodPersistedData.size
+        Assertions.assertTrue { niodDataStatements.size == niodPersistedData.size }
     }
 
 }

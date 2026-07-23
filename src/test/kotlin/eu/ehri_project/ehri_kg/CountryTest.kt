@@ -135,7 +135,7 @@ class CountryTest : EntityTest() {
         //Everything should be identical
         assertStatementsExist(nlDataStatements, nlPersistedData)
 
-        nlDataStatements.size == nlPersistedData.size
+        Assertions.assertTrue { nlDataStatements.size == nlPersistedData.size }
     }
 
 }

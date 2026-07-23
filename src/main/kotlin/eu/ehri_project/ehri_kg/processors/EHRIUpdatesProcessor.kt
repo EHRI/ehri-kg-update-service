@@ -48,6 +48,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             "Country" -> EHRITypes.COUNTRY
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
+            "CvocConcept" -> EHRITypes.VOCABULARY
             else -> error("Unknown or unsupported type $type")
         }
     }
