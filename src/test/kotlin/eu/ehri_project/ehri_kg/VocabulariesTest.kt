@@ -67,16 +67,19 @@ class VocabulariesTest : EntityTest() {
         Assertions.assertTrue { retrieveAllEntityIds().size == 1 }
 
         val campPersistedData = retrieveEntityTriples("ehri-camps\\/2233")
-        val campDataStatements = termData.defaultModel.listStatements().toList()
-
-        // For now, we test that everything was deleted
-        Assertions.assertTrue { campPersistedData.isEmpty() }
+        val campDataStatements = campData.defaultModel.listStatements().toList()
 
         //These should have been deleted
-        //assertStatementsNotExist(campDataStatements, campPersistedData, listOf())
+        assertStatementsNotExist(campDataStatements, campPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf",
+            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject"
+        ))
 
         //These should have been preserved
-        //assertStatementsExist(campDataStatements, campPersistedData, listOf())
+        assertStatementsExist(campDataStatements, campPersistedData, listOf(
+            "https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf",
+            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject"
+        ))
     }
 
     @Test

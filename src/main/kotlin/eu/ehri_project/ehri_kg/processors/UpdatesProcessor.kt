@@ -65,6 +65,26 @@ class UpdatesProcessorFactory(val config: Config,
                     querySparqlEndpoint,
                     updateSparqlEndpoint
                 )
+            EHRITypes.CORPORATE_BODY ->
+                HistoricalAgentsUpdatesProcessor(
+                    config.get("historicalAgentsGraphQLQuery"),
+                    config.get("corporateBodiesShexmlMappingRules"),
+                    config.get("historicalAgentsDeleteSparqlQuery"),
+                    config.get("historicalAgentsConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
+            EHRITypes.PERSON ->
+                HistoricalAgentsUpdatesProcessor(
+                    config.get("historicalAgentsGraphQLQuery"),
+                    config.get("personsShexmlMappingRules"),
+                    config.get("historicalAgentsDeleteSparqlQuery"),
+                    config.get("historicalAgentsConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
         }
     }
 }
@@ -186,6 +206,23 @@ class ArchivalDescriptionsUpdatesProcessor(
 ) : UpdatesProcessor(config)
 
 class VocabulariesUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String,
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
+) : UpdatesProcessor(config) {
+    override fun replaceEntityId(event: EHRIEvent, fileContent: String): String {
+        val eventId = event.id
+            .replaceFirst("-", "\\/")
+            .replaceFirst('_', '-')
+        return fileContent.replace("<\$entityId>", eventId)
+    }
+}
+
+class HistoricalAgentsUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,

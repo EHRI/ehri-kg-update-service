@@ -1,0 +1,10 @@
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047/otherNames/אלי_ויזל> <https://www.ica.org/standards/RiC/ontology#name> "אלי ויזל" .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047/otherNames/אלי_ויזל> <https://www.ica.org/standards/RiC/ontology#isOrWasAgentNameOf> <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047/otherNames/אלי_ויזל> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.ehri-project-test.eu/ontology#AlternateAgentName> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <https://www.ica.org/standards/RiC/ontology#hasDeathDate> <http://lod.ehri-project-test.eu/dates/2016-07-02> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <https://www.ica.org/standards/RiC/ontology#hasBirthDate> <http://lod.ehri-project-test.eu/dates/1928-09-30> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <http://lod.ehri-project-test.eu/ontology#sources> "Cataloguing system of the Yad Vashem (Jerusalem/Israel) http://www.yadvashem.org."@en .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <https://www.ica.org/standards/RiC/ontology#history> "Jewish writer, Holocaust survivor."@en .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <https://www.ica.org/standards/RiC/ontology#hasOrHadAgentName> <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047/otherNames/אלי_ויזל> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <https://www.ica.org/standards/RiC/ontology#name> "Elie Wiesel" .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.ehri-project-test.eu/ontology#Person> .

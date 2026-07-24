@@ -6,16 +6,16 @@ PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
 CONSTRUCT {
   ?s ?p ?o .
 } WHERE {
-  {
+  #{
     ?s ?p ?o .
-    FILTER(?s = ehri_vocabs:<$entityId>)
-  }
-  UNION
-  {
-    ?s ?p ?o .
-    # Until the mapping rules cover this case we only remove the supported attributes
-    #VALUES ?p { rico:hasOrHadSubject skos:hasTopConcept }
-    VALUES ?p { rico:hasOrHadSubject }
-    FILTER(?o = ehri_vocabs:<$entityId>)
-  }
+    FILTER(?s = ehri_vocabs:<$entityId>
+      && ?p != rico:isOrWasSubjectOf)
+  #}
+  #UNION
+  #{
+    #?s ?p ?o .
+    # This is commented until the mapping rules cover this case
+    #VALUES ?p { skos:hasTopConcept }
+    #FILTER(?o = ehri_vocabs:<$entityId>)
+  #}
 }
