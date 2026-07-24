@@ -1,0 +1,36 @@
+{"query": "{query:
+  HistoricalAgent(id: \"<id>\") {
+    id
+    identifier
+    description {
+      languageCode
+      name
+      identifier
+      dates {
+        startDate
+        endDate
+      }
+      lastName
+      firstName
+      source
+      typeOfEntity
+      datesOfExistence
+      biographicalHistory
+      legalStatus
+      structure
+      generalContext
+      occupation
+      otherFormsOfName
+      parallelFormsOfName
+      place
+      functions
+      mandates
+    }
+    links {
+      targets {
+        id
+        type
+      }
+    }
+  }
+}" }

@@ -1,0 +1,10 @@
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+
+SELECT DISTINCT ?s WHERE {
+  ?s ?p ?o ;
+    a ?historicalAgent .
+  VALUES ?historicalAgent { ehri:CorporateBody ehri:Person }
+  # this avoids conflicts with data created by other mapping rules
+  FILTER(?p != rico:isOrWasSubjectOf && ?p != rico:isCreatorOf)
+}

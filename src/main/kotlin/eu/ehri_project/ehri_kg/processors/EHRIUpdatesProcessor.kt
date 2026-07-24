@@ -26,7 +26,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             it.map {
                 getEventTypeAndId(it).map {
                     try {
-                        with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(it.type))) {
+                        with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(it.type, it.id))) {
                             val graphQLContent = downloadContents(it)
                             val dataBefore = getDataStatus(it)
                             val turtleResult = transformToRDF(graphQLContent)
@@ -43,12 +43,17 @@ class EHRIUpdatesProcessor(val config: Config) {
         }
     }
 
-    private fun selectEntityTypeCase(type: String): EHRITypes {
+    private fun selectEntityTypeCase(type: String, id: String? = "null"): EHRITypes {
         return when(type) {
             "Country" -> EHRITypes.COUNTRY
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
             "CvocConcept" -> EHRITypes.VOCABULARY
+            "HistoricalAgent" -> id?.let {
+                if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
+                else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
+                else null
+            } ?: error("Unknown or unsupported Historical Agent type for id $id")
             else -> error("Unknown or unsupported type $type")
         }
     }

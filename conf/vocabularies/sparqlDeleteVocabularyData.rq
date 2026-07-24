@@ -10,13 +10,7 @@ DELETE {
         # All the main triples where the concept is the subject except those that are not re-generated
         ?s ?p ?o .
         FILTER(?s = ehri_vocabs:<$entityId>
-            && ?p != skos:topConceptOf)
-    }
-    UNION
-    {
-        # Other triples that need to be cleaned up on a per-case basis
-        ?s ?p ?o .
-        VALUES ?p { rico:hasOrHadSubject }
-        FILTER(?o = ehri_vocabs:<$entityId>)
+            && ?p != skos:topConceptOf
+            && ?p != rico:isOrWasSubjectOf)
     }
 }
