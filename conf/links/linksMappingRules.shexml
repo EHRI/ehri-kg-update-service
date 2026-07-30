@@ -1,0 +1,166 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://data.ehri-project.eu/vocabularies/ehri-terms/>
+PREFIX ehri_languages: <http://lod.ehri-project-test.eu/languages/>
+PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
+PREFIX ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/>
+PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#>
+PREFIX ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#>
+PREFIX ehri_is_copy_of_relations: <http://lod.ehri-project-test.eu/isCopyOfRelations/>
+PREFIX ehri_has_copy_relations: <http://lod.ehri-project-test.eu/hasCopyRelations/>
+FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Transformers.scala>
+FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Validators.scala>
+SOURCE links_file <stdin>
+ITERATOR components_iterator <jsonpath: $.data.query> {
+    PUSHED_FIELD source_id <source.id>
+    PUSHED_FIELD source_type <source.type>
+    ITERATOR loc_org <[?(@.field=='locationOfOriginals' && @.source.id)]> {
+        PUSHED_FIELD loc_org_id <id>
+        PUSHED_FIELD loc_org_description <description>
+        ITERATOR targets <targets[*]> {
+            POPPED_FIELD subject_id <holding_id>
+            FIELD target_id <id>
+            FIELD type <type>
+            POPPED_FIELD source_id <source_id>
+            POPPED_FIELD source_type <source_type>
+            POPPED_FIELD identifier <loc_org_id>
+            POPPED_FIELD description <loc_org_description>
+        }
+    }
+    ITERATOR loc_cop <[?(@.field=='locationOfCopies' && @.source.id)]> {
+        PUSHED_FIELD loc_cop_id <id>
+        PUSHED_FIELD loc_cop_description <description>
+        ITERATOR targets <targets[*]> {
+            POPPED_FIELD subject_id <holding_id>
+            FIELD target_id <id>
+            FIELD type <type>
+            POPPED_FIELD source_id <source_id>
+            POPPED_FIELD source_type <source_type>
+            POPPED_FIELD identifier <loc_cop_id>
+            POPPED_FIELD description <loc_cop_description>
+        }
+    }
+    ITERATOR creators <[?(@.body[0].type=='creator')]> {
+        FIELD unit_id <targets[?(@.type=='DocumentaryUnit')].id>
+        FIELD cb_id <targets[?(@.type=='HistoricalAgent')].id>
+    }
+}
+
+EXPRESSION links <links_file.components_iterator>
+
+################################################
+### Copy links for holdings and repositories ###
+################################################
+
+## Location of Originals ##
+# unit to unit or unit to institution
+ehri:HoldingLocationOfOriginals ehri_units:[links.loc_org.targets.source_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.source_type)] {
+    rico:thingIsSourceOfRelation @ehri:IsCopyOfLocOrg ;
+    #completion of hasCopy links
+    rico:thingIsTargetOfRelation ehri_has_copy_relations:[links.loc_org.targets.identifier] ;
+}
+# institution to unit or institution to institution
+ehri:InstitutionLocationOfOriginals ehri_institutions:[links.loc_org.targets.source_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.source_type)] {
+    rico:thingIsSourceOfRelation @ehri:IsCopyOfLocOrg ;
+    #completion of hasCopy links
+    rico:thingIsTargetOfRelation ehri_has_copy_relations:[links.loc_org.targets.identifier] ;
+}
+#n-ary relation for ehri:IsCopyOf location of originals
+ehri:IsCopyOfLocOrg ehri_is_copy_of_relations:[links.loc_org.targets.identifier] {
+    a ehri:IsCopyOfRelation ;
+    rico:generalDescription [links.loc_org.targets.description] ;
+    # The object is a documentary unit
+    rico:relationHasTarget ehri_units:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] ;
+    # The object is an institution
+    rico:relationHasTarget ehri_institutions:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] ;
+    # The subject is a documentary unit
+    rico:relationHasSource ehri_units:[links.loc_org.targets.source_id IF validators.isDocumentaryUnit(links.loc_org.targets.source_type)] ;
+    # The subject is an institution
+    rico:relationHasSource ehri_institutions:[links.loc_org.targets.source_id IF validators.isInstitution(links.loc_org.targets.source_type)] ;
+}
+# unit to unit or institution to unit (inverse)
+ehri:HoldingLocationOfOriginalsInverse ehri_units:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] {
+    rico:thingIsSourceOfRelation @ehri:HasCopyLocOrg ;
+    #completion of isCopyOf links
+    rico:thingIsTargetOfRelation ehri_is_copy_of_relations:[links.loc_org.targets.identifier] ;
+}
+# unit to institution or institution to institution (inverse)
+ehri:InstitutionLocationOfOriginalsInverse ehri_institutions:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] {
+    rico:thingIsSourceOfRelation @ehri:HasCopyLocOrg ;
+    #completion of isCopyOf links
+    rico:thingIsTargetOfRelation ehri_is_copy_of_relations:[links.loc_org.targets.identifier] ;
+}
+#n-ary relation for ehri:HasCopy location of originals
+ehri:HasCopyLocOrg ehri_has_copy_relations:[links.loc_org.targets.identifier] {
+    a ehri:HasCopyRelation ;
+    rico:generalDescription [links.loc_org.targets.description] ;
+    # The object is a documentary unit
+    rico:relationHasTarget ehri_units:[links.loc_org.targets.source_id IF validators.isDocumentaryUnit(links.loc_org.targets.source_type)] ;
+    # The object is an institution
+    rico:relationHasTarget ehri_institutions:[links.loc_org.targets.source_id IF validators.isInstitution(links.loc_org.targets.source_type)] ;
+    # The subject is a documentary unit
+    rico:relationHasSource ehri_units:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] ;
+    # The subject is an institution
+    rico:relationHasSource ehri_institutions:[links.loc_org.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_org.targets.source_id, links.loc_org.targets.target_id, links.loc_org.targets.type)] ;
+}
+
+## Location of Copies ##
+# institution to unit or institution to institution
+ehri:HoldingLocationOfCopies ehri_units:[links.loc_cop.targets.source_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.source_type)] {
+    rico:thingIsSourceOfRelation @ehri:HasCopyLocCop ;
+    #completion of isCopyOf links
+    rico:thingIsTargetOfRelation ehri_is_copy_of_relations:[links.loc_cop.targets.identifier] ;
+}
+# institution to unit or institution to institution
+ehri:InstitutionLocationOfCopies ehri_institutions:[links.loc_cop.targets.source_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.source_type)] {
+    rico:thingIsSourceOfRelation @ehri:HasCopyLocCop ;
+    #completion of isCopyOf links
+    rico:thingIsTargetOfRelation ehri_is_copy_of_relations:[links.loc_cop.targets.identifier] ;
+}
+#n-ary relation for ehri:HasCopy location of copies
+ehri:HasCopyLocCop ehri_has_copy_relations:[links.loc_cop.targets.identifier] {
+    a ehri:HasCopyRelation ;
+    rico:generalDescription [links.loc_cop.targets.description] ;
+    # The object is a documentary unit
+    rico:relationHasTarget ehri_units:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] ;
+    # The object is an institution
+    rico:relationHasTarget ehri_institutions:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] ;
+    # The subject is a documentary unit
+    rico:relationHasSource ehri_units:[links.loc_cop.targets.source_id IF validators.isDocumentaryUnit(links.loc_cop.targets.source_type)] ;
+    # The subject is an institution
+    rico:relationHasSource ehri_institutions:[links.loc_cop.targets.source_id IF validators.isInstitution(links.loc_cop.targets.source_type)] ;
+}
+# unit to unit or institution to unit (inverse)
+ehri:HoldingLocationOfCopiesInverse ehri_units:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] {
+    rico:thingIsSourceOfRelation @ehri:IsCopyOfLocCop ;
+    #completion of hasCopy links
+    rico:thingIsTargetOfRelation ehri_has_copy_relations:[links.loc_cop.targets.identifier] ;
+}
+# unit to institution or institution to institution (inverse)
+ehri:InstitutionLocationOfCopiesInverse ehri_institutions:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] {
+    rico:thingIsSourceOfRelation @ehri:IsCopyOfLocCop ;
+    #completion of hasCopy links
+    rico:thingIsTargetOfRelation ehri_has_copy_relations:[links.loc_cop.targets.identifier] ;
+}
+#n-ary relation for ehri:IsCopyOf location of copies
+ehri:IsCopyOfLocCop ehri_is_copy_of_relations:[links.loc_cop.targets.identifier] {
+    a ehri:IsCopyOfRelation ;
+    rico:generalDescription [links.loc_cop.targets.description] ;
+    # The object is an institution
+    rico:relationHasTarget ehri_institutions:[links.loc_cop.targets.source_id IF validators.isInstitution(links.loc_cop.targets.source_type)] ;
+    # The object is a documentary unit
+	rico:relationHasTarget ehri_units:[links.loc_cop.targets.source_id IF validators.isDocumentaryUnit(links.loc_cop.targets.source_type)] ;
+    # The subject is a documentary unit
+    rico:relationHasSource ehri_units:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectDocumentaryUnit(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] ;
+    # The subject is an institution
+    rico:relationHasSource ehri_institutions:[links.loc_cop.targets.target_id IF validators.areSourceAndTargetDifferentAndIsSubjectInstitution(links.loc_cop.targets.source_id, links.loc_cop.targets.target_id, links.loc_cop.targets.type)] ;
+}

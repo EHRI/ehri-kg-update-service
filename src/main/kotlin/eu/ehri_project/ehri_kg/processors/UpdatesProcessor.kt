@@ -85,6 +85,16 @@ class UpdatesProcessorFactory(val config: Config,
                     querySparqlEndpoint,
                     updateSparqlEndpoint
                 )
+            EHRITypes.LINK ->
+                LinksUpdatesProcessor(
+                    config.get("linksGraphQLQuery"),
+                    config.get("linksShexmlMappingRules"),
+                    config.get("linksDeleteSparqlQuery"),
+                    config.get("linksConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
         }
     }
 }
@@ -196,6 +206,16 @@ class CountriesUpdatesProcessor(
 ) : UpdatesProcessor(config)
 
 class ArchivalDescriptionsUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String,
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
+) : UpdatesProcessor(config)
+
+class LinksUpdatesProcessor(
     override val graphQLQuery: String,
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,

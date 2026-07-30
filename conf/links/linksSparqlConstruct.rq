@@ -1,0 +1,22 @@
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_is_copy_of_relations: <http://lod.ehri-project-test.eu/isCopyOfRelations/>
+PREFIX ehri_has_copy_relations: <http://lod.ehri-project-test.eu/hasCopyRelations/>
+
+CONSTRUCT {
+    ?s ?p ?o .
+} WHERE {
+    {
+        # All the main triples where the concept is the subject, direct and inverse n-ary relations
+        ?s ?p ?o .
+        FILTER(?s = ehri_is_copy_of_relations:<$entityId>
+            || ?s = ehri_has_copy_relations:<$entityId>)
+    }
+    UNION
+    {
+        # All the main triples where the concept is the object, direct and inverse n-ary relations
+        ?s ?p ?o .
+        FILTER(?o = ehri_is_copy_of_relations:<$entityId>
+            || ?o = ehri_has_copy_relations:<$entityId>)
+    }
+}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "query": {
+      "id": "9f57326c-4bbb-11e9-aff1-03b6fe2bb563",
+      "type": "Link",
+      "description": "[Updated data] United States Holocaust Memorial Museum holds copies of Holocaust-relevant archives from Mémorial de la Shoah, Centre de Documentation Juive Contemporaine",
+      "field": "locationOfOriginals",
+      "body": [],
+      "targets": [
+        {
+          "id": "fr-002375",
+          "type": "Repository"
+        },
+        {
+          "id": "us-005578-irn508311",
+          "type": "DocumentaryUnit"
+        }
+      ],
+      "source": {
+        "id": "us-005578-irn508311",
+        "type": "DocumentaryUnit"
+      }
+    }
+  }
+}
