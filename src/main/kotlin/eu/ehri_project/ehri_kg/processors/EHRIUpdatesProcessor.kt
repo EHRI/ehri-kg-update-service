@@ -49,6 +49,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
             "CvocConcept" -> EHRITypes.VOCABULARY
+            "Link" -> EHRITypes.LINK
             "HistoricalAgent" -> id?.let {
                 if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
                 else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
