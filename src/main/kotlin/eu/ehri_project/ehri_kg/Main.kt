@@ -35,17 +35,18 @@ class EhriKgUpdateService : CliktCommand() {
 
     override fun run() {
         val kafkaEmitter = kafkaOptions?.let { KafkaEmitter(it.kafkaServer, it.kafkaTopic) }
-        val observable = EHRISSEConsumer(mappingFile).processEvents()
-        EHRIUpdatesProcessor(Config(entitiesConfig))
+        val config = Config(entitiesConfig)
+        val lastEventId = config.get("resumeFromEventId").ifEmpty { null }
+        val observable = EHRISSEConsumer(mappingFile, lastEventId = lastEventId).processEvents()
+        EHRIUpdatesProcessor(config)
             .process(observable)
             .blockingGet()
             .blockingForEach { eventReport ->
                 val jsonReport = Json.encodeToString(eventReport)
                 logger.info { "Report for the processed event:\n${jsonReport}" }
                 outputToFile?.let {
-                    val nonEmptyEvents = eventReport.filter { it.receivedEvent.eventId.isNotEmpty() }
-                    if(nonEmptyEvents.isNotEmpty()) {
-                        val filteredJsonReport = Json.encodeToString(nonEmptyEvents)
+                    if (eventReport.receivedEvent.eventId.isNotEmpty()) {
+                        val filteredJsonReport = Json.encodeToString(listOf(eventReport))
                         SourceHelper.writeToFile(it, "${filteredJsonReport}\n")
                     }
                 }

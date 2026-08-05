@@ -7,7 +7,7 @@ import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
 import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import org.apache.jena.query.Dataset
 
@@ -21,25 +21,29 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     private val logger = KotlinLogging.logger {}
 
-    fun process(observable: Single<Observable<Dataset>>): Single<Observable<List<EHRIUpdateReport>>> {
+    fun process(observable: Single<Flowable<Dataset>>): Single<Flowable<EHRIUpdateReport>> {
         return observable.map {
-            it.map {
-                getEventTypeAndId(it).map {
-                    try {
-                        with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(it.type, it.id))) {
-                            val graphQLContent = downloadContents(it)
-                            val dataBefore = getDataStatus(it)
-                            val turtleResult = transformToRDF(graphQLContent)
-                            val executedQueries = update(it, turtleResult)
-                            val dataAfter = getDataStatus(it)
-                            val dataDiff = compareGraphs(dataBefore, dataAfter)
-                            EHRIUpdateReport(it, executedQueries, dataDiff)
-                        }
-                    } catch (e: Exception) {
-                        EHRIUpdateReport(it, emptyList(), emptyList(), e.stackTraceToString())
-                    }
-                }.ifEmpty { listOf(EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())) }
+            it.concatMap {
+                Flowable.fromIterable(getEventTypeAndId(it)).map {
+                   processEvent(it)
+                }.defaultIfEmpty(EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList()))
             }
+        }
+    }
+
+    fun processEvent(event: EHRIEvent): EHRIUpdateReport {
+        try {
+            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+                val graphQLContent = downloadContents(event)
+                val dataBefore = getDataStatus(event)
+                val turtleResult = transformToRDF(graphQLContent)
+                val executedQueries = update(event, turtleResult)
+                val dataAfter = getDataStatus(event)
+                val dataDiff = compareGraphs(dataBefore, dataAfter)
+                return EHRIUpdateReport(event, executedQueries, dataDiff)
+            }
+        } catch (e: Exception) {
+            return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString())
         }
     }
 
