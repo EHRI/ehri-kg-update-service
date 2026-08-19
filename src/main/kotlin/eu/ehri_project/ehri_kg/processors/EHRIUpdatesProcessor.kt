@@ -1,5 +1,6 @@
 package eu.ehri_project.ehri_kg.processors
 
+import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
@@ -15,6 +16,8 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
     val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
+    val database = DatabaseManager(config)
+    var previousEventErroredOrNotProcessed = false
 
     init {
         org.apache.jena.query.ARQ.init()
@@ -34,14 +37,21 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     fun processEvent(event: EHRIEvent): EHRIUpdateReport {
         try {
-            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
-                val graphQLContent = downloadContents(event)
-                val dataBefore = getDataStatus(event)
-                val turtleResult = transformToRDF(graphQLContent)
-                val executedQueries = update(event, turtleResult)
-                val dataAfter = getDataStatus(event)
-                val dataDiff = compareGraphs(dataBefore, dataAfter)
-                return EHRIUpdateReport(event, executedQueries, dataDiff)
+            if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
+                logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
+                return emptyEventReport
+            }
+            else {
+                previousEventErroredOrNotProcessed = true
+                with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+                    val graphQLContent = downloadContents(event)
+                    val dataBefore = getDataStatus(event)
+                    val turtleResult = transformToRDF(graphQLContent)
+                    val executedQueries = update(event, turtleResult)
+                    val dataAfter = getDataStatus(event)
+                    val dataDiff = compareGraphs(dataBefore, dataAfter)
+                    return EHRIUpdateReport(event, executedQueries, dataDiff)
+                }
             }
         } catch (_: IllegalStateException) {
             return emptyEventReport

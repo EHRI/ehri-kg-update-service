@@ -2,9 +2,9 @@ package eu.ehri_project.ehri_kg.database
 
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
+import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.serialization.json.Json
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
@@ -53,6 +53,24 @@ class DatabaseManager(config: Config) {
                 } catch (e: SQLException) {
                     logger.error(e) { "Error while inserting the event report into the database" }
                 }
+            }
+        }
+    }
+
+    fun checkIfSuccessfullyProcessed(event: EHRIEvent): Boolean {
+        connect().use { connection ->
+            connection.prepareStatement(
+                """
+                SELECT 1 FROM events_history
+                WHERE event_id = ? AND item_id = ? AND item_type = ? AND event_type = ? AND (errors IS NULL OR errors = '')
+                ORDER BY timestamp DESC;
+                """.trimIndent()
+            ).use { statement ->
+                statement.setString(1, event.eventId)
+                statement.setString(2, event.id)
+                statement.setString(3, event.type)
+                statement.setString(4, event.eventType)
+                statement.executeQuery().use { rs -> return rs.next() }
             }
         }
     }
