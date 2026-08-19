@@ -26,6 +26,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.3.5")
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
     implementation("org.apache.kafka", "kafka-clients", "4.1.0")
+    implementation("org.xerial:sqlite-jdbc:3.53.2.1")
 }
 
 tasks.test {

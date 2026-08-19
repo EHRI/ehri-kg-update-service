@@ -14,6 +14,7 @@ import org.apache.jena.query.Dataset
 class EHRIUpdatesProcessor(val config: Config) {
 
     val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
+    val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
 
     init {
         org.apache.jena.query.ARQ.init()
@@ -26,7 +27,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             it.concatMap {
                 Flowable.fromIterable(getEventTypeAndId(it)).map {
                    processEvent(it)
-                }.defaultIfEmpty(EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList()))
+                }.defaultIfEmpty(emptyEventReport)
             }
         }
     }
@@ -42,6 +43,8 @@ class EHRIUpdatesProcessor(val config: Config) {
                 val dataDiff = compareGraphs(dataBefore, dataAfter)
                 return EHRIUpdateReport(event, executedQueries, dataDiff)
             }
+        } catch (_: IllegalStateException) {
+            return emptyEventReport
         } catch (e: Exception) {
             return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString())
         }
@@ -58,7 +61,7 @@ class EHRIUpdatesProcessor(val config: Config) {
                 if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
                 else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
                 else null
-            } ?: error("Unknown or unsupported Historical Agent type for id $id")
+            } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
             else -> error("Unknown or unsupported type $type")
         }
     }
