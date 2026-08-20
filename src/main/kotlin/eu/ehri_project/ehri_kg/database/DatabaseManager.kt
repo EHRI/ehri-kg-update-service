@@ -61,8 +61,8 @@ class DatabaseManager(config: Config) {
         connect().use { connection ->
             connection.prepareStatement(
                 """
-                SELECT 1 FROM events_history
-                WHERE event_id = ? AND item_id = ? AND item_type = ? AND event_type = ? AND (errors IS NULL OR errors = '')
+                SELECT errors FROM events_history
+                WHERE event_id = ? AND item_id = ? AND item_type = ? AND event_type = ?
                 ORDER BY timestamp DESC;
                 """.trimIndent()
             ).use { statement ->
@@ -70,7 +70,11 @@ class DatabaseManager(config: Config) {
                 statement.setString(2, event.id)
                 statement.setString(3, event.type)
                 statement.setString(4, event.eventType)
-                statement.executeQuery().use { rs -> return rs.next() }
+                statement.executeQuery().use { rs ->
+                    rs.next()
+                    val errors = rs.getString("errors")
+                    return errors.isNullOrEmpty()
+                }
             }
         }
     }
