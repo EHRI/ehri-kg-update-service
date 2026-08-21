@@ -37,13 +37,12 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     fun processEvent(event: EHRIEvent): EHRIUpdateReport {
         try {
-            if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
-                logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
-                return emptyEventReport
-            }
-            else {
-                previousEventErroredOrNotProcessed = true
-                with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+                if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
+                    logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
+                    return emptyEventReport
+                } else {
+                    previousEventErroredOrNotProcessed = true
                     val graphQLContent = downloadContents(event)
                     val dataBefore = getDataStatus(event)
                     val turtleResult = transformToRDF(graphQLContent)

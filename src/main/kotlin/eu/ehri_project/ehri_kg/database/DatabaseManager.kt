@@ -71,9 +71,9 @@ class DatabaseManager(config: Config) {
                 statement.setString(3, event.type)
                 statement.setString(4, event.eventType)
                 statement.executeQuery().use { rs ->
-                    rs.next()
+                    val hasNext = rs.next()
                     val errors = rs.getString("errors")
-                    return errors.isNullOrEmpty()
+                    return hasNext && errors.isNullOrEmpty()
                 }
             }
         }
