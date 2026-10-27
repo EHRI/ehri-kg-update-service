@@ -124,8 +124,11 @@ abstract class UpdatesProcessor(config: Config) {
 
     fun transformToRDF(graphQLResponse: String): Dataset {
         val mappingRules = SourceHelper.readFile(shexmlMappingRules)
-        return ShExMLMappingLauncherProxy().convert(mappingRules, graphQLResponse)
+        return ShExMLMappingLauncherProxy().convert(mappingRules, beforeMapping(graphQLResponse))
     }
+
+    /** The response as the type's mapping rules map it, e.g. without the parts that aren't in the KG. */
+    open fun beforeMapping(graphQLResponse: String): String = graphQLResponse
 
     fun create(newContent: Dataset): List<String> {
         logger.info { "Launching INSERT query against the SPARQL endpoint" }
@@ -215,7 +218,11 @@ class ArchivalDescriptionsUpdatesProcessor(
     config: Config,
     override val sparqlStore: SparqlStore,
     override val graphQLClient: GraphQLClient
-) : UpdatesProcessor(config)
+) : UpdatesProcessor(config) {
+    private val kgSets = KgSets(config)
+
+    override fun beforeMapping(graphQLResponse: String): String = kgSets.withAccessPointsInKg(graphQLResponse)
+}
 
 class LinksUpdatesProcessor(
     override val graphQLQuery: String,

@@ -114,21 +114,14 @@ class EHRIUpdatesProcessorTest {
     }
 
     @Test
-    fun `concepts and historical agents outside EHRI's own sets are ignored`() {
+    fun `concepts and historical agents of sets not configured to be in the KG are ignored`() {
         val reports = run(sseEvent("evt-1", "update-event",
-            "terezin_terms-keyword_jmp_874" to "CvocConcept", "terezin_victims-person_iti_995281" to "HistoricalAgent"))
+            "terezin_terms-keyword_jmp_874" to "CvocConcept", "terezin_victims-person_iti_995281" to "HistoricalAgent",
+            "ehri_other-1" to "HistoricalAgent", "ehri_pers-000001" to "CvocConcept"))
 
         assertTrue(reports.all(::isEmptyReport))
         assertTrue(graphQL.requests.isEmpty())
         assertTrue(store.updates.isEmpty())
-    }
-
-    @Test
-    fun `unknown historical agent ids produce an error report`() {
-        val report = run(sseEvent("evt-1", "update-event", "ehri_other-1" to "HistoricalAgent")).single()
-
-        assertEquals("ehri_other-1", report.receivedEvent.id)
-        assertTrue("Unknown or unsupported Historical Agent type" in report.errors)
     }
 
     @Test

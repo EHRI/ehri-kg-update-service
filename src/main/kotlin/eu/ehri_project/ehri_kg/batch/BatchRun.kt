@@ -41,6 +41,7 @@ class BatchRun(
             val response = runBlocking { fetcher.fetch(source, responsesDir) }
             source.name to chunk(source, response)
         }
+        forgetMappingsWithAnotherConfiguration()
         val jobs = MapJob.forChunks(sources, chunksDir, mappedDir)
         mapper.map(jobs, File(dir, "work"))
         val violations = File(dir, "violations.txt")
@@ -54,6 +55,21 @@ class BatchRun(
             output.path, violations.path)
         File(dir, "report.json").writeText(Json { prettyPrint = true }.encodeToString(report))
         return report
+    }
+
+    /**
+     * Removes the data mapped by an earlier run if its mapping configuration differs from this run's, e.g. because the
+     * sets in the KG changed, so that the chunks are mapped again rather than mixing two configurations' data.
+     */
+    private fun forgetMappingsWithAnotherConfiguration() {
+        val recorded = File(mappedDir, "configuration.txt")
+        if (mappedDir.exists() && recorded.takeIf { it.exists() }?.readText() != mapper.configuration) {
+            logger.warn { "The mapping configuration changed since the chunks in $mappedDir were mapped, so all " +
+                "the chunks will be mapped again. It was:\n${recorded.takeIf { it.exists() }?.readText() ?: "not recorded"}" }
+            mappedDir.deleteRecursively()
+        }
+        mappedDir.mkdirs()
+        recorded.writeText(mapper.configuration)
     }
 
     /**
@@ -82,4 +98,5 @@ class BatchRun(
         complete.writeText("$items\n")
         return items
     }
+
 }

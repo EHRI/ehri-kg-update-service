@@ -17,13 +17,9 @@ class EHRIFunctions {
   def functionPath(id: String, index: String): String = s"${vocabularyPath(id)}/functions/${index.toInt + 1}"
   def mandatePath(id: String, index: String): String = s"${vocabularyPath(id)}/mandates/${index.toInt + 1}"
 
-  // Whether a historical agent or concept is in the KG: only those in EHRI's own vocabularies and authority sets,
-  // e.g. ehri_terms or ehri_pers, are. Keep in step with inEhriSet in the service code.
-  def inEhriSet(id: String): Boolean = id.startsWith("ehri_")
-
-  // Items in the KG an access point can link to, by their type and id
-  def isAgent(itemType: String, id: String): Boolean = itemType == "HistoricalAgent" && inEhriSet(id)
-  def isAgentOrConcept(itemType: String, id: String): Boolean =
-    (itemType == "HistoricalAgent" || itemType == "CvocConcept") && inEhriSet(id)
+  // Kinds of item an access point can link to. The service leaves out access points to agents and concepts whose
+  // authority sets and vocabularies aren't in the KG before mapping (see KgSets in the service code).
+  def isAgent(itemType: String): Boolean = itemType == "HistoricalAgent"
+  def isAgentOrConcept(itemType: String): Boolean = itemType == "HistoricalAgent" || itemType == "CvocConcept"
 
 }

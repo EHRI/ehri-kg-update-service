@@ -5,6 +5,7 @@ import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
+import eu.ehri_project.ehri_kg.model.NotInKgException
 import eu.ehri_project.ehri_kg.model.UnsupportedEntityTypeException
 import eu.ehri_project.ehri_kg.validation.TypeValidators
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -20,6 +21,7 @@ class EHRIUpdatesProcessor(
 ) {
 
     private val eventExtractor = EventExtractor(config.get("eventDetailsSparqlQuery"))
+    private val kgSets = KgSets(config)
     val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
     var previousEventErroredOrNotProcessed = false
 
@@ -54,6 +56,9 @@ class EHRIUpdatesProcessor(
                     return EHRIUpdateReport(event, executedQueries, dataDiff, violations = violations, dryRun = dryRun)
                 }
             }
+        } catch (e: NotInKgException) {
+            logger.info { "Ignoring event ${event.eventId}: ${e.message}" }
+            return emptyEventReport
         } catch (e: UnsupportedEntityTypeException) {
             logger.debug { "Ignoring event ${event.eventId}: ${e.message}" }
             return emptyEventReport
@@ -75,15 +80,11 @@ class EHRIUpdatesProcessor(
             "Country" -> EHRITypes.COUNTRY
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
-            "CvocConcept" -> if (inEhriSet(id.orEmpty())) EHRITypes.VOCABULARY
-                else throw UnsupportedEntityTypeException("Concept $id is not in an EHRI vocabulary")
+            "CvocConcept" -> if (kgSets.hasConcept(id.orEmpty())) EHRITypes.VOCABULARY
+                else throw NotInKgException("Concept $id is not in a vocabulary in the KG (see vocabularySets)")
             "Link" -> EHRITypes.LINK
-            "HistoricalAgent" -> id?.let {
-                if (!inEhriSet(it)) throw UnsupportedEntityTypeException("Historical Agent $id is not in an EHRI authority set")
-                else if(it.startsWith("ehri_cb") || it.startsWith("ehri_fm")) EHRITypes.CORPORATE_BODY
-                else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
-                else null
-            } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
+            "HistoricalAgent" -> kgSets.agentType(id.orEmpty())
+                ?: throw NotInKgException("Historical Agent $id is not in an authority set in the KG (see personSets and corporateBodySets)")
             else -> throw UnsupportedEntityTypeException("Unknown or unsupported type $type")
         }
     }

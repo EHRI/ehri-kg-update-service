@@ -3,6 +3,7 @@ package eu.ehri_project.ehri_kg.batch
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRITypes
+import eu.ehri_project.ehri_kg.processors.KgSets
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -38,8 +39,9 @@ data class BatchSource(
         private val mappedLinkFields = setOf("locationOfOriginals", "locationOfCopies")
 
         /** The sources of all entities of the given types, from the per-entity queries in [config]. */
-        fun fromConfig(config: Config, types: Collection<EHRITypes> = EHRITypes.entries): List<BatchSource> =
-            types.flatMap { type ->
+        fun fromConfig(config: Config, types: Collection<EHRITypes> = EHRITypes.entries): List<BatchSource> {
+            val sets = KgSets(config)
+            return types.flatMap { type ->
                 when (type) {
                     EHRITypes.COUNTRY -> listOf(all(type, config.get("countriesGraphQLQuery")))
                     EHRITypes.INSTITUTION -> listOf(all(type, config.get("institutionsGraphQLQuery")))
@@ -47,20 +49,18 @@ data class BatchSource(
                     EHRITypes.LINK -> listOf(all(type, config.get("linksGraphQLQuery")) {
                         it["field"]?.jsonPrimitive?.content in mappedLinkFields
                     })
-                    EHRITypes.PERSON -> sets(config, "batchPersonSets").map {
+                    EHRITypes.PERSON -> sets.personSets.map {
                         inSet(type, config.get("historicalAgentsGraphQLQuery"), "AuthoritativeSet", it, "authorities")
                     }
-                    EHRITypes.CORPORATE_BODY -> sets(config, "batchCorporateBodySets").map {
+                    EHRITypes.CORPORATE_BODY -> sets.corporateBodySets.map {
                         inSet(type, config.get("historicalAgentsGraphQLQuery"), "AuthoritativeSet", it, "authorities")
                     }
-                    EHRITypes.VOCABULARY -> sets(config, "batchVocabularySets").map {
+                    EHRITypes.VOCABULARY -> sets.vocabularySets.map {
                         inSet(type, config.get("vocabulariesGraphQLQuery"), "CvocVocabulary", it, "concepts")
                     }
                 }
             }
-
-        private fun sets(config: Config, property: String): List<String> =
-            config.getOptional(property)?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }.orEmpty()
+        }
 
         /** All the entities of a top-level list field, e.g. `{ countries { items { … } } }`. */
         fun all(type: EHRITypes, queryFile: String, keep: (JsonObject) -> Boolean = { true }): BatchSource {

@@ -3,6 +3,7 @@ package eu.ehri_project.ehri_kg.batch
 import eu.ehri_project.ehri_kg.helpers.Config
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
 /** Some chunks could not be mapped. */
@@ -21,6 +22,9 @@ class BatchMapper(
     private val workerJvmArgs: List<String> = emptyList(),
 ) {
     private val logger = KotlinLogging.logger {}
+
+    /** The configuration the chunks are mapped with, see [MappingConfiguration]. */
+    val configuration: String by lazy { MappingConfiguration.describe(Config(configPath)) }
 
     /** Maps the jobs not done yet, failing if any of them couldn't be. Worker logs and job lists go in [workDir]. */
     fun map(jobs: List<MapJob>, workDir: File) {
@@ -57,7 +61,8 @@ class BatchMapper(
         val shares = jobs.sortedByDescending { it.chunk.length() }.withIndex()
             .groupBy({ it.index % workers }, { it.value }).values
         val java = ProcessHandle.current().info().command().orElse("java")
-        val processes = mutableListOf<Process>()
+        // Read by the shutdown hook while workers are still being started
+        val processes = CopyOnWriteArrayList<Process>()
         // Workers left running after this process ends would map the same chunks as those of the next run
         val stopWorkers = Thread { processes.forEach { it.destroy() } }
         Runtime.getRuntime().addShutdownHook(stopWorkers)
@@ -98,8 +103,16 @@ class BatchMapper(
             output.outputStream().buffered().use { out ->
                 violations.bufferedWriter().use { violationsOut ->
                     jobs.forEach { job ->
-                        job.output.inputStream().use { it.copyTo(out) }
-                        val triples = job.output.useLines { lines -> lines.count { it.isNotBlank() } }.toLong()
+                        var triples = 0L
+                        job.output.inputStream().buffered().use { input ->
+                            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                            while (true) {
+                                val read = input.read(buffer)
+                                if (read < 0) break
+                                out.write(buffer, 0, read)
+                                for (i in 0 until read) if (buffer[i] == '\n'.code.toByte()) triples++
+                            }
+                        }
                         val jobViolations = job.violations.readLines().filter { it.isNotEmpty() }
                         jobViolations.forEach { violationsOut.write("${job.source}/${job.chunk.name}: $it\n") }
                         val (t, v) = counts.getOrDefault(job.source, 0L to 0)

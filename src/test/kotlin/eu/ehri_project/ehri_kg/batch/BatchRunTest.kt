@@ -1,6 +1,7 @@
 package eu.ehri_project.ehri_kg.batch
 
 import com.sun.net.httpserver.HttpServer
+import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.support.testConfig
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -65,6 +66,27 @@ class BatchRunTest {
         assertEquals(emptyList(), requested)
         assertEquals(mapped, File(dir, "mapped").walk().filter { it.extension == "nt" }.associateWith { it.lastModified() })
         assertMatchesExampleKG(File(dir, "kg.nt"))
+    }
+
+    @Test
+    fun `chunks are mapped again when the sets in the KG change`() {
+        run()
+        val withCamps = File(dir, "kg.nt").readText()
+        assertTrue(withCamps.contains("/vocabularies/ehri-camps/1>"))
+
+        // The same configuration, without ehri_camps
+        val config = File(dir, "config.properties").apply {
+            writeText(File("conf/config.properties").readText()
+                .replace("vocabularySets=ehri_terms,ehri_camps,ehri_ghettos", "vocabularySets=ehri_terms,ehri_ghettos"))
+        }
+        requested.clear()
+        BatchRun(BatchSource.fromConfig(Config(config.path)),
+            StreamFetcher("http://localhost:${server.address.port}/graphql", client),
+            BatchMapper(config.path, workers = 1), chunkSize = 2, dir = dir).run()
+
+        assertEquals(emptyList(), requested)
+        assertFalse(File(dir, "kg.nt").readText().contains("/vocabularies/ehri-camps/1>"))
+        assertTrue(File(dir, "mapped/configuration.txt").readText().contains("vocabularySets=ehri_terms,ehri_ghettos\n"))
     }
 
     @Test

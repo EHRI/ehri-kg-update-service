@@ -434,14 +434,14 @@ ehri:AlternateIds ehri_units:[transformers.combinedPathHoldingAlternateIDs(holdi
 
 # Agents linked via the unit's access points as its creators, and agents and concepts as its subjects
 ehri:HoldingAccessPoints ehri_units:[holding.holding_id] {
-	rico:hasCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type, holding.creators.id)] ;
-	rico:hasOrHadSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type, holding.subjects.id)] ;
+	rico:hasCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type)] ;
+	rico:hasOrHadSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type)] ;
 }
 
-ehri:HoldingCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type, holding.creators.id)] {
+ehri:HoldingCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type)] {
 	rico:isCreatorOf ehri_units:[holding.creators.holding_id] ;
 }
 
-ehri:HoldingSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type, holding.subjects.id)] {
+ehri:HoldingSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type)] {
 	rico:isOrWasSubjectOf ehri_units:[holding.subjects.holding_id] ;
 }

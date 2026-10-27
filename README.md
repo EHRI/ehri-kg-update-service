@@ -70,7 +70,9 @@ $ java -jar ehri-kg-update-service.jar batch --dir batch --workers 8
 
 1. **Fetch:** each source is fetched with one streamed GraphQL request (the `X-Stream` header), to
    `<dir>/responses`. A source is a list field, such as `documentaryUnits`, or one of the EHRI authority sets and
-   vocabularies named by the `batch…Sets` properties of `conf/config.properties`.
+   vocabularies named by the `personSets`, `corporateBodySets` and `vocabularySets` properties of
+   `conf/config.properties`. These also decide which agents and concepts the update stream maintains, and which the
+   mapping rules link to.
 2. **Chunk:** each response is split into chunks of `batchChunkSize` items, in `<dir>/chunks`, as responses to the
    type's per-entity query. Links that the mapping rules don't map are left out.
 3. **Map:** the chunks are mapped and validated by `--workers` processes, to N-Triples in `<dir>/mapped`, and

@@ -22,7 +22,10 @@ data class EHRIEvent(
     val id: String,
     val type: String)
 
-class UnsupportedEntityTypeException(message: String) : Exception(message)
+open class UnsupportedEntityTypeException(message: String) : Exception(message)
+
+/** An event for a historical agent or concept whose set isn't configured to be in the KG. */
+class NotInKgException(message: String) : UnsupportedEntityTypeException(message)
 
 enum class EHRITypes {
     COUNTRY, INSTITUTION, ARCHIVAL_DESCRIPTION, VOCABULARY, CORPORATE_BODY, PERSON, LINK

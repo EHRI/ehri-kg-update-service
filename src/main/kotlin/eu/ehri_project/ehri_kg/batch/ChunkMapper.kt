@@ -1,9 +1,10 @@
 package eu.ehri_project.ehri_kg.batch
 
 import eu.ehri_project.ehri_kg.helpers.Config
-import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRITypes
-import eu.ehri_project.ehri_kg.shexml.ShExMLMappingLauncherProxy
+import eu.ehri_project.ehri_kg.processors.UpdatesProcessor
+import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
+import eu.ehri_project.ehri_kg.sparql.LoggingSparqlStore
 import eu.ehri_project.ehri_kg.validation.TypeValidators
 import org.apache.jena.riot.Lang
 import org.apache.jena.riot.RDFDataMgr
@@ -37,16 +38,22 @@ data class MapJob(val source: String, val type: EHRITypes, val chunk: File, val 
     }
 }
 
-/** Maps chunks with their type's mapping rules, validating the data against the type's shapes. */
-class ChunkMapper(private val config: Config) {
+/**
+ * Maps chunks as the update stream maps an entity's response, with the type's [UpdatesProcessor], validating the data
+ * against the type's shapes.
+ */
+class ChunkMapper(config: Config) {
 
-    private val rules = mutableMapOf<EHRITypes, String>()
+    // Only used for mapping, so without a GraphQL endpoint or triple store
+    private val factory = UpdatesProcessorFactory(config, { _, _ -> error("Chunks are mapped, not fetched") },
+        sparqlStore = LoggingSparqlStore())
+    private val processors = mutableMapOf<EHRITypes, UpdatesProcessor>()
     private val validators = TypeValidators(config)
 
     /** Maps the job's chunk, returning the number of triples written. */
     fun map(job: MapJob): Long {
-        val mappingRules = rules.getOrPut(job.type) { SourceHelper.readFile(config.get(mappingRulesProperty(job.type))) }
-        val model = ShExMLMappingLauncherProxy().convert(mappingRules, job.chunk.readText()).defaultModel
+        val processor = processors.getOrPut(job.type) { factory.createUpdateProcessor(job.type) }
+        val model = processor.transformToRDF(job.chunk.readText()).defaultModel
         job.output.parentFile.mkdirs()
         job.violations.writeText(validators.validate(job.type, model.graph).joinToString("") { "$it\n" })
         // Written last, so that the output only exists once the job is complete
@@ -54,17 +61,5 @@ class ChunkMapper(private val config: Config) {
         part.outputStream().use { RDFDataMgr.write(it, model, Lang.NTRIPLES) }
         Files.move(part.toPath(), job.output.toPath(), StandardCopyOption.ATOMIC_MOVE)
         return model.size()
-    }
-
-    companion object {
-        fun mappingRulesProperty(type: EHRITypes): String = when (type) {
-            EHRITypes.COUNTRY -> "countriesShexmlMappingRules"
-            EHRITypes.INSTITUTION -> "institutionsShexmlMappingRules"
-            EHRITypes.ARCHIVAL_DESCRIPTION -> "archivalDescriptionsShexmlMappingRules"
-            EHRITypes.VOCABULARY -> "vocabulariesShexmlMappingRules"
-            EHRITypes.CORPORATE_BODY -> "corporateBodiesShexmlMappingRules"
-            EHRITypes.PERSON -> "personsShexmlMappingRules"
-            EHRITypes.LINK -> "linksShexmlMappingRules"
-        }
     }
 }
