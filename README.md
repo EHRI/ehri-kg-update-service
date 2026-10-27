@@ -9,17 +9,21 @@ creating and updating the concerned entities in the designated triple store.
 This service is mainly meant to be operated through the command line for which it offers a convenient CLI:
 
 ```
-Usage: ehri-kg-update-service [<options>]
+Usage: ehri-kg-update-service [<options>] <command> [<args>]...
 
 Options:
   -m, --mapping=<text>      The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml
   -c, --conf=<text>         The properties file with the entities configurations. Default: conf/config.properties
   -o, --output=<text>       File path where to store the reports of this service. Example: output.jsonl
   -e, --sseEndpoint=<text>  SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events
+  --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
   -n, --dryRun              Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.
   --kafkaServer=<text>      Kafka topic where to push the reports of this service. Example: localhost:9092
   --kafkaTopic=<text>       Kafka topic where to push the reports of this service. Example: my-topic
   -h, --help                Show this message and exit
+
+Commands:
+  batch  Convert all the Portal's entities to N-Triples, for loading into an empty triple store.
 ```
 
 There are no mandatory options to run the service, as by default it assumes that the 
@@ -55,6 +59,26 @@ under `conf/shapes`. The `<type>Shapes` properties of `conf/config.properties` n
 `conf/shapes/holdings`, the ShEx schema `holdings.shex` with the shape map `holdings.smap`, and the SHACL shapes
 `holdings.shacl.ttl`. Violations are logged and listed under `violations` in the event's report, and the data is
 applied regardless. Types without a `<type>Shapes` property are not validated.
+
+## Batch conversion
+The `batch` command builds the whole KG from the Portal, for loading into an empty triple store, with the same
+queries, mapping rules and shapes as the update stream:
+
+```
+$ java -jar ehri-kg-update-service.jar batch --dir batch --workers 8
+```
+
+1. **Fetch:** each source is fetched with one streamed GraphQL request (the `X-Stream` header), to
+   `<dir>/responses`. A source is a list field, such as `documentaryUnits`, or one of the EHRI authority sets and
+   vocabularies named by the `batch…Sets` properties of `conf/config.properties`.
+2. **Chunk:** each response is split into chunks of `batchChunkSize` items, in `<dir>/chunks`, as responses to the
+   type's per-entity query. Links that the mapping rules don't map are left out.
+3. **Map:** the chunks are mapped and validated by `--workers` processes, to N-Triples in `<dir>/mapped`, and
+   written together to `<dir>/kg.nt`, with the violations in `<dir>/violations.txt` and a summary in
+   `<dir>/report.json`.
+
+Each step resumes where an earlier run left off: run the same command again after a failure. To fetch a source again,
+delete its response in `<dir>/responses`; its chunks and mapped data are then replaced.
 
 ## Requirements
 The minimum versions for this software to work are:

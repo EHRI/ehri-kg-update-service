@@ -47,6 +47,8 @@ class EhriKgUpdateService : CliktCommand() {
             help="File path where to store the reports of this service. Example: output.jsonl")
     val sseEndpoint by option("-e", "--sseEndpoint",
             help="SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events")
+    val resumeFromEventId by option("--resumeFromEventId",
+            help="Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property. Example: 01a1d504-64aa-764a-ae6c-25adbe186009")
     val dryRun by option("-n", "--dryRun",
             help="Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.")
         .flag()
@@ -59,7 +61,7 @@ class EhriKgUpdateService : CliktCommand() {
         val config = Config(entitiesConfig)
         val consumer = EHRISSEConsumer(
             mappingFile,
-            lastEventId = config.getOptional("resumeFromEventId"),
+            lastEventId = resumeFromEventId ?: config.getOptional("resumeFromEventId"),
             sseEndpoint = sseEndpoint ?: config.getOptional("sseEndpoint")
         )
         val database = DatabaseManager(config)
