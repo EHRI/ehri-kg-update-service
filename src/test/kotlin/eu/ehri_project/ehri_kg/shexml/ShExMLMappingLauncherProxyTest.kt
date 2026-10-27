@@ -5,6 +5,7 @@ import eu.ehri_project.ehri_kg.support.loadResource
 import org.apache.jena.rdf.model.ResourceFactory
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ShExMLMappingLauncherProxyTest {
@@ -30,5 +31,14 @@ class ShExMLMappingLauncherProxyTest {
         val second = proxy.convert(rules, loadResource("countries/ukJsonGraphQL.json")).defaultModel
 
         assertTrue(first.isIsomorphicWith(second))
+    }
+
+    @Test
+    fun `stdin is restored after a conversion`() {
+        val stdin = System.`in`
+        ShExMLMappingLauncherProxy().convert(
+            SourceHelper.readFile("conf/countries/countriesMappingRules.shexml"),
+            loadResource("countries/ukJsonGraphQL.json"))
+        assertSame(stdin, System.`in`)
     }
 }
