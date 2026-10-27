@@ -48,3 +48,6 @@ bin/
 ### Misc fuseki-related ###
 DB/
 run/
+
+### Conversion ###
+batch-local

@@ -1,9 +1,40 @@
 package eu.ehri_project.ehri_kg.consumers
 
+import com.sun.net.httpserver.HttpServer
+import eu.ehri_project.ehri_kg.model.EHRIEvent
+import eu.ehri_project.ehri_kg.processors.EventExtractor
+import java.net.InetSocketAddress
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class EHRISSEConsumerTest {
+
+    @Test
+    fun `events are read from an SSE stream`() {
+        val server = HttpServer.create(InetSocketAddress("localhost", 0), 0).apply {
+            createContext("/events") { exchange ->
+                exchange.responseHeaders.add("Content-Type", "text/event-stream")
+                exchange.sendResponseHeaders(200, 0)
+                exchange.responseBody.use {
+                    it.write(("id: e1\nevent: update-event\n" +
+                        "data: {\"datetime\":\"2026-01-01T00:00:00Z\",\"ids\":[\"be\"],\"types\":[\"Country\"]}\n\n").toByteArray())
+                }
+            }
+            start()
+        }
+        try {
+            val consumer = EHRISSEConsumer(mappingPath, sseEndpoint = "http://localhost:${server.address.port}/events")
+            val extractor = EventExtractor("conf/sparqlGetEventDetails.rq")
+            val event = consumer.processEvents().blockingGet()
+                .concatMapIterable { extractor.events(it) }
+                .timeout(30, TimeUnit.SECONDS)
+                .blockingFirst()
+            assertEquals(EHRIEvent("e1", "update-event", "2026-01-01T00:00:00Z", "be", "Country"), event)
+        } finally {
+            server.stop(0)
+        }
+    }
 
     private val mappingPath = "conf/ehri_sse_mapping.shexml"
     private val streamLine = "STREAM ehri_sse <https://portal.ehri-project.eu/admin/monitor/_events>"

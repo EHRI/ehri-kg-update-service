@@ -21,6 +21,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.apache.commons:commons-csv:1.8")
     implementation("com.herminiogarcia:shexml-streaming_3:0.0.2-SNAPSHOT")
+    // shexml-streaming's SSE handler uses Jackson without declaring it; it came with Jena 3, but not Jena 5
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.11.3")
     implementation("io.ktor:ktor-client-core:3.3.1")
     implementation("io.ktor:ktor-client-cio:3.3.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -32,6 +34,7 @@ dependencies {
     implementation(platform("org.apache.jena:jena-bom:5.5.0"))
     implementation("org.apache.jena:jena-shex")
     implementation("org.apache.jena:jena-shacl")
+    implementation("com.google.code.gson:gson:2.13.1")
 }
 
 tasks.test {

@@ -3,6 +3,7 @@ package eu.ehri_project.ehri_kg
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.default
@@ -27,11 +28,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>) {
-    EhriKgUpdateService().main(args)
+    EhriKgUpdateService().subcommands(BatchCommand()).main(args)
 }
 
 class EhriKgUpdateService : CliktCommand() {
     val logger = KotlinLogging.logger {}
+
+    // Without a subcommand, the service listens to the Portal's events
+    override val invokeWithoutSubcommand = true
 
     val mappingFile by option("-m", "--mapping",
             help="The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml")
@@ -50,6 +54,7 @@ class EhriKgUpdateService : CliktCommand() {
 
 
     override fun run() {
+        if (currentContext.invokedSubcommand != null) return
         val kafkaEmitter = kafkaOptions?.let { KafkaEmitter(it.kafkaServer, it.kafkaTopic) }
         val config = Config(entitiesConfig)
         val consumer = EHRISSEConsumer(

@@ -2,13 +2,11 @@ package eu.ehri_project.ehri_kg.processors
 
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
-import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
 import eu.ehri_project.ehri_kg.model.UnsupportedEntityTypeException
-import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
-import eu.ehri_project.ehri_kg.validation.KGValidator
+import eu.ehri_project.ehri_kg.validation.TypeValidators
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -21,20 +19,16 @@ class EHRIUpdatesProcessor(
     private val dryRun: Boolean = false
 ) {
 
-    val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
+    private val eventExtractor = EventExtractor(config.get("eventDetailsSparqlQuery"))
     val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
     var previousEventErroredOrNotProcessed = false
-
-    init {
-        org.apache.jena.query.ARQ.init()
-    }
 
     private val logger = KotlinLogging.logger {}
 
     fun process(observable: Single<Flowable<Dataset>>): Single<Flowable<EHRIUpdateReport>> {
         return observable.map {
             it.concatMap {
-                Flowable.fromIterable(getEventTypeAndId(it)).map {
+                Flowable.fromIterable(eventExtractor.events(it)).map {
                    processEvent(it)
                 }
             }
@@ -68,24 +62,12 @@ class EHRIUpdatesProcessor(
         }
     }
 
-    /** The validators of each entity type's mapped data, for the types with shapes configured. */
-    private val validators = mutableMapOf<EHRITypes, KGValidator?>()
+    private val validators = TypeValidators(config)
 
     private fun validate(type: EHRITypes, mapped: Dataset): List<String> {
-        val validator = validators.getOrPut(type) { config.getOptional(shapesProperty(type))?.let(::KGValidator) }
-        val violations = validator?.validate(mapped.defaultModel.graph).orEmpty().map { it.toString() }
+        val violations = validators.validate(type, mapped.defaultModel.graph).map { it.toString() }
         violations.forEach { logger.warn { "Mapped data does not conform to its shapes: $it" } }
         return violations
-    }
-
-    private fun shapesProperty(type: EHRITypes): String = when(type) {
-        EHRITypes.COUNTRY -> "countriesShapes"
-        EHRITypes.INSTITUTION -> "institutionsShapes"
-        EHRITypes.ARCHIVAL_DESCRIPTION -> "archivalDescriptionsShapes"
-        EHRITypes.VOCABULARY -> "vocabulariesShapes"
-        EHRITypes.CORPORATE_BODY -> "corporateBodiesShapes"
-        EHRITypes.PERSON -> "personsShapes"
-        EHRITypes.LINK -> "linksShapes"
     }
 
     private fun selectEntityTypeCase(type: String, id: String? = "null"): EHRITypes {
@@ -104,29 +86,6 @@ class EHRIUpdatesProcessor(
             } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
             else -> throw UnsupportedEntityTypeException("Unknown or unsupported type $type")
         }
-    }
-
-    private fun getEventTypeAndId(dataset: Dataset): List<EHRIEvent> {
-        logger.info { "Extracting event information" }
-        val sparqlQuery = SourceHelper.readFile(eventDetailsSparqlQuery)
-        val resultSet = SparqlDatasetQueryProcessor(dataset).query(sparqlQuery)
-        val events = resultSet.asSequence().toList().map {
-            EHRIEvent(
-                it.getLiteral("eventId").string,
-                it.getLiteral("eventType").string,
-                it.getLiteral("date").string,
-                it.getLiteral("ids").string,
-                it.getLiteral("types").string,
-            )
-        }
-        if (events.isEmpty()) {
-            if (dataset.defaultModel.isEmpty) logger.debug { "Empty event received" }
-            else logger.warn {
-                "Event data received but no event could be extracted from it; " +
-                    "check that the SSE mapping rules match $eventDetailsSparqlQuery"
-            }
-        }
-        return events
     }
 }
 
