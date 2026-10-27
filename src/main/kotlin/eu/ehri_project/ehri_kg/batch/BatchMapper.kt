@@ -57,20 +57,33 @@ class BatchMapper(
         val shares = jobs.sortedByDescending { it.chunk.length() }.withIndex()
             .groupBy({ it.index % workers }, { it.value }).values
         val java = ProcessHandle.current().info().command().orElse("java")
-        val processes = shares.mapIndexed { i, share ->
-            val jobsFile = File(workDir, "worker-${i + 1}.jobs").apply { writeText(share.joinToString("") { it.toLine() + "\n" }) }
-            ProcessBuilder(listOf(java) + workerJvmArgs + listOf("-cp", System.getProperty("java.class.path"),
-                "eu.ehri_project.ehri_kg.batch.MapWorkerKt", configPath, jobsFile.path))
-                .redirectErrorStream(true)
-                .redirectOutput(File(workDir, "worker-${i + 1}.log"))
-                .start()
-        }
-        logger.info { "Started ${processes.size} mapping workers, logging to $workDir" }
-        while (!processes.all { it.waitFor(30, TimeUnit.SECONDS) }) {
-            logger.info { "Mapped ${jobs.count { it.done }} of ${jobs.size} chunks" }
-        }
-        processes.forEachIndexed { i, process ->
-            if (process.exitValue() != 0) logger.error { "Mapping worker ${i + 1} exited with ${process.exitValue()}" }
+        val processes = mutableListOf<Process>()
+        // Workers left running after this process ends would map the same chunks as those of the next run
+        val stopWorkers = Thread { processes.forEach { it.destroy() } }
+        Runtime.getRuntime().addShutdownHook(stopWorkers)
+        try {
+            shares.forEachIndexed { i, share ->
+                val jobsFile = File(workDir, "worker-${i + 1}.jobs").apply { writeText(share.joinToString("") { it.toLine() + "\n" }) }
+                processes += ProcessBuilder(listOf(java) + workerJvmArgs + listOf("-cp", System.getProperty("java.class.path"),
+                    "eu.ehri_project.ehri_kg.batch.MapWorkerKt", configPath, jobsFile.path))
+                    .redirectErrorStream(true)
+                    .redirectOutput(File(workDir, "worker-${i + 1}.log"))
+                    .start()
+            }
+            logger.info { "Started ${processes.size} mapping workers, logging to $workDir" }
+            while (!processes.all { it.waitFor(30, TimeUnit.SECONDS) }) {
+                logger.info { "Mapped ${jobs.count { it.done }} of ${jobs.size} chunks" }
+            }
+            processes.forEachIndexed { i, process ->
+                if (process.exitValue() != 0) logger.error { "Mapping worker ${i + 1} exited with ${process.exitValue()}" }
+            }
+        } finally {
+            processes.filter { it.isAlive }.forEach { it.destroy() }
+            try {
+                Runtime.getRuntime().removeShutdownHook(stopWorkers)
+            } catch (_: IllegalStateException) {
+                // Already shutting down, so the hook is running
+            }
         }
     }
 

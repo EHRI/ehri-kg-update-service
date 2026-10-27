@@ -80,4 +80,18 @@ class BatchRunTest {
         assertMatchesExampleKG(File(dir, "kg.nt"))
     }
 
+    @Test
+    fun `a response is kept when its chunks can't be written`() {
+        File(dir, "chunks").apply { parentFile.mkdirs(); writeText("not a directory") }
+        assertFailsWith<java.io.IOException> { run() }
+        assertTrue(File(dir, "responses/countries.json").exists())
+    }
+
+    @Test
+    fun `a chunk size that isn't positive is refused`() {
+        assertFailsWith<IllegalArgumentException> {
+            BatchRun(sources, StreamFetcher("http://localhost:${server.address.port}/graphql", client),
+                BatchMapper("conf/config.properties", workers = 1), chunkSize = 0, dir = dir)
+        }
+    }
 }

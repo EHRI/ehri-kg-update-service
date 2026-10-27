@@ -28,6 +28,10 @@ class BatchRun(
 ) {
     private val logger = KotlinLogging.logger {}
 
+    init {
+        require(chunkSize > 0) { "The chunk size must be positive, not $chunkSize" }
+    }
+
     private val responsesDir = File(dir, "responses")
     private val chunksDir = File(dir, "chunks")
     private val mappedDir = File(dir, "mapped")
@@ -67,8 +71,9 @@ class BatchRun(
         File(mappedDir, source.name).deleteRecursively()
         val (_, items) = try {
             ItemChunker.writeChunks(response, source, chunkSize, sourceChunks)
-        } catch (e: Exception) {
-            // An unreadable response, e.g. from a stream the backend aborted, is fetched again by the next run
+        } catch (e: BatchResponseException) {
+            // An invalid response, e.g. from a stream the backend aborted, is fetched again by the next run; other
+            // errors, e.g. writing the chunks to a full disk, leave it to be chunked again
             response.delete()
             sourceChunks.deleteRecursively()
             throw BatchResponseException("The response for ${source.name} is incomplete or invalid, so it was deleted " +

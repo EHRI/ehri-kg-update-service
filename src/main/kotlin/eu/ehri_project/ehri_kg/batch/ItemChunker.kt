@@ -1,12 +1,16 @@
 package eu.ehri_project.ehri_kg.batch
 
+import com.google.gson.JsonParseException
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
+import com.google.gson.stream.MalformedJsonException
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
+import java.io.EOFException
 import java.io.File
 
 /** A source's streamed response read in an error, e.g. a GraphQL error the backend wrote after the data. */
@@ -50,7 +54,15 @@ object ItemChunker {
                 }
                 reader.endObject()
             }
-            readObject(source.itemsPath)
+            try {
+                readObject(source.itemsPath)
+            } catch (e: Exception) {
+                // e.g. a truncated response, from a stream the backend aborted
+                if (e is EOFException || e is MalformedJsonException || e is JsonParseException || e is IllegalStateException
+                    || e is SerializationException || e is IllegalArgumentException)
+                    throw BatchResponseException("Invalid response for ${source.name}: $e")
+                throw e
+            }
             if (!found) throw BatchResponseException("No ${source.itemsPath.joinToString(".")} in the response for ${source.name}")
         }
     }

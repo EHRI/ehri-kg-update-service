@@ -21,7 +21,8 @@ fun main(args: Array<String>) {
         try {
             val triples = mapper.map(job)
             logger.info { "Mapped ${job.chunk} to $triples triples" }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // Including errors, e.g. a chunk too large for the heap, so that the worker's other chunks are mapped
             logger.error(e) { "Mapping ${job.chunk} failed" }
             job.error.parentFile.mkdirs()
             job.error.writeText(e.stackTraceToString())
