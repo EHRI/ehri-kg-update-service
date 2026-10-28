@@ -29,6 +29,9 @@ object ItemChunker {
     fun items(response: File, source: BatchSource): Sequence<JsonObject> = sequence {
         JsonReader(response.bufferedReader()).use { reader ->
             var found = false
+            var nulls = 0
+            var left = 0
+            var kept = 0
             suspend fun SequenceScope<JsonObject>.readObject(path: List<String>) {
                 reader.beginObject()
                 while (reader.hasNext()) {
@@ -41,10 +44,10 @@ object ItemChunker {
                                 found = true
                                 reader.beginArray()
                                 while (reader.hasNext()) {
-                                    if (reader.peek() == JsonToken.NULL) reader.nextNull()
+                                    if (reader.peek() == JsonToken.NULL) { reader.nextNull(); nulls++ }
                                     else {
                                         val item = Json.parseToJsonElement(JsonParser.parseReader(reader).toString()).jsonObject
-                                        if (source.keep(item)) yield(item)
+                                        if (source.keep(item)) { kept++; yield(item) } else left++
                                     }
                                 }
                                 reader.endArray()
@@ -64,6 +67,7 @@ object ItemChunker {
                 throw e
             }
             if (!found) throw BatchResponseException("No ${source.itemsPath.joinToString(".")} in the response for ${source.name}")
+            logger.debug { "Read ${source.name}: kept $kept items, left out $left not mapped and $nulls null" }
         }
     }
 
@@ -76,7 +80,10 @@ object ItemChunker {
         dir.mkdirs()
         var items = 0
         val chunks = items(response, source).chunked(size).onEach { items += it.size }
-            .mapIndexed { i, chunk -> File(dir, "%06d.json".format(i + 1)).writeText(source.response(chunk)) }
+            .mapIndexed { i, chunk ->
+                File(dir, "%06d.json".format(i + 1)).apply { writeText(source.response(chunk)) }
+                    .also { logger.debug { "Wrote ${chunk.size} items to $it" } }
+            }
             .count()
         logger.info { "Split ${source.name} into $chunks chunks of $items items in $dir" }
         return chunks to items

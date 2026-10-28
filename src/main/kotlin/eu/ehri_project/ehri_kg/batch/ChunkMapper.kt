@@ -1,11 +1,13 @@
 package eu.ehri_project.ehri_kg.batch
 
 import eu.ehri_project.ehri_kg.helpers.Config
+import eu.ehri_project.ehri_kg.helpers.timed
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessor
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
 import eu.ehri_project.ehri_kg.sparql.LoggingSparqlStore
 import eu.ehri_project.ehri_kg.validation.TypeValidators
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.jena.riot.Lang
 import org.apache.jena.riot.RDFDataMgr
 import java.io.File
@@ -49,13 +51,17 @@ class ChunkMapper(config: Config) {
         sparqlStore = LoggingSparqlStore())
     private val processors = mutableMapOf<EHRITypes, UpdatesProcessor>()
     private val validators = TypeValidators(config)
+    private val logger = KotlinLogging.logger {}
 
     /** Maps the job's chunk, returning the number of triples written. */
     fun map(job: MapJob): Long {
         val processor = processors.getOrPut(job.type) { factory.createUpdateProcessor(job.type) }
-        val model = processor.transformToRDF(job.chunk.readText()).defaultModel
+        val (model, mapMs) = timed { processor.transformToRDF(job.chunk.readText()).defaultModel }
         job.output.parentFile.mkdirs()
-        job.violations.writeText(validators.validate(job.type, model.graph).joinToString("") { "$it\n" })
+        val (violations, validateMs) = timed { validators.validate(job.type, model.graph) }
+        job.violations.writeText(violations.joinToString("") { "$it\n" })
+        logger.debug { "Mapped ${job.chunk} (${job.chunk.length()} bytes) to ${model.size()} triples in ${mapMs}ms, " +
+            "validated with ${violations.size} violations in ${validateMs}ms" }
         // Written last, so that the output only exists once the job is complete
         val part = File(job.output.path + ".part")
         part.outputStream().use { RDFDataMgr.write(it, model, Lang.NTRIPLES) }

@@ -8,6 +8,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.jvm.javaio.*
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -33,6 +35,8 @@ class StreamFetcher(private val endpoint: String, private val client: HttpClient
         dir.mkdirs()
         val part = File(dir, "${source.name}.json.part")
         logger.info { "Fetching ${source.name} to $target" }
+        logger.debug { "POST $endpoint with $STREAM_HEADER: true: ${source.body}" }
+        val start = System.nanoTime()
         client.preparePost(endpoint) {
             contentType(ContentType.Application.Json)
             header(STREAM_HEADER, "true")
@@ -40,7 +44,8 @@ class StreamFetcher(private val endpoint: String, private val client: HttpClient
         }.execute { response ->
             if (!response.status.isSuccess())
                 error("Fetching ${source.name} failed with ${response.status}: ${response.bodyAsText().take(1000)}")
-            part.outputStream().use { out -> response.bodyAsChannel().toInputStream().use { it.copyTo(out) } }
+            logger.debug { "Response for ${source.name}: ${response.status}, ${response.headers.entries()}" }
+            part.outputStream().use { out -> response.bodyAsChannel().toInputStream().use { copyLoggingProgress(source, it, out) } }
         }
         if (part.length() == 0L) {
             part.delete()
@@ -48,7 +53,29 @@ class StreamFetcher(private val endpoint: String, private val client: HttpClient
         }
         Files.move(part.toPath(), target.toPath(), StandardCopyOption.ATOMIC_MOVE)
         logger.info { "Fetched ${source.name}: ${target.length()} bytes" }
+        logger.debug { "Fetched ${source.name} in ${(System.nanoTime() - start) / 1_000_000}ms" }
         return target
+    }
+
+    /** Copies the response, logging how much has been received every [PROGRESS_INTERVAL_MS], when debugging. */
+    private fun copyLoggingProgress(source: BatchSource, input: InputStream, out: OutputStream) {
+        if (!logger.isDebugEnabled()) {
+            input.copyTo(out)
+            return
+        }
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        var total = 0L
+        var logged = System.nanoTime()
+        while (true) {
+            val read = input.read(buffer)
+            if (read < 0) break
+            out.write(buffer, 0, read)
+            total += read
+            if (System.nanoTime() - logged > PROGRESS_INTERVAL_MS * 1_000_000) {
+                logger.debug { "Received $total bytes of ${source.name}" }
+                logged = System.nanoTime()
+            }
+        }
     }
 
     /**
@@ -68,6 +95,7 @@ class StreamFetcher(private val endpoint: String, private val client: HttpClient
 
     companion object {
         const val STREAM_HEADER = "X-Stream"
+        private const val PROGRESS_INTERVAL_MS = 10_000L
 
         /** A client without the CIO engine's default 15s request timeout, which would cut off a long stream. */
         fun streamingClient(): HttpClient = HttpClient(CIO) { engine { requestTimeout = 0 } }

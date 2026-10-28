@@ -28,6 +28,7 @@ class EventExtractor(private val eventDetailsSparqlQuery: String) {
                 it.getLiteral("types").string,
             )
         }
+        events.forEach { logger.debug { "Event received: $it" } }
         if (events.isEmpty()) {
             if (dataset.defaultModel.isEmpty) logger.debug { "Empty event received" }
             else logger.warn {

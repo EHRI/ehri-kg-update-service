@@ -17,9 +17,12 @@ class GraphQLQueryProcessor(val endpoint: String, private val client: HttpClient
 
     override suspend fun download(event: EHRIEvent, query: String): String {
         logger.info { "Downloading data from the GraphQL endpoint for the entity with id ${event.id}" }
-        return client.post(endpoint) {
+        logger.debug { "POST $endpoint: $query" }
+        val response = client.post(endpoint) {
             contentType(ContentType.Application.Json)
             setBody(query)
-        }.body<String>()
+        }
+        logger.debug { "GraphQL response: ${response.status}" }
+        return response.body<String>()
     }
 }

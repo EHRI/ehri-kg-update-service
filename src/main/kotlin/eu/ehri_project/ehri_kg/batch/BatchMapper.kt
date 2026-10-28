@@ -69,8 +69,11 @@ class BatchMapper(
         try {
             shares.forEachIndexed { i, share ->
                 val jobsFile = File(workDir, "worker-${i + 1}.jobs").apply { writeText(share.joinToString("") { it.toLine() + "\n" }) }
-                processes += ProcessBuilder(listOf(java) + workerJvmArgs + listOf("-cp", System.getProperty("java.class.path"),
-                    "eu.ehri_project.ehri_kg.batch.MapWorkerKt", configPath, jobsFile.path))
+                val command = listOf(java) + workerJvmArgs + listOf("-cp", System.getProperty("java.class.path"),
+                    "eu.ehri_project.ehri_kg.batch.MapWorkerKt", configPath, jobsFile.path)
+                logger.debug { "Worker ${i + 1} maps ${share.size} chunks of ${share.sumOf { it.chunk.length() }} bytes: " +
+                    command.joinToString(" ") }
+                processes += ProcessBuilder(command)
                     .redirectErrorStream(true)
                     .redirectOutput(File(workDir, "worker-${i + 1}.log"))
                     .start()

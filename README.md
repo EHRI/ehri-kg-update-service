@@ -18,6 +18,7 @@ Options:
   -e, --sseEndpoint=<text>  SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events
   --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
   -n, --dryRun              Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.
+  --debug                   Log what the service does in detail, with timings: the events received, the GraphQL requests, the mapping, validation and SPARQL updates.
   --kafkaServer=<text>      Kafka topic where to push the reports of this service. Example: localhost:9092
   --kafkaTopic=<text>       Kafka topic where to push the reports of this service. Example: my-topic
   -h, --help                Show this message and exit
@@ -37,6 +38,13 @@ topic using the `--kafkaServer` and `--kafkaTopic` options.
 
 With the `--dryRun` option the service processes events as usual but, instead of executing the SPARQL DELETE and
 INSERT statements, prints them to the terminal through the `sparql` logger.
+
+The `--debug` option logs each step in detail, with timings: the events received, the GraphQL requests and
+responses, the data in the store before and after, the triples mapped, the violations and the SPARQL statements.
+`batch --debug` (the option goes after `batch`) logs the requests and the progress of each streamed response, the
+items left out, and each chunk written and mapped; the workers log their chunks' timings
+in `<dir>/work/worker-<n>.log`. Only the service's own loggers debug; set `-DehriKg.logLevel=debug` to do the same
+without the option.
 
 ## Architecture
 The architecture of this service heavily relies on the Reactive programming precepts in order to be able to process the 

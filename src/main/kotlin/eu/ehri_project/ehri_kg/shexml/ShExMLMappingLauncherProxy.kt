@@ -12,7 +12,7 @@ class ShExMLMappingLauncherProxy {
 
     fun convert(mappingRules: String, fileInput: String): Dataset {
         logger.info { "Transforming received data to RDF using ShExML" }
-        logger.debug { "Mapping rules $mappingRules" }
+        logger.trace { "Mapping rules $mappingRules" }
         // ShExML reads <stdin> sources from System.in, so take the lock shexml-streaming takes for the same, in case
         // it maps an SSE message meanwhile
         synchronized(MappingLauncher::class.java) {

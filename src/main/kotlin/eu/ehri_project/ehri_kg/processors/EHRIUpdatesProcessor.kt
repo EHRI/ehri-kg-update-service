@@ -2,6 +2,7 @@ package eu.ehri_project.ehri_kg.processors
 
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
+import eu.ehri_project.ehri_kg.helpers.timed
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
@@ -46,13 +47,20 @@ class EHRIUpdatesProcessor(
                     return emptyEventReport
                 } else {
                     previousEventErroredOrNotProcessed = true
-                    val graphQLContent = fetchGraphQLData(event)
-                    val dataBefore = getDataStatus(event)
-                    val turtleResult = transformToRDF(graphQLContent)
-                    val violations = validate(type, turtleResult)
-                    val executedQueries = update(event, turtleResult)
+                    logger.debug { "Processing ${event.eventType} ${event.eventId} of $type ${event.id}" }
+                    val (graphQLContent, fetchMs) = timed { fetchGraphQLData(event) }
+                    logger.debug { "Fetched ${graphQLContent.length} characters in ${fetchMs}ms: ${graphQLContent.take(2000)}" }
+                    val (dataBefore, beforeMs) = timed { getDataStatus(event) }
+                    logger.debug { "The store had ${dataBefore.size()} triples for ${event.id}, queried in ${beforeMs}ms" }
+                    val (turtleResult, mapMs) = timed { transformToRDF(graphQLContent) }
+                    logger.debug { "Mapped to ${turtleResult.defaultModel.size()} triples in ${mapMs}ms" }
+                    val (violations, validateMs) = timed { validate(type, turtleResult) }
+                    logger.debug { "Validated with ${violations.size} violations in ${validateMs}ms" }
+                    val (executedQueries, updateMs) = timed { update(event, turtleResult) }
+                    logger.debug { "Ran ${executedQueries.size} SPARQL updates in ${updateMs}ms" }
                     val dataAfter = getDataStatus(event)
                     val dataDiff = compareGraphs(dataBefore, dataAfter)
+                    logger.debug { "The store has ${dataAfter.size()} triples for ${event.id}, ${dataDiff.size} changed subject-predicate pairs" }
                     return EHRIUpdateReport(event, executedQueries, dataDiff, violations = violations, dryRun = dryRun)
                 }
             }

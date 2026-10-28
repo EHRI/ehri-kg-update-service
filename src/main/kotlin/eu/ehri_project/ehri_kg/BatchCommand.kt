@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.split
 import com.github.ajalt.clikt.parameters.types.int
@@ -14,6 +15,7 @@ import eu.ehri_project.ehri_kg.batch.BatchRun
 import eu.ehri_project.ehri_kg.batch.BatchSource
 import eu.ehri_project.ehri_kg.batch.StreamFetcher
 import eu.ehri_project.ehri_kg.helpers.Config
+import eu.ehri_project.ehri_kg.helpers.DebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
@@ -39,8 +41,12 @@ class BatchCommand : CliktCommand(name = "batch") {
     val workerHeap by option("--workerHeap", help = "Maximum heap of each mapping process. Default: 1g").default("1g")
     val graphQLEndpoint by option("-g", "--graphQLEndpoint",
             help = "GraphQL endpoint to fetch the entities from, overriding the graphQLEndpoint property. Example: http://localhost:9000/api/graphql")
+    val debug by option("--debug",
+            help = "Log what the batch does in detail, with timings, including in the mapping workers' logs")
+        .flag()
 
     override fun run() {
+        if (debug) DebugLogging.enable()
         val config = Config(entitiesConfig)
         val allSources = BatchSource.fromConfig(config)
         val selected = sources?.let { names ->
@@ -51,11 +57,12 @@ class BatchCommand : CliktCommand(name = "batch") {
             }
             allSources.filter { it.name in names }
         } ?: allSources
-
+        logger.debug { "Converting ${selected.map { it.name }} from ${graphQLEndpoint ?: config.get("graphQLEndpoint")} " +
+            "in $dir, in chunks of ${config.get("batchChunkSize")} with $workers workers of $workerHeap" }
         val report = try {
             StreamFetcher.streamingClient().use { client ->
                 BatchRun(selected, StreamFetcher(graphQLEndpoint ?: config.get("graphQLEndpoint"), client),
-                    BatchMapper(entitiesConfig, workers, listOf("-Xmx$workerHeap")),
+                    BatchMapper(entitiesConfig, workers, listOf("-Xmx$workerHeap") + DebugLogging.jvmArgs()),
                     config.get("batchChunkSize").toInt(), File(dir), output?.let(::File) ?: File(dir, "kg.nt")
                 ).run()
             }

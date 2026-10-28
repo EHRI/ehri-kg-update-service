@@ -16,6 +16,7 @@ import eu.ehri_project.ehri_kg.consumers.SseEndpointCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.graphql.GraphQLQueryProcessor
 import eu.ehri_project.ehri_kg.helpers.Config
+import eu.ehri_project.ehri_kg.helpers.DebugLogging
 import eu.ehri_project.ehri_kg.helpers.KafkaEmitter
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.processors.EHRIUpdatesProcessor
@@ -52,10 +53,14 @@ class EhriKgUpdateService : CliktCommand() {
     val dryRun by option("-n", "--dryRun",
             help="Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.")
         .flag()
+    val debug by option("--debug",
+            help="Log what the service does in detail, with timings: the events received, the GraphQL requests, the mapping, validation and SPARQL updates.")
+        .flag()
     val kafkaOptions by KafkaOptions().cooccurring()
 
 
     override fun run() {
+        if (debug) DebugLogging.enable()
         if (currentContext.invokedSubcommand != null) return
         val kafkaEmitter = kafkaOptions?.let { KafkaEmitter(it.kafkaServer, it.kafkaTopic) }
         val config = Config(entitiesConfig)
@@ -64,12 +69,16 @@ class EhriKgUpdateService : CliktCommand() {
             lastEventId = resumeFromEventId ?: config.getOptional("resumeFromEventId"),
             sseEndpoint = sseEndpoint ?: config.getOptional("sseEndpoint")
         )
+        logger.debug { "Configuration $entitiesConfig: GraphQL endpoint ${config.get("graphQLEndpoint")}, " +
+            "SPARQL endpoints ${config.get("querySparqlEndpoint")} and ${config.get("updateSparqlEndpoint")}, " +
+            "resuming from event ${consumer.lastEventId ?: "none"}" }
         val database = DatabaseManager(config)
         val sparqlStore = if (dryRun) LoggingSparqlStore()
             else RemoteSparqlStore(config.get("querySparqlEndpoint"), config.get("updateSparqlEndpoint"))
         if (dryRun) logger.info { "Dry run: SPARQL update statements will be logged, not executed" }
         HttpClient().use { httpClient ->
             val sseUrl = consumer.streamUrl()
+            logger.debug { "Listening to the SSE stream at $sseUrl" }
             try {
                 runBlocking { SseEndpointCheck.verify(httpClient, sseUrl) }
             } catch (e: SseConnectionException) {

@@ -19,6 +19,9 @@
     <logger name="com.herminiogarcia.shexml.MappingLauncher" level="off"/>
     <logger name="com.herminiogarcia.shexml.visitor.RDFGeneratorVisitor" level="off"/>
 
+    <!-- Set to debug by the debug option, see DebugLogging -->
+    <logger name="eu.ehri_project.ehri_kg" level="${ehriKg.logLevel:-info}"/>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

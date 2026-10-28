@@ -63,6 +63,7 @@ class BatchRun(
      */
     private fun forgetMappingsWithAnotherConfiguration() {
         val recorded = File(mappedDir, "configuration.txt")
+        logger.debug { "Mapping configuration:\n${mapper.configuration}" }
         if (mappedDir.exists() && recorded.takeIf { it.exists() }?.readText() != mapper.configuration) {
             logger.warn { "The mapping configuration changed since the chunks in $mappedDir were mapped, so all " +
                 "the chunks will be mapped again. It was:\n${recorded.takeIf { it.exists() }?.readText() ?: "not recorded"}" }

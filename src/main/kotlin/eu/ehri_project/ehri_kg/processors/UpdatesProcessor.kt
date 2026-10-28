@@ -182,6 +182,7 @@ abstract class UpdatesProcessor(config: Config) {
 
     fun getDataStatus(event: EHRIEvent): Model {
         val query = replaceEntityId(event, SourceHelper.readFile(constructSparqlQuery))
+        logger.debug { "Construct query: $query" }
         return sparqlStore.construct(query)
     }
 
