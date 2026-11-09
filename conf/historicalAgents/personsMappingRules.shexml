@@ -255,6 +255,7 @@ zho  AS zh &
 zul AS zu>
 FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
 FUNCTIONS validators <scala: conf/functions/Validators.scala>
+FUNCTIONS helpers <scala: conf/functions/EHRIFunctions.scala>
 SOURCE people <stdin>
 
 ITERATOR people_iterator <jsonpath: $.data.historicalAgents.items[*]> {
@@ -302,8 +303,6 @@ ITERATOR people_iterator <jsonpath: $.data.historicalAgents.items[*]> {
 }
 
 EXPRESSION person <people.people_iterator>
-EXPRESSION other_name_id <people.people_iterator.otherFormsOfName.person_id + "/otherNames/" + people.people_iterator.otherFormsOfName.name>
-EXPRESSION parallel_name_id <people.people_iterator.parallelFormsOfName.person_id + "/parallelNames/" + people.people_iterator.parallelFormsOfName.name>
 
 ehri:Person ehri_pers:[person.id] {
     a ehri:Person ;
@@ -326,13 +325,13 @@ ehri:Person ehri_pers:[person.id] {
     rdfs:seeAlso [person.seeAlso] ;
 }
 
-ehri:AgentOtherName ehri_pers:[other_name_id] {
+ehri:AgentOtherName ehri_pers:[helpers.entityOtherNamePath(people.people_iterator.otherFormsOfName.person_id, people.people_iterator.otherFormsOfName.name)] {
 	a ehri:AlternateAgentName ;
 	rico:name [person.otherFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_pers:[person.otherFormsOfName.person_id] ;
 }
 
-ehri:AgentParallelName ehri_pers:[parallel_name_id] {
+ehri:AgentParallelName ehri_pers:[helpers.entityParallelNamePath(people.people_iterator.parallelFormsOfName.person_id, people.people_iterator.parallelFormsOfName.name)] {
 	a ehri:ParallelAgentName ;
 	rico:name [person.parallelFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_pers:[person.parallelFormsOfName.person_id] ;

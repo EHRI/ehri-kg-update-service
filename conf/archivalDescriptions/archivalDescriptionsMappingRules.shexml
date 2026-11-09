@@ -337,7 +337,6 @@ ITERATOR components_iterator <jsonpath: $.data.documentaryUnits.items[*]> {
 }
 
 EXPRESSION holding <holdings.components_iterator>
-EXPRESSION parallel_name_id <holdings.components_iterator.descriptions.parallelFormsOfName.holding_id + "/parallelNames/" + holdings.components_iterator.descriptions.parallelFormsOfName.name>
 
 #########################
 ### Documentary Units ###
@@ -386,7 +385,7 @@ ehri:Institution ehri_institutions:[holding.repositoryId] {
 	rico:isOrWasHolderOf ehri_units:[holding.holding_id] ;
 }
 
-ehri:HoldingParallelFormOfName ehri_units:[parallel_name_id] {
+ehri:HoldingParallelFormOfName ehri_units:[helpers.entityParallelNamePath(holdings.components_iterator.descriptions.parallelFormsOfName.holding_id, holdings.components_iterator.descriptions.parallelFormsOfName.name)] {
 	a rico:Title ;
 	rico:name [holding.descriptions.parallelFormsOfName.name] @[holding.descriptions.parallelFormsOfName.langCode MATCHING langcode_two_digit_equivalent] ;
 	rico:isOrWasTitleOf ehri_units:[holding.descriptions.parallelFormsOfName.holding_id] ;

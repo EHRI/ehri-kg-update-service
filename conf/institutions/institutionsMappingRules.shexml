@@ -15,6 +15,7 @@ PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
 FUNCTIONS validators <scala: conf/functions/Validators.scala>
+FUNCTIONS helpers <scala: conf/functions/EHRIFunctions.scala>
 MATCHER langcode_two_digit_equivalent <aar AS aa & 
 abk AS ab & 
 afr AS af & 
@@ -325,8 +326,6 @@ ITERATOR repositories_iterator <jsonpath: $.data.repositories.items[*]> {
 }
 
 EXPRESSION organization <repositories.repositories_iterator>
-EXPRESSION parallel_name_id <repositories.repositories_iterator.descriptions.parallelFormsOfName.repository_id + "/parallelNames/" + repositories.repositories_iterator.descriptions.parallelFormsOfName.name>
-EXPRESSION other_name_id <repositories.repositories_iterator.descriptions.otherFormsOfName.repository_id + "/otherNames/" + repositories.repositories_iterator.descriptions.otherFormsOfName.name>
 
 
 ####################
@@ -398,13 +397,13 @@ ehri:City ehri_cities:[organization.descriptions.addresses.municipality] {
 	# To be implemented owl:sameAs
 }
 
-ehri:AgentParallelName ehri_institutions:[parallel_name_id] {
+ehri:AgentParallelName ehri_institutions:[helpers.entityParallelNamePath(repositories.repositories_iterator.descriptions.parallelFormsOfName.repository_id, repositories.repositories_iterator.descriptions.parallelFormsOfName.name)] {
 	a ehri:ParallelAgentName ;
 	rico:name [organization.descriptions.parallelFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.parallelFormsOfName.repository_id] ;
 }
 
-ehri:AgentOtherName ehri_institutions:[other_name_id] { 
+ehri:AgentOtherName ehri_institutions:[helpers.entityOtherNamePath(repositories.repositories_iterator.descriptions.otherFormsOfName.repository_id, repositories.repositories_iterator.descriptions.otherFormsOfName.name)] { 
 	a ehri:AlternateAgentName ;
 	rico:name [organization.descriptions.otherFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.otherFormsOfName.repository_id] ;

@@ -9,9 +9,15 @@ class EHRIFunctions {
     vocabulary.replace('_', '-') + "/" + rest.drop(1)
   }
 
+  // Paths of an entity's other and parallel names. Some names have control characters, which IRIs can't, e.g. the
+  // MARC non-sorting markers U+0098 and U+009C around "von", so they are left out; line breaks and tabs become spaces.
+  def entityOtherNamePath(id: String, name: String): String = s"$id/otherNames/${iriName(name)}"
+  def entityParallelNamePath(id: String, name: String): String = s"$id/parallelNames/${iriName(name)}"
+  private def iriName(name: String): String = name.replaceAll("[\\t\\n\\r]", " ").replaceAll("\\p{Cc}", "")
+
   // Paths of the nodes belonging to a historical agent
-  def otherNamePath(id: String, name: String): String = s"${vocabularyPath(id)}/otherNames/$name"
-  def parallelNamePath(id: String, name: String): String = s"${vocabularyPath(id)}/parallelNames/$name"
+  def otherNamePath(id: String, name: String): String = entityOtherNamePath(vocabularyPath(id), name)
+  def parallelNamePath(id: String, name: String): String = entityParallelNamePath(vocabularyPath(id), name)
   def legalStatusPath(id: String): String = s"${vocabularyPath(id)}/legalStatuses/1"
   def occupationPath(id: String): String = s"${vocabularyPath(id)}/occupations/1"
   def functionPath(id: String, index: String): String = s"${vocabularyPath(id)}/functions/${index.toInt + 1}"
