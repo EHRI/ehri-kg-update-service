@@ -57,7 +57,7 @@
 
 <vocabularies/ehri-cb/004284>
         a                       ehri:CorporateBody ;
-        rico:date               1941 ;
+        rico:date               "1941" ;
         rico:hasOrHadAgentName  <vocabularies/ehri-cb/004284/parallelNames/Freiwilligenlegion_Niederlande> ;
         rico:history            "[Test Update] Dutch volunteers to fight with the Nazi's on the East-front"@nl ;
         rico:name               "Vrijwilligerslegioen Nederland"@nl .

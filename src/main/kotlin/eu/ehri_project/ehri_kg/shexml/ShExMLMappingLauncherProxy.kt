@@ -19,7 +19,10 @@ class ShExMLMappingLauncherProxy {
             val original = System.`in`
             System.setIn(fileInput.byteInputStream())
             try {
-                return MappingLauncher("", "", "", true, true, ParallelExecutionConfigurator.empty(), Path.of(""))
+                // Not inferring datatypes (the first boolean), as numeric-looking values such as identifiers and years
+                // would become xsd:integer or xsd:decimal; values without a datatype in the mapping rules are strings.
+                // The second normalises URIs.
+                return MappingLauncher("", "", "", false, true, ParallelExecutionConfigurator.empty(), Path.of(""))
                     .launchMapping(mappingRules)
             } finally {
                 System.setIn(original)
