@@ -1,6 +1,5 @@
 @prefix ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/> .
 @prefix ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/> .
-@prefix ehri_dates: <http://lod.ehri-project-test.eu/dates/> .
 @prefix ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
@@ -75,23 +74,6 @@ ehri:AgentOtherName  a  sh:NodeShape ;
                         ] ;
         sh:targetClass  ehri:AlternateAgentName .
 
-ehri:CBBeginningDate
-        a               sh:NodeShape ;
-        sh:nodeKind     sh:IRI ;
-        sh:property     [ sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:nodeKind  sh:IRI ;
-                          sh:path      rico:isBeginningDateOf
-                        ] ;
-        sh:property     [ sh:nodeKind  sh:Literal ;
-                          sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:path      rico:normalizedDateValue
-                        ] ;
-        sh:property     [ sh:in    ( rico:Date ) ;
-                          sh:path  rdf:type
-                        ] .
-
 ehri:AuthorityFunction
         a               sh:NodeShape ;
         sh:nodeKind     sh:IRI ;
@@ -130,22 +112,6 @@ ehri:AuthorityMandate
                         ] ;
         sh:targetClass  rico:Mandate .
 
-ehri:CBEndDate  a       sh:NodeShape ;
-        sh:nodeKind     sh:IRI ;
-        sh:property     [ sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:nodeKind  sh:IRI ;
-                          sh:path      rico:isEndDateOf
-                        ] ;
-        sh:property     [ sh:nodeKind  sh:Literal ;
-                          sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:path      rico:normalizedDateValue
-                        ] ;
-        sh:property     [ sh:in    ( rico:Date ) ;
-                          sh:path  rdf:type
-                        ] .
-
 ehri:CBAndFamily  a     sh:NodeShape ;
         sh:nodeKind     sh:IRI ;
         sh:property     [ sh:node  ehri:AuthorityMandate ;
@@ -154,8 +120,8 @@ ehri:CBAndFamily  a     sh:NodeShape ;
         sh:property     [ sh:nodeKind  sh:Literal ;
                           sh:path      rico:date
                         ] ;
-        sh:property     [ sh:node  ehri:CBEndDate ;
-                          sh:path  rico:hasEndDate
+        sh:property     [ sh:node  ehri:CBDate ;
+                          sh:path  rico:isAssociatedWithDate
                         ] ;
         sh:property     [ sh:path  rico:hasOrHadAgentName ;
                           sh:or (
@@ -206,9 +172,6 @@ ehri:CBAndFamily  a     sh:NodeShape ;
                           sh:maxCount  1 ;
                           sh:path      rico:generalDescription
                         ] ;
-        sh:property     [ sh:node  ehri:CBBeginningDate ;
-                          sh:path  rico:hasBeginningDate
-                        ] ;
         sh:targetClass  ehri:CorporateBody, ehri:Family .
 
 ehri:AuthorityOccupation
@@ -229,4 +192,29 @@ ehri:AuthorityOccupation
                         ] ;
         sh:property     [ sh:in    ( rico:Activity ) ;
                           sh:path  rdf:type
+                        ] .
+
+ehri:CBDate  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:in    ( rico:Date ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  <http://id.loc.gov/datatypes/edtf> ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:normalizedDateValue
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:beginningDate
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:endDate
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:pattern   "^http://lod.ehri-project-test.eu/vocabularies/ehri-(cb|fm)/" ;
+                          sh:path      rico:isDateAssociatedWith
                         ] .

@@ -6,7 +6,6 @@ PREFIX ehri_fm: <http://lod.ehri-project-test.eu/vocabularies/ehri-fm/>
 PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
 PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
 PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
@@ -22,8 +21,7 @@ ehri:CBAndFamily IRI {
 	rdfs:seeAlso IRI * ;
 	ehri:sources rdf:langString *;
 	rico:date Literal * ;
-	rico:hasBeginningDate @ehri:CBBeginningDate * ;
-	rico:hasEndDate @ehri:CBEndDate * ;
+	rico:isAssociatedWithDate @ehri:CBDate * ;
 	rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus * ;
 	rico:performsOrPerformed @ehri:AuthorityOccupation OR @ehri:AuthorityFunction * ;
 	rico:authorizedBy @ehri:AuthorityMandate * ;
@@ -42,16 +40,6 @@ ehri:AgentParallelName IRI {
 	rdf:type [ ehri:ParallelAgentName ] ;
 	rico:name xsd:string  ;
 	rico:isOrWasAgentNameOf [ ehri_cb:~ ehri_fm:~ ]  ;
-}
-ehri:CBBeginningDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isBeginningDateOf [ ehri_cb:~ ehri_fm:~ ]  ;
-}
-ehri:CBEndDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isEndDateOf [ ehri_cb:~ ehri_fm:~ ]  ;
 }
 ehri:AuthorityLegalStatus IRI {
 	rdf:type [ rico:LegalStatus ] ;
@@ -74,4 +62,11 @@ ehri:AuthorityMandate IRI {
 	rdf:type [ rico:Mandate ] ;
 	rico:generalDescription rdf:langString ;
 	rico:authorizes [ ehri_cb:~ ehri_fm:~ ]  ;
+}
+ehri:CBDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isDateAssociatedWith [ ehri_cb:~ ehri_fm:~ ] ;
 }

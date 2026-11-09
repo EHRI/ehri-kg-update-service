@@ -13,7 +13,7 @@
               "name": "Example item",
               "identifier": null,
               "accessPoints": [],
-              "dates": [],
+              "dates": [{"startDate": "1942-08-04", "endDate": "1942-08-04", "precision": "day"}],
               "archivistNote": null,
               "archivalHistory": null,
               "acquisition": null,

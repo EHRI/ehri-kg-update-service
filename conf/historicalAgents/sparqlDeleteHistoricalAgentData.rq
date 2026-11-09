@@ -24,7 +24,17 @@ DELETE {
     }
     UNION
     {
-        # Other triples that need to be cleaned up on a per-case basis
+        # The agent's dates, which are only bound to it (unlike the dates shared by all entities, which the mappings
+        # made before)
+        ?s ?p ?o ;
+            a rico:Date ;
+            ?inverseProperty ?agent .
+        FILTER(?agent = ehri_vocabs:<$entityId> && STRSTARTS(STR(?s), CONCAT(STR(?agent), "/dates/")))
+    }
+    UNION
+    {
+        # Links from the date nodes shared by all entities, which the mappings made before dates were literals, in case
+        # the KG still has them
         ?s ?p ?o .
         VALUES ?p { rico:isEndDateOf rico:isBeginningDateOf rico:isDeathDateOf rico:isBirthDateOf }
         FILTER(?o = ehri_vocabs:<$entityId>)

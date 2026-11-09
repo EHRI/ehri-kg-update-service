@@ -17,6 +17,7 @@
         dates {
           startDate
           endDate
+          precision
         }
         archivistNote
         archivalHistory

@@ -9,10 +9,10 @@ PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
 PREFIX ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/>
 PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
 PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX loc: <http://id.loc.gov/datatypes/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
@@ -305,9 +305,8 @@ ITERATOR components_iterator <jsonpath: $.data.documentaryUnits.items[*]> {
 			FIELD lang <[*]>
 			POPPED_FIELD holding_id <holding_id>
 		}
-		ITERATOR dates <dates[*]> {
-			FIELD startDate <startDate>
-			FIELD endDate <endDate>
+		ITERATOR dates <dates> {
+			FIELD period <[*]>
 			POPPED_FIELD holding_id <holding_id>
 		}
 		ITERATOR scriptOfMaterial <scriptOfMaterial> {
@@ -353,8 +352,7 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:recordResourceExtent [holding.descriptions.extentAndMedium] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceStructure [holding.descriptions.systemOfArrangement] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:date [holding.descriptions.unitDates] ;
-	rico:hasBeginningDate @ehri:HoldingBeginningDate ;
-	rico:hasEndDate @ehri:HoldingEndDate ;
+	rico:hasCreationDate @ehri:HoldingCreationDate ;
 	rico:isOrWasIncludedIn ehri_units:[holding.parentId] ;
 	rico:resultsOrResultedFrom @ehri:Acquisition ;
 	rico:identifier [holding.identifier] xsd:string ;
@@ -391,16 +389,12 @@ ehri:HoldingParallelFormOfName ehri_units:[helpers.entityParallelNamePath(holdin
 	rico:isOrWasTitleOf ehri_units:[holding.descriptions.parallelFormsOfName.holding_id] ;
 }
 
-ehri:HoldingBeginningDate ehri_dates:[holding.descriptions.dates.startDate] {
+ehri:HoldingCreationDate ehri_units:[helpers.entityPeriodPath(holding.descriptions.dates.holding_id, holding.descriptions.dates.period) IF helpers.hasPeriod(holding.descriptions.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.startDate] ;
-	rico:isBeginningDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
-}
-
-ehri:HoldingEndDate ehri_dates:[holding.descriptions.dates.endDate] {
-	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.endDate] ;
-	rico:isEndDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
+	rico:normalizedDateValue [helpers.periodValue(holding.descriptions.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestDate(holding.descriptions.dates.period) IF helpers.hasEarliestDate(holding.descriptions.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestDate(holding.descriptions.dates.period) IF helpers.hasLatestDate(holding.descriptions.dates.period)] xsd:date ;
+	rico:isCreationDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
 }
 
 ehri:ArchiveComponent ehri_units:[holding.parentId] {

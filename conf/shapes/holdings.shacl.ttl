@@ -85,8 +85,8 @@ ehri:Holding  a         sh:NodeShape ;
         sh:property     [ sh:datatype  rdf:langString ;
                           sh:path      ehri:archivistNote
                         ] ;
-        sh:property     [ sh:node  ehri:HoldingBeginningDate ;
-                          sh:path  rico:hasBeginningDate
+        sh:property     [ sh:node  ehri:HoldingCreationDate ;
+                          sh:path  rico:hasCreationDate
                         ] ;
         sh:property     [ sh:datatype  rdf:langString ;
                           sh:path      rico:recordResourceStructure
@@ -103,9 +103,6 @@ ehri:Holding  a         sh:NodeShape ;
                         ] ;
         sh:property     [ sh:datatype  rdf:langString ;
                           sh:path      ehri:physicalCharacteristicsAndTechnicalRequirements
-                        ] ;
-        sh:property     [ sh:node  ehri:HoldingEndDate ;
-                          sh:path  rico:hasEndDate
                         ] ;
         sh:property     [ sh:datatype  rdf:langString ;
                           sh:path      rico:conditionsOfUse
@@ -186,21 +183,6 @@ ehri:Holding  a         sh:NodeShape ;
         sh:targetClass  ehri:RecordSet ;
         sh:nodeKind     sh:IRI .
 
-ehri:HoldingEndDate  a  sh:NodeShape ;
-        sh:nodeKind     sh:IRI ;
-        sh:property     [ sh:minCount  1 ;
-                          sh:nodeKind  sh:IRI ;
-                          sh:path      rico:isEndDateOf
-                        ] ;
-        sh:property     [ sh:nodeKind  sh:Literal ;
-                          sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:path      rico:normalizedDateValue
-                        ] ;
-        sh:property     [ sh:in    ( rico:Date ) ;
-                          sh:path  rdf:type
-                        ] .
-
 ehri:AlternateIds  a    sh:NodeShape ;
         sh:nodeKind     sh:IRI ;
         sh:property     [ sh:maxCount  1 ;
@@ -254,22 +236,6 @@ ehri:Language  a        sh:NodeShape ;
                         ] ;
         sh:targetClass  rico:Language .
 
-ehri:HoldingBeginningDate
-        a               sh:NodeShape ;
-        sh:nodeKind     sh:IRI ;
-        sh:property     [ sh:minCount  1 ;
-                          sh:nodeKind  sh:IRI ;
-                          sh:path      rico:isBeginningDateOf
-                        ] ;
-        sh:property     [ sh:nodeKind  sh:Literal ;
-                          sh:maxCount  1 ;
-                          sh:minCount  1 ;
-                          sh:path      rico:normalizedDateValue
-                        ] ;
-        sh:property     [ sh:in    ( rico:Date ) ;
-                          sh:path  rdf:type
-                        ] .
-
 ehri:HoldingLocationOfCopiesInverseInstitutionSubject
         a               sh:NodeShape ;
         sh:nodeKind     sh:IRI ;
@@ -284,4 +250,29 @@ ehri:HoldingCreatorInverse
         sh:property     [ sh:maxCount  1 ;
                           sh:nodeKind  sh:IRI ;
                           sh:path      rico:isCreatorOf
+                        ] .
+
+ehri:HoldingCreationDate  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:in    ( rico:Date ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  <http://id.loc.gov/datatypes/edtf> ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:normalizedDateValue
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:beginningDate
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:endDate
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:pattern   "^http://lod.ehri-project-test.eu/units/" ;
+                          sh:path      rico:isCreationDateOf
                         ] .

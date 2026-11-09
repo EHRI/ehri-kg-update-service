@@ -58,12 +58,14 @@
 <vocabularies/ehri-cb/004763>
         a                       ehri:CorporateBody ;
         ehri:sources            "Cataloguing system of the Yad Vashem (Jerusalem/Israel) http://www.yadvashem.org."@en ;
-        rico:hasBeginningDate   <dates/1905-04-04> ;
-        rico:hasEndDate         <dates/1905-04-28> ;
+        rico:isAssociatedWithDate <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> ;
         rico:hasOrHadAgentName  <vocabularies/ehri-cb/004763/otherNames/Orsz%C3%A1gos_Vit%C3%A9zi_Sz%C3%A9k> ;
         rico:history            "Hungarian order of merit. During World War II, many members of the Hungarian government and military were members of the Order."@en ;
         rico:name               "Order of Vitéz"@en .
 
-# other triples
-<http://lod.ehri-project-test.eu/dates/1905-04-04> <https://www.ica.org/standards/RiC/ontology#isBeginningDateOf> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763> .
-<http://lod.ehri-project-test.eu/dates/1905-04-28> <https://www.ica.org/standards/RiC/ontology#isEndDateOf> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763> .
+# Dates
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.ica.org/standards/RiC/ontology#Date> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> <https://www.ica.org/standards/RiC/ontology#normalizedDateValue> "1905-04-04/1905-04-28"^^<http://id.loc.gov/datatypes/edtf> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> <https://www.ica.org/standards/RiC/ontology#beginningDate> "1905-04-04"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> <https://www.ica.org/standards/RiC/ontology#endDate> "1905-04-28"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763/dates/1905-04-04_1905-04-28> <https://www.ica.org/standards/RiC/ontology#isDateAssociatedWith> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004763> .

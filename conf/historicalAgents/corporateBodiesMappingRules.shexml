@@ -5,10 +5,11 @@ PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
 PREFIX ehri_vocabularies: <http://lod.ehri-project-test.eu/vocabularies/>
 PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
 PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
+PREFIX loc: <http://id.loc.gov/datatypes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
@@ -274,9 +275,8 @@ ITERATOR cb_iterator <jsonpath: $.data.historicalAgents.items[*]> {
     FIELD generalContext <description.generalContext>
     FIELD occupation <description.occupation>
     FIELD seeAlso <seeAlso>
-    ITERATOR dates <description.dates[*]> {
-        FIELD startDate <startDate>
-        FIELD endDate <endDate>
+    ITERATOR dates <description.dates> {
+        FIELD period <[*]>
         POPPED_FIELD cb_id <id>
     }
     ITERATOR otherFormsOfName <description.otherFormsOfName> {
@@ -323,8 +323,7 @@ ehri:CBAndFamily ehri_vocabularies:[helpers.vocabularyPath(cbs.id)] {
     rdfs:seeAlso [transformers.removeSquareBrackets(cbs.sourceLink) IF validators.isURL(cbs.sourceLink)] ;
     ehri:sources [transformers.removeSquareBrackets(cbs.sourceLink) IF validators.nonURL(cbs.sourceLink)] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ;
     rico:date [cbs.datesOfExistence] ;
-	  rico:hasBeginningDate @ehri:CBBeginningDate ;
-	  rico:hasEndDate @ehri:CBEndDate ;
+    rico:isAssociatedWithDate @ehri:CBDate ;
     # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # This is not present in the API and it will be difficult to determine the correct prefix among cities, countries and regions.
     rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus ;
     rico:performsOrPerformed @ehri:AuthorityOccupation ;
@@ -333,6 +332,14 @@ ehri:CBAndFamily ehri_vocabularies:[helpers.vocabularyPath(cbs.id)] {
     ehri:structureOrGenealogy [cbs.structure] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ; # This can be divided in structure of cb and genealogy of family if needed
     rico:generalDescription [cbs.generalContext] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ;
     rdfs:seeAlso [cbs.seeAlso] ;
+}
+
+ehri:CBDate ehri_vocabularies:[helpers.periodPath(cbs.dates.cb_id, cbs.dates.period) IF helpers.hasPeriod(cbs.dates.period)] {
+    a rico:Date ;
+    rico:normalizedDateValue [helpers.periodValue(cbs.dates.period)] loc:edtf ;
+    rico:beginningDate [helpers.earliestDate(cbs.dates.period) IF helpers.hasEarliestDate(cbs.dates.period)] xsd:date ;
+    rico:endDate [helpers.latestDate(cbs.dates.period) IF helpers.hasLatestDate(cbs.dates.period)] xsd:date ;
+    rico:isDateAssociatedWith ehri_vocabularies:[helpers.vocabularyPath(cbs.dates.cb_id)] ;
 }
 
 ehri:AgentOtherName ehri_vocabularies:[helpers.otherNamePath(cb.cb_iterator.otherFormsOfName.cb_id, cb.cb_iterator.otherFormsOfName.name)] {
@@ -345,18 +352,6 @@ ehri:AgentParallelName ehri_vocabularies:[helpers.parallelNamePath(cb.cb_iterato
 	a ehri:ParallelAgentName ;
 	rico:name [cbs.parallelFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_vocabularies:[helpers.vocabularyPath(cb.cb_iterator.parallelFormsOfName.cb_id)] ;
-}
-
-ehri:CBBeginningDate ehri_dates:[cbs.dates.startDate] {
-	a rico:Date ;
-	rico:normalizedDateValue [cbs.dates.startDate] ;
-	rico:isBeginningDateOf ehri_vocabularies:[helpers.vocabularyPath(cbs.dates.cb_id)] ;
-}
-
-ehri:CBEndDate ehri_dates:[cbs.dates.endDate] {
-	a rico:Date ;
-	rico:normalizedDateValue [cbs.dates.endDate] ;
-	rico:isEndDateOf ehri_vocabularies:[helpers.vocabularyPath(cbs.dates.cb_id)] ;
 }
 
 ehri:AuthorityLegalStatus ehri_vocabularies:[helpers.legalStatusPath(cbs.id) IF validators.nonEmpty(cbs.legalStatus)] {

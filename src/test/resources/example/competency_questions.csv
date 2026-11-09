@@ -305,15 +305,20 @@ SELECT ?relation ?relationType ?source ?target ?description WHERE {
   }
   FILTER(?source = ehri_units:be-000001-kd_00001 || ?target = ehri_units:be-000001-kd_00001)
 }"
-CQ_023,List records whose date range includes a specific year,"Record URI, label, beginning and end dates",,Browsing records by period,Proposed,Medium,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+CQ_023,List records whose date range includes a specific year,"Record URI, label, period, and its beginning and end dates",,Browsing records by period,Proposed,Medium,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-SELECT ?record ?recordLabel ?beginning ?end WHERE {
+# Each of a record's periods has bounds: the earliest day it can start and the latest it can end. A period with an
+# unknown start or end, e.g. ""1942/"", has no bound for it, and is taken as open at that end.
+SELECT ?record ?recordLabel ?period ?beginning ?end WHERE {
   ?record a ehri:RecordSet ;
     rico:title ?recordLabel ;
-    rico:hasBeginningDate/rico:normalizedDateValue ?beginning ;
-    rico:hasEndDate/rico:normalizedDateValue ?end .
-  FILTER(SUBSTR(STR(?beginning), 1, 4) <= ""1942"" && SUBSTR(STR(?end), 1, 4) >= ""1942"")
+    rico:hasCreationDate ?date .
+  ?date rico:normalizedDateValue ?period .
+  OPTIONAL { ?date rico:beginningDate ?beginning }
+  OPTIONAL { ?date rico:endDate ?end }
+  FILTER((!BOUND(?beginning) || ?beginning <= ""1942-12-31""^^xsd:date) && (!BOUND(?end) || ?end >= ""1942-01-01""^^xsd:date))
   FILTER(lang(?recordLabel) = ""en"")
 }"
 CQ_024,List records containing material in a specific language and script,Record URI and label,,Finding records a researcher can read,Proposed,Low,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
@@ -336,18 +341,19 @@ SELECT DISTINCT ?language WHERE {
   BIND(lang(?title) AS ?language)
 }
 ORDER BY ?language"
-CQ_026,"List the creators of records, with their dates of existence","Record URI, creator URI, creator name, beginning and end dates",,Browsing records by provenance,Proposed,Medium,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+CQ_026,"List the creators of records, with their dates of existence","Record URI, creator URI, creator name, period, and its beginning and end dates",,Browsing records by provenance,Proposed,Medium,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 
-SELECT ?record ?creator ?creatorName ?beginning ?end WHERE {
+# A corporate body's or family's periods of existence (a person's are their birth and death dates, see CQ_028)
+SELECT ?record ?creator ?creatorName ?period ?beginning ?end WHERE {
   ?record a ehri:RecordSet ;
     rico:hasCreator ?creator .
   ?creator rico:name ?creatorName .
   OPTIONAL {
-    ?creator rico:hasBeginningDate/rico:normalizedDateValue ?beginning .
-  }
-  OPTIONAL {
-    ?creator rico:hasEndDate/rico:normalizedDateValue ?end .
+    ?creator rico:isAssociatedWithDate ?date .
+    ?date rico:normalizedDateValue ?period .
+    OPTIONAL { ?date rico:beginningDate ?beginning }
+    OPTIONAL { ?date rico:endDate ?end }
   }
 }"
 CQ_027,List institutions in a specific city,Institution URI and main name,,Browsing institutions by place,Proposed,Low,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
@@ -385,3 +391,20 @@ SELECT ?institution ?institutionLabel ?latitude ?longitude WHERE {
   ?coordinates rico:latitude ?latitude ;
     rico:longitude ?longitude .
 }"
+CQ_030,"List records whose dates lie within a period, earliest first","Record URI, label, beginning and end dates",,Browsing records by period,Proposed,Medium,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# A record's dates are the earliest day its periods can start and the latest they can end. A record with a period
+# whose start or end is unknown, e.g. ""1942/"", has no bound for it, so can't be known to lie within the period, and
+# is left out.
+SELECT ?record ?recordLabel (MIN(?periodStart) AS ?beginning) (MAX(?periodEnd) AS ?end) WHERE {
+  ?record rico:title ?recordLabel ;
+    rico:hasCreationDate ?date .
+  OPTIONAL { ?date rico:beginningDate ?periodStart }
+  OPTIONAL { ?date rico:endDate ?periodEnd }
+  FILTER(lang(?recordLabel) = ""en"")
+}
+GROUP BY ?record ?recordLabel
+HAVING (COUNT(?periodStart) = COUNT(?date) && COUNT(?periodEnd) = COUNT(?date)
+  && MIN(?periodStart) >= ""1942-01-01""^^xsd:date && MAX(?periodEnd) <= ""1944-12-31""^^xsd:date)
+ORDER BY ?beginning ?end ?record"

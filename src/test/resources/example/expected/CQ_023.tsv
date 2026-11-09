@@ -1,2 +1,5 @@
-?record	?recordLabel	?beginning	?end
-<http://lod.ehri-project-test.eu/units/be-000001-kd_00001>	"Miscellaneous documents collected to create the Jewish Museum of Deportation and Resistance. Collection"@en	"1940-01-01"	"1945-12-31"
+?record	?recordLabel	?period	?beginning	?end
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001>	"Miscellaneous documents collected to create the Jewish Museum of Deportation and Resistance. Collection"@en	"1940-01-01/1945-12-31"^^<http://id.loc.gov/datatypes/edtf>	"1940-01-01"^^<http://www.w3.org/2001/XMLSchema#date>	"1945-12-31"^^<http://www.w3.org/2001/XMLSchema#date>
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1>	"Example sub-collection"@en	"1942-08-04/1944-07-31"^^<http://id.loc.gov/datatypes/edtf>	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>	"1944-07-31"^^<http://www.w3.org/2001/XMLSchema#date>
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1-1>	"Example item"@en	"1942-08-04"^^<http://id.loc.gov/datatypes/edtf>	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>
+<http://lod.ehri-project-test.eu/units/nl-000002-example_copy>	"Example copy of KD_00001"@en	"1942/"^^<http://id.loc.gov/datatypes/edtf>	"1942-01-01"^^<http://www.w3.org/2001/XMLSchema#date>	

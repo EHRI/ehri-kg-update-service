@@ -71,8 +71,7 @@
         rico:conditionsOfAccess       "Contact Kazerne Dossin Documentation Centre: info@kazernedossin.eu"@en ;
         rico:conditionsOfUse          "State Archives, Brussels - digitised by Kazerne Dossin"@en ;
         rico:date                     "20ste eeuw" ;
-        rico:hasBeginningDate         <dates/1880-01-01> ;
-        rico:hasEndDate               <dates/1945-12-31> ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> ;
         rico:hasOrHadHolder           <institutions/be-002157> ;
         rico:hasOrHadSubject          <vocabularies/ehri-terms/505> , <vocabularies/ehri-terms/1226> , <vocabularies/ehri-terms/904> , <vocabularies/ehri-terms/700> , <vocabularies/ehri-terms/204> , <vocabularies/ehri-terms/518> , <vocabularies/ehri-terms/519> ;
         rico:hasRecordSetType         <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#Fonds> , <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#Collection> ;
@@ -82,3 +81,10 @@
         rico:resultsOrResultedFrom    <units/be-002157-kd_00017/acquisitions/1> ;
         rico:scopeAndContent          "This collection contains over 19,650 portraits of Roma, Sinti and Jewish men, women and children from Belgium and the north of France, whom have been deported from the SS-Sammellager Mecheln (Dossin barracks) to Auschwitz-Birkenau, Buchenwald, Ravensbrück, Bergen-Belsen and Vittel between August 1942 and July 1944."@en , "In deze verzameling vinden we foto’s van Joden en Roma uit België en Noord-Frankrijk die tussen 1942-1944 gedeporteerd werden vanuit de Kazerne Dossin. Ze werden verzameld naar aanleiding van het project Geef ze een gezicht (2005-2009), ter voorbereiding van het boek Mecheln-Auschwitz. De foto’s zelf zijn afkomstig uit verschillende archieven, zoals de individuele vreemdelingendossiers, de collectie Relieken, privéverzamelingen, … De collectie bevat intussen al meer foto’s dan in het boek gepubliceerd werden."@nl ;
         rico:title                    "Give Them a Face portrait collection. Collection"@en , "“Geef ze een gezicht”-verzameling."@nl .
+
+# Dates
+<http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.ica.org/standards/RiC/ontology#Date> .
+<http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> <https://www.ica.org/standards/RiC/ontology#normalizedDateValue> "1880-01-01/1945-12-31"^^<http://id.loc.gov/datatypes/edtf> .
+<http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> <https://www.ica.org/standards/RiC/ontology#beginningDate> "1880-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> <https://www.ica.org/standards/RiC/ontology#endDate> "1945-12-31"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/units/be-002157-kd_00017/dates/1880-01-01_1945-12-31> <https://www.ica.org/standards/RiC/ontology#isCreationDateOf> <http://lod.ehri-project-test.eu/units/be-002157-kd_00017> .

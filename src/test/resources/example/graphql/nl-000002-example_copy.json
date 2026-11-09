@@ -13,7 +13,7 @@
               "name": "Example copy of KD_00001",
               "identifier": null,
               "accessPoints": [],
-              "dates": [],
+              "dates": [{"startDate": "1942", "endDate": null, "precision": "year"}, {"startDate": "1950", "endDate": "1955", "precision": "year"}],
               "archivistNote": null,
               "archivalHistory": null,
               "acquisition": null,

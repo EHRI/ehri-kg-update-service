@@ -19,6 +19,13 @@ CONSTRUCT {
   }
   UNION
   {
+    ?s ?p ?o ;
+      a rico:Date ;
+      rico:isCreationDateOf ?unit .
+    FILTER(?unit = ehri_units:<$entityId> && STRSTARTS(STR(?s), CONCAT(STR(?unit), "/dates/")))
+  }
+  UNION
+  {
     ?s ?p ?o .
     FILTER(?o = ehri_units:<$entityId>)
   }

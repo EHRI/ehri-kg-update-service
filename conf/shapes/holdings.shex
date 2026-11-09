@@ -31,8 +31,7 @@ ehri:Holding IRI {
 	rico:recordResourceExtent rdf:langString * ;
 	rico:recordResourceStructure rdf:langString * ;
 	rico:date xsd:string * ;
-	rico:hasBeginningDate @ehri:HoldingBeginningDate * ;
-	rico:hasEndDate @ehri:HoldingEndDate * ;
+	rico:hasCreationDate @ehri:HoldingCreationDate * ;
 	rico:isOrWasIncludedIn [ ehri_units:~ ] ? ;
 	rico:resultsOrResultedFrom @ehri:Acquisition ? ;
 	rico:identifier xsd:string ?  ;
@@ -69,16 +68,6 @@ ehri:HoldingParallelFormOfName IRI {
 	rico:name rdf:langString  ;
 	rico:isOrWasTitleOf [ ehri_units:~ ]  ;
 }
-ehri:HoldingBeginningDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isBeginningDateOf [ ehri_units:~ ] + ;
-}
-ehri:HoldingEndDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isEndDateOf [ ehri_units:~ ] + ;
-}
 ehri:Language IRI {
 	rdf:type [ rico:Language ] ;
 	rico:name xsd:string  ;
@@ -104,4 +93,11 @@ ehri:HoldingLocationOfCopiesInverseInstitutionSubject IRI {
 }
 ehri:HoldingCreatorInverse IRI {
 	rico:isCreatorOf [ ehri_units:~ ] ? ;
+}
+ehri:HoldingCreationDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isCreationDateOf [ ehri_units:~ ] ;
 }

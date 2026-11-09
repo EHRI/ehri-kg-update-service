@@ -15,7 +15,6 @@
 @prefix ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/> .
 @prefix ehri_cities: <http://lod.ehri-project-test.eu/cities/> .
 @prefix ehri_countries: <http://lod.ehri-project-test.eu/countries/> .
-@prefix ehri_dates: <http://lod.ehri-project-test.eu/dates/> .
 @prefix ehri_fm: <http://lod.ehri-project-test.eu/vocabularies/ehri-fm/> .
 @prefix ehri_has_copy_relations: <http://lod.ehri-project-test.eu/hasCopyRelations/> .
 @prefix ehri_institutions: <http://lod.ehri-project-test.eu/institutions/> .
@@ -202,8 +201,7 @@ ehri_units:be-000001-kd_00001
         rico:recordResourceStructure "Example system of arrangement."@en ;
         rico:recordResourceSourceOfInformation "Example sources used to prepare the description."@en ;
         rico:date "1940-1945" ;
-        rico:hasBeginningDate ehri_dates:1940-01-01 ;
-        rico:hasEndDate ehri_dates:1945-12-31 ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/be-000001-kd_00001/dates/1940-01-01_1945-12-31> ;
         rico:accruals "Example accruals."@en ;
         rico:conditionsOfAccess "Example conditions governing access."@en ;
         rico:conditionsOfUse "Example conditions of reproduction."@en ;
@@ -236,6 +234,7 @@ ehri_units:be-000001-kd_00001-1
         rico:identifier "1" ;
         rico:hasRecordSetType ehri_rst:Subcollection ;
         rico:title "Example sub-collection"@en ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1/dates/1942-08-04_1944-07-31> ;
         rico:hasOrHadHolder ehri_institutions:be-000001 ;
         rico:hasOrHadSubject ehri_terms:2 , ehri_cb:000001 ;
         rico:isOrWasIncludedIn ehri_units:be-000001-kd_00001 ;
@@ -247,6 +246,7 @@ ehri_units:be-000001-kd_00001-1-1
         rico:identifier "1" ;
         rico:hasRecordSetType ehri_rst:Item ;
         rico:title "Example item"@en ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1-1/dates/1942-08-04> ;
         rico:hasOrHadHolder ehri_institutions:be-000001 ;
         rico:hasOrHadSubject ehri_pers:000001 , ehri_pers:000002 , ehri_fm:000002 ;
         rico:isOrWasIncludedIn ehri_units:be-000001-kd_00001-1 .
@@ -257,6 +257,8 @@ ehri_units:nl-000002-example_copy
         rico:identifier "example_copy" ;
         rico:hasRecordSetType ehri_rst:OtherLevel ;
         rico:title "Example copy of KD_00001"@en ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/nl-000002-example_copy/dates/1942_> ,
+                <http://lod.ehri-project-test.eu/units/nl-000002-example_copy/dates/1950_1955> ;
         rico:hasOrHadHolder ehri_institutions:nl-000002 ;
         rico:thingIsSourceOfRelation ehri_is_copy_of_relations:00000000-0000-0000-0000-000000000001 ;
         rico:thingIsTargetOfRelation ehri_has_copy_relations:00000000-0000-0000-0000-000000000001 ;
@@ -278,6 +280,44 @@ ehri_units:nl-000002-example_copy
         a rico:Activity ;
         rico:hasActivityType ehri_activity_types:acquisition ;
         rico:generalDescription "Example immediate source of acquisition."@en .
+
+# Dates: one for each of a unit's periods, named after its value, with an
+# ISO 8601/EDTF date or interval, and xsd:date bounds for range queries: the
+# earliest day it can start and the latest it can end
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001/dates/1940-01-01_1945-12-31>
+        a rico:Date ;
+        rico:normalizedDateValue "1940-01-01/1945-12-31"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1940-01-01"^^xsd:date ;
+        rico:endDate "1945-12-31"^^xsd:date ;
+        rico:isCreationDateOf ehri_units:be-000001-kd_00001 .
+
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1/dates/1942-08-04_1944-07-31>
+        a rico:Date ;
+        rico:normalizedDateValue "1942-08-04/1944-07-31"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1942-08-04"^^xsd:date ;
+        rico:endDate "1944-07-31"^^xsd:date ;
+        rico:isCreationDateOf ehri_units:be-000001-kd_00001-1 .
+
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1-1/dates/1942-08-04>
+        a rico:Date ;
+        rico:normalizedDateValue "1942-08-04"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1942-08-04"^^xsd:date ;
+        rico:endDate "1942-08-04"^^xsd:date ;
+        rico:isCreationDateOf ehri_units:be-000001-kd_00001-1-1 .
+
+# A period with an unknown end, which has no end bound, and another period
+<http://lod.ehri-project-test.eu/units/nl-000002-example_copy/dates/1942_>
+        a rico:Date ;
+        rico:normalizedDateValue "1942/"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1942-01-01"^^xsd:date ;
+        rico:isCreationDateOf ehri_units:nl-000002-example_copy .
+
+<http://lod.ehri-project-test.eu/units/nl-000002-example_copy/dates/1950_1955>
+        a rico:Date ;
+        rico:normalizedDateValue "1950/1955"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1950-01-01"^^xsd:date ;
+        rico:endDate "1955-12-31"^^xsd:date ;
+        rico:isCreationDateOf ehri_units:nl-000002-example_copy .
 
 
 ######################
@@ -311,8 +351,7 @@ ehri_cb:000001
         rico:history "Example history of the corporate body."@en ;
         rico:generalDescription "Example general context."@en ;
         rico:date "1942-1944" ;
-        rico:hasBeginningDate ehri_dates:1942-01-01 ;
-        rico:hasEndDate ehri_dates:1944-12-31 ;
+        rico:isAssociatedWithDate <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001/dates/1942_1944> ;
         rico:hasOrHadLegalStatus <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001/legalStatuses/1> ;
         rico:performsOrPerformed <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001/functions/1> ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001-1 ;
@@ -337,6 +376,14 @@ ehri_cb:000001
         rico:generalDescription "Example function."@en ;
         rico:isOrWasPerformedBy ehri_cb:000001 .
 
+# The period 1942-01-01 to 1944-12-31 with a precision of year
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001/dates/1942_1944>
+        a rico:Date ;
+        rico:normalizedDateValue "1942/1944"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1942-01-01"^^xsd:date ;
+        rico:endDate "1944-12-31"^^xsd:date ;
+        rico:isDateAssociatedWith ehri_cb:000001 .
+
 # Family
 ehri_fm:000002
         a ehri:Family ;
@@ -351,8 +398,8 @@ ehri_pers:000001
         rico:hasOrHadAgentName <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/parallelNames/Hertz_Jospa> ;
         rico:history "Example biographical history."@en ;
         rico:date "1904-1966" ;
-        rico:hasBirthDate ehri_dates:1904-01-01 ;
-        rico:hasDeathDate ehri_dates:1966-12-31 ;
+        rico:hasBirthDate <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/dates/1904-01-01> ;
+        rico:hasDeathDate <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/dates/1966-12-31> ;
         rico:performsOrPerformed <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/occupations/1> ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001-1-1 ;
         ehri:sources "Example sources."@en .
@@ -361,6 +408,22 @@ ehri_pers:000001
         a ehri:ParallelAgentName ;
         rico:name "Hertz Jospa" ;
         rico:isOrWasAgentNameOf ehri_pers:000001 .
+
+# A person's period is their life, so its start and end are their birth and
+# death dates
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/dates/1904-01-01>
+        a rico:Date ;
+        rico:normalizedDateValue "1904-01-01"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1904-01-01"^^xsd:date ;
+        rico:endDate "1904-01-01"^^xsd:date ;
+        rico:isBirthDateOf ehri_pers:000001 .
+
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/dates/1966-12-31>
+        a rico:Date ;
+        rico:normalizedDateValue "1966-12-31"^^<http://id.loc.gov/datatypes/edtf> ;
+        rico:beginningDate "1966-12-31"^^xsd:date ;
+        rico:endDate "1966-12-31"^^xsd:date ;
+        rico:isDeathDateOf ehri_pers:000001 .
 
 <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/occupations/1>
         a rico:Activity ;
@@ -419,41 +482,3 @@ ehri_material_script:Latn
         rico:name "Latn" ;
         ehri:isOrWasScriptOf ehri_units:be-000001-kd_00001 .
 
-
-#############
-### Dates ###
-#############
-
-# Dates are full ISO 8601 dates, as given by the Portal. With a date's
-# precision unset, as here, all of YYYY-MM-DD is significant; with a precision
-# of year (or month), only YYYY (or YYYY-MM) is.
-
-ehri_dates:1904-01-01
-        a rico:Date ;
-        rico:normalizedDateValue "1904-01-01" ;
-        rico:isBirthDateOf ehri_pers:000001 .
-
-ehri_dates:1940-01-01
-        a rico:Date ;
-        rico:normalizedDateValue "1940-01-01" ;
-        rico:isBeginningDateOf ehri_units:be-000001-kd_00001 .
-
-ehri_dates:1942-01-01
-        a rico:Date ;
-        rico:normalizedDateValue "1942-01-01" ;
-        rico:isBeginningDateOf ehri_cb:000001 .
-
-ehri_dates:1944-12-31
-        a rico:Date ;
-        rico:normalizedDateValue "1944-12-31" ;
-        rico:isEndDateOf ehri_cb:000001 .
-
-ehri_dates:1945-12-31
-        a rico:Date ;
-        rico:normalizedDateValue "1945-12-31" ;
-        rico:isEndDateOf ehri_units:be-000001-kd_00001 .
-
-ehri_dates:1966-12-31
-        a rico:Date ;
-        rico:normalizedDateValue "1966-12-31" ;
-        rico:isDeathDateOf ehri_pers:000001 .

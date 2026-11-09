@@ -13,7 +13,7 @@
               "name": "Example sub-collection",
               "identifier": null,
               "accessPoints": [],
-              "dates": [],
+              "dates": [{"startDate": "1942-08-04", "endDate": "1944-07-31", "precision": "day"}],
               "archivistNote": null,
               "archivalHistory": null,
               "acquisition": null,

@@ -4,10 +4,11 @@ PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
 PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
 PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
+PREFIX loc: <http://id.loc.gov/datatypes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
@@ -273,9 +274,8 @@ ITERATOR people_iterator <jsonpath: $.data.historicalAgents.items[*]> {
     FIELD generalContext <description.generalContext>
     FIELD occupation <description.occupation>
     FIELD seeAlso <seeAlso>
-    ITERATOR dates <description.dates[*]> {
-        FIELD startDate <startDate>
-        FIELD endDate <endDate>
+    ITERATOR dates <description.dates> {
+        FIELD period <[*]>
         POPPED_FIELD person_id <id>
     }
     ITERATOR otherFormsOfName <description.otherFormsOfName> {
@@ -313,8 +313,8 @@ ehri:Person ehri_pers:[person.id] {
     rdfs:seeAlso [transformers.removeSquareBrackets(person.sourceLink) IF validators.isURL(person.sourceLink)] ;
     ehri:sources [transformers.removeSquareBrackets(person.sourceLink) IF validators.nonURL(person.sourceLink)] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
     rico:date [person.datesOfExistence] ;
-	rico:hasBirthDate @ehri:PersonBeginningDate ;
-	rico:hasDeathDate @ehri:PersonEndDate ;
+	rico:hasBirthDate @ehri:PersonBirthDate ;
+	rico:hasDeathDate @ehri:PersonDeathDate ;
     # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # It will be difficult to determine the correct prefix among cities, countries and regions.
     rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus ;
     rico:performsOrPerformed @ehri:AuthorityOccupation ;
@@ -337,15 +337,19 @@ ehri:AgentParallelName ehri_pers:[helpers.entityParallelNamePath(people.people_i
 	rico:isOrWasAgentNameOf ehri_pers:[person.parallelFormsOfName.person_id] ;
 }
 
-ehri:PersonBeginningDate ehri_dates:[person.dates.startDate] {
+ehri:PersonBirthDate ehri_pers:[helpers.entityStartDatePath(person.dates.person_id, person.dates.period) IF helpers.hasStartDate(person.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.startDate] ;
+	rico:normalizedDateValue [helpers.startDate(person.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestDate(person.dates.period) IF helpers.hasEarliestDate(person.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestStartDate(person.dates.period) IF helpers.hasLatestStartDate(person.dates.period)] xsd:date ;
 	rico:isBirthDateOf ehri_pers:[person.dates.person_id] ;
 }
 
-ehri:PersonEndDate ehri_dates:[person.dates.endDate] {
+ehri:PersonDeathDate ehri_pers:[helpers.entityEndDatePath(person.dates.person_id, person.dates.period) IF helpers.hasEndDate(person.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.endDate] ;
+	rico:normalizedDateValue [helpers.endDate(person.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestEndDate(person.dates.period) IF helpers.hasEarliestEndDate(person.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestDate(person.dates.period) IF helpers.hasLatestDate(person.dates.period)] xsd:date ;
 	rico:isDeathDateOf ehri_pers:[person.dates.person_id] ;
 }
 

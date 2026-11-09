@@ -19,7 +19,7 @@ CONSTRUCT {
     ?s ?p ?o ;
       a ?connectedClasses ;
       ?inverseProperty ?agent .
-    VALUES ?connectedClasses { ehri:AlternateAgentName ehri:ParallelAgentName rico:LegalStatus rico:Activity rico:Mandate }
+    VALUES ?connectedClasses { ehri:AlternateAgentName ehri:ParallelAgentName rico:LegalStatus rico:Activity rico:Mandate rico:Date }
     FILTER(?agent = ehri_vocabs:<$entityId>)
   }
 }

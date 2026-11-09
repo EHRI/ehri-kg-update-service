@@ -5,7 +5,6 @@ PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
 PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
 PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
@@ -21,8 +20,8 @@ ehri:Person IRI {
 	rdfs:seeAlso IRI * ;
 	ehri:sources rdf:langString *;
 	rico:date Literal * ;
-	rico:hasBirthDate @ehri:PersonBeginningDate * ;
-	rico:hasDeathDate @ehri:PersonEndDate * ;
+	rico:hasBirthDate @ehri:PersonBirthDate * ;
+	rico:hasDeathDate @ehri:PersonDeathDate * ;
 	rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus * ;
 	rico:performsOrPerformed @ehri:AuthorityOccupation OR @ehri:AuthorityFunction * ;
 	rico:authorizedBy @ehri:AuthorityMandate * ;
@@ -41,16 +40,6 @@ ehri:AgentParallelName IRI {
 	rdf:type [ ehri:ParallelAgentName ] ;
 	rico:name xsd:string  ;
 	rico:isOrWasAgentNameOf [ ehri_pers:~ ]  ;
-}
-ehri:PersonBeginningDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isBirthDateOf [ ehri_pers:~ ]  ;
-}
-ehri:PersonEndDate IRI {
-	rdf:type [ rico:Date ] ;
-	rico:normalizedDateValue Literal ;
-	rico:isDeathDateOf [ ehri_pers:~ ]  ;
 }
 ehri:AuthorityLegalStatus IRI {
 	rdf:type [ rico:LegalStatus ] ;
@@ -73,4 +62,18 @@ ehri:AuthorityMandate IRI {
 	rdf:type [ rico:Mandate ] ;
 	rico:generalDescription rdf:langString ;
 	rico:authorizes [ ehri_pers:~ ]  ;
+}
+ehri:PersonBirthDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isBirthDateOf [ ehri_pers:~ ] ;
+}
+ehri:PersonDeathDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isDeathDateOf [ ehri_pers:~ ] ;
 }

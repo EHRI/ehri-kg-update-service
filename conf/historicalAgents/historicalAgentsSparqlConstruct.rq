@@ -22,8 +22,15 @@ CONSTRUCT {
     }
     UNION
     {
+        ?s ?p ?o ;
+            a rico:Date ;
+            ?inverseProperty ?agent .
+        FILTER(?agent = ehri_vocabs:<$entityId> && STRSTARTS(STR(?s), CONCAT(STR(?agent), "/dates/")))
+    }
+    UNION
+    {
         ?s ?p ?o .
-        VALUES ?p { rico:hasOrHadSubject rico:isEndDateOf rico:isBeginningDateOf }
+        VALUES ?p { rico:hasOrHadSubject }
         FILTER(?o = ehri_vocabs:<$entityId>)
     }
 }
