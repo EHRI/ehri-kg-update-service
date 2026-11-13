@@ -4,6 +4,7 @@
       "items": [
         {
           "id": "nl-000002-example_copy",
+          "ark": "ark:41045/p0000000000013",
           "type": "DocumentaryUnit",
           "identifier": "example_copy",
           "otherIdentifiers": [],

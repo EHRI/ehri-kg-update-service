@@ -10,6 +10,7 @@ PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 ehri:Person IRI {
@@ -27,6 +28,7 @@ ehri:Person IRI {
 	rico:authorizedBy @ehri:AuthorityMandate * ;
 	ehri:structureOrGenealogy rdf:langString ? ;
 	rico:generalDescription rdf:langString ? ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
 }
 ehri:Link IRI {
 	rico:hasOrHadSubject [ ehri_pers:~ ]  ;

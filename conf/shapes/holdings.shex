@@ -55,6 +55,7 @@ ehri:Holding IRI {
 	rico:hasOrHadHolder [ ehri_institutions:~ ]  ;
 	rdfs:seeAlso IRI ? ;
 	rico:hasOrHadIdentifier @ehri:AlternateIds * ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
 	rico:includesOrIncluded [ ehri_units:~ ] * ;
 	ehri:isCopyOf [ ehri_units:~ ] * ;
 	ehri:isCopyOf [ ehri_institutions:~ ] * ;

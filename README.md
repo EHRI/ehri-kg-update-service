@@ -85,7 +85,12 @@ $ java -jar ehri-kg-update-service.jar batch --dir batch --workers 8
    type's per-entity query. Links that the mapping rules don't map are left out.
 3. **Map:** the chunks are mapped and validated by `--workers` processes, to N-Triples in `<dir>/mapped`, and
    written together to `<dir>/kg.nt`, with the violations in `<dir>/violations.txt` and a summary in
-   `<dir>/report.json`.
+   `<dir>/report.json`, which gives the number of triples written and the time each step took. The data of the RDF
+   files named by the `batchStaticFiles` property, such as instances that the mapped data refers to but doesn't
+   define, is added to it.
+
+To replace a Fuseki dataset's data with the output, run `scripts/load-fuseki.sh [<kg.nt>] [<dataset URL>]`, by
+default `batch/kg.nt` and `http://localhost:3030/ehri`, with `FUSEKI_AUTH=<user>:<password>` if the server needs it.
 
 Each step resumes where an earlier run left off: run the same command again after a failure. To fetch a source again,
 delete its response in `<dir>/responses`; its chunks and mapped data are then replaced.

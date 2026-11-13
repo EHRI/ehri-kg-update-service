@@ -20,4 +20,5 @@ ehri:Country IRI {
 	ehri:archivalSituation [ @en ] ? ;
 	ehri:researchSummary [ @en ] ? ;
 	ehri:researchExtensive [ @en ] ? ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
 }

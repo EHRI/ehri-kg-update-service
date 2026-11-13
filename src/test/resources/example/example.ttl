@@ -42,6 +42,8 @@
 
 ehri_countries:be
         a ehri:Country ;
+        # The entity's Archival Resource Key (ARK) in the Portal, which resolves to its Portal page
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000005> ;
         rico:name "Belgium"@en ;
         rico:isOrWasLocationOfAgent ehri_institutions:be-000001 ;
         rico:containsTransitive ehri_regions:Antwerpen ;
@@ -53,6 +55,7 @@ ehri_countries:be
 
 ehri_countries:nl
         a ehri:Country ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000015> ;
         rico:name "Netherlands"@en ;
         rico:isOrWasLocationOfAgent ehri_institutions:nl-000002 ;
         rico:containsTransitive ehri_regions:Noord-Holland ;
@@ -92,6 +95,7 @@ ehri_cities:Amsterdam
 
 ehri_institutions:be-000001
         a ehri:Institution ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000004> ;
         rico:name "Kazerne Dossin"@en ;
         rico:history "Example history of the institution."@en ;
         rico:generalDescription "Example description of the institution's holdings."@en ;
@@ -120,6 +124,7 @@ ehri_institutions:be-000001
 
 ehri_institutions:nl-000002
         a ehri:Institution ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000014> ;
         rico:name "NIOD Institute for War, Holocaust and Genocide Studies"@en ;
         rico:agentHasOrHadLocation <http://lod.ehri-project-test.eu/institutions/nl-000002/locations/1> ;
         rico:isOrWasHolderOf ehri_units:nl-000002-example_copy ;
@@ -189,6 +194,7 @@ ehri_units:be-000001-kd_00001
         a ehri:RecordSet ;
         rico:identifier "KD_00001" ;
         rico:hasOrHadIdentifier <http://lod.ehri-project-test.eu/units/be-000001-kd_00001/alternateIDs/1> ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000003> ;
         rico:hasRecordSetType ric_rst:Collection ;
         rico:title
                 "Miscellaneous documents collected to create the Jewish Museum of Deportation and Resistance. Collection"@en ,
@@ -231,6 +237,7 @@ ehri_units:be-000001-kd_00001
 # Second level
 ehri_units:be-000001-kd_00001-1
         a ehri:RecordSet ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000002> ;
         rico:identifier "1" ;
         rico:hasRecordSetType ehri_rst:Subcollection ;
         rico:title "Example sub-collection"@en ;
@@ -243,6 +250,7 @@ ehri_units:be-000001-kd_00001-1
 # Third level
 ehri_units:be-000001-kd_00001-1-1
         a ehri:RecordSet ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000001> ;
         rico:identifier "1" ;
         rico:hasRecordSetType ehri_rst:Item ;
         rico:title "Example item"@en ;
@@ -254,6 +262,7 @@ ehri_units:be-000001-kd_00001-1-1
 # A copy held by another institution
 ehri_units:nl-000002-example_copy
         a ehri:RecordSet ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000013> ;
         rico:identifier "example_copy" ;
         rico:hasRecordSetType ehri_rst:OtherLevel ;
         rico:title "Example copy of KD_00001"@en ;
@@ -346,6 +355,7 @@ ehri_is_copy_of_relations:00000000-0000-0000-0000-000000000001
 # Corporate body
 ehri_cb:000001
         a ehri:CorporateBody ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000007> ;
         rico:name "Comité de Défense des Juifs"@en ;
         rico:hasOrHadAgentName <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001/otherNames/CDJ> ;
         rico:history "Example history of the corporate body."@en ;
@@ -387,6 +397,7 @@ ehri_cb:000001
 # Family
 ehri_fm:000002
         a ehri:Family ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000008> ;
         rico:name "Example family"@en ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001-1-1 ;
         ehri:structureOrGenealogy "Example genealogy."@en .
@@ -394,6 +405,7 @@ ehri_fm:000002
 # Person
 ehri_pers:000001
         a ehri:Person ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000009> ;
         rico:name "Hertz Jospa" ;
         rico:hasOrHadAgentName <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/000001/parallelNames/Hertz_Jospa> ;
         rico:history "Example biographical history."@en ;
@@ -434,6 +446,7 @@ ehri_pers:000001
 # Person linked to an external dataset (CDEC), used by federated queries
 ehri_pers:000002
         a ehri:Person ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000010> ;
         rico:name "Example person" ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001-1-1 ;
         rdfs:seeAlso <http://dati.cdec.it/lod/shoah/person/example-1> .
@@ -445,6 +458,7 @@ ehri_pers:000002
 
 ehri_terms:1
         a skos:Concept ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000011> ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001 ;
         skos:prefLabel "Resistance"@en ;
         skos:altLabel "Resistance movements"@en ;
@@ -453,6 +467,7 @@ ehri_terms:1
 
 ehri_terms:2
         a skos:Concept ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000012> ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001-1 ;
         skos:prefLabel "Jewish resistance"@en , "Joods verzet"@nl ;
         skos:scopeNote "Example scope note."@en ;
@@ -461,6 +476,7 @@ ehri_terms:2
 
 ehri_camps:1
         a skos:Concept ;
+        schema:sameAs <https://n2t.net/ark:41045/p0000000000006> ;
         rico:isOrWasSubjectOf ehri_units:be-000001-kd_00001 ;
         geo:lat "51.033"^^xsd:decimal ;
         geo:long "4.475"^^xsd:decimal ;
@@ -481,4 +497,3 @@ ehri_material_script:Latn
         a ehri:MaterialScript ;
         rico:name "Latn" ;
         ehri:isOrWasScriptOf ehri_units:be-000001-kd_00001 .
-

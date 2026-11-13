@@ -69,3 +69,6 @@
 <http://lod.ehri-project-test.eu/units/hu-002739-mnl_ol_k_28> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/1062> .
 <http://lod.ehri-project-test.eu/units/md-002886-112_1> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/1062> .
 <http://lod.ehri-project-test.eu/units/de-002624-ms-0_6-ms_200_301> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/1062> .
+
+# ARK
+<http://lod.ehri-project-test.eu/vocabularies/ehri-terms/1062> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0dmn7qswb1g6t> .

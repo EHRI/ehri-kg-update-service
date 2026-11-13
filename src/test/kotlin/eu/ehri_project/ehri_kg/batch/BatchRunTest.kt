@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpServer
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.support.testConfig
 import kotlinx.serialization.json.Json
+import org.apache.jena.riot.RDFDataMgr
+import org.apache.jena.riot.RiotException
 import java.io.File
 import java.net.InetSocketAddress
 import kotlin.io.path.createTempDirectory
@@ -41,9 +43,10 @@ class BatchRunTest {
         server.stop(0)
     }
 
-    private fun run() = BatchRun(
+    private fun run(staticFiles: List<File> = emptyList()) = BatchRun(
         sources, StreamFetcher("http://localhost:${server.address.port}/graphql", client),
-        BatchMapper("conf/config.properties", workers = 1), chunkSize = 2, dir = dir
+        BatchMapper("conf/config.properties", workers = 1), chunkSize = 2, dir = dir,
+        staticFiles = staticFiles
     ).run()
 
     @Test
@@ -100,6 +103,40 @@ class BatchRunTest {
         run()
         assertTrue(requested.contains("countries"))
         assertMatchesExampleKG(File(dir, "kg.nt"))
+    }
+
+    @Test
+    fun `adds the static files' data to the output`() {
+        val static = File(createTempDirectory().toFile(), "static.ttl").apply {
+            writeText("<http://example.org/s> <http://example.org/p> \"o\" .")
+        }
+        val report = run(staticFiles = listOf(static))
+
+        val kg = RDFDataMgr.loadModel(File(dir, "kg.nt").path)
+        val staticData = RDFDataMgr.loadModel(static.path)
+        assertFalse(staticData.isEmpty)
+        assertTrue(kg.containsAll(staticData))
+        assertEquals(staticData.size(), report.staticTriples)
+        assertEquals(staticData.size(), kg.size() - kg.difference(staticData).size())
+    }
+
+    @Test
+    fun `reports the number of triples written and the time each step took`() {
+        val static = File(createTempDirectory().toFile(), "static.ttl").apply {
+            writeText("<http://example.org/s> <http://example.org/p> \"o\" .")
+        }
+        val report = run(staticFiles = listOf(static))
+
+        assertEquals(File(dir, "kg.nt").readLines().count { it.isNotBlank() }.toLong(), report.triples)
+        assertEquals(report.sources.sumOf { it.triples } + 1, report.triples)
+        with(report.seconds) { assertTrue(total >= fetching + chunking + mapping + writing - 4, "$this") }
+    }
+
+    @Test
+    fun `an invalid static file fails the run before anything is fetched`() {
+        val invalid = File(createTempDirectory().toFile(), "invalid.ttl").apply { writeText("not turtle") }
+        assertFailsWith<RiotException> { run(staticFiles = listOf(invalid)) }
+        assertEquals(emptyList(), requested)
     }
 
     @Test

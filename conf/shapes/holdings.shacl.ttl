@@ -133,6 +133,11 @@ ehri:Holding  a         sh:NodeShape ;
         sh:property     [ sh:node  ehri:AlternateIds ;
                           sh:path  rico:hasOrHadIdentifier
                         ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
         sh:property     [ sh:node  ehri:HoldingParallelFormOfName ;
                           sh:path  rico:hasOrHadTitle ;
                         ] ;

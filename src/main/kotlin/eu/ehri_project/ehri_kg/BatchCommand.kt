@@ -18,6 +18,7 @@ import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.DebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
+import kotlin.time.Duration.Companion.seconds
 
 class BatchCommand : CliktCommand(name = "batch") {
     private val logger = KotlinLogging.logger {}
@@ -63,7 +64,9 @@ class BatchCommand : CliktCommand(name = "batch") {
             StreamFetcher.streamingClient().use { client ->
                 BatchRun(selected, StreamFetcher(graphQLEndpoint ?: config.get("graphQLEndpoint"), client),
                     BatchMapper(entitiesConfig, workers, listOf("-Xmx$workerHeap") + DebugLogging.jvmArgs()),
-                    config.get("batchChunkSize").toInt(), File(dir), output?.let(::File) ?: File(dir, "kg.nt")
+                    config.get("batchChunkSize").toInt(), File(dir), output?.let(::File) ?: File(dir, "kg.nt"),
+                    config.getOptional("batchStaticFiles").orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                        .map(::File)
                 ).run()
             }
         } catch (e: Exception) {
@@ -75,6 +78,11 @@ class BatchCommand : CliktCommand(name = "batch") {
 
         report.sources.forEach {
             logger.info { "${it.name}: ${it.items} items in ${it.chunks} chunks, ${it.triples} triples, ${it.violations} violations" }
+        }
+        if (report.staticTriples > 0) logger.info { "Added ${report.staticTriples} triples from the static files" }
+        with(report.seconds) {
+            logger.info { "Wrote ${report.triples} triples in ${total.seconds} (fetching ${fetching.seconds}, " +
+                "chunking ${chunking.seconds}, mapping ${mapping.seconds}, writing ${writing.seconds})" }
         }
         logger.info { "Wrote the data to ${report.output}, the violations to ${report.violations} and this report to $dir/report.json" }
     }

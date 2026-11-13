@@ -11,6 +11,8 @@ PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
 PREFIX loc: <http://id.loc.gov/datatypes/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX n2t: <https://n2t.net/>
+PREFIX schema: <http://schema.org/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
 abk AS ab &
@@ -262,6 +264,7 @@ SOURCE cb <stdin>
 
 ITERATOR cb_iterator <jsonpath: $.data.historicalAgents.items[*]> {
 	PUSHED_FIELD id <id>
+    FIELD ark <ark>
     FIELD name <description.name>
     FIELD lastName <description.lastName>
     FIELD firstName <description.firstName>
@@ -332,6 +335,7 @@ ehri:CBAndFamily ehri_vocabularies:[helpers.vocabularyPath(cbs.id)] {
     ehri:structureOrGenealogy [cbs.structure] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ; # This can be divided in structure of cb and genealogy of family if needed
     rico:generalDescription [cbs.generalContext] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ;
     rdfs:seeAlso [cbs.seeAlso] ;
+    schema:sameAs n2t:[cbs.ark] ;
 }
 
 ehri:CBDate ehri_vocabularies:[helpers.periodPath(cbs.dates.cb_id, cbs.dates.period) IF helpers.hasPeriod(cbs.dates.period)] {

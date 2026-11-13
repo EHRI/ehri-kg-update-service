@@ -4,6 +4,7 @@
       "items": [
         {
           "id": "be",
+          "ark": "ark:41045/p0000000000005",
           "type": "Country",
           "identifier": "be",
           "name": "Belgium",

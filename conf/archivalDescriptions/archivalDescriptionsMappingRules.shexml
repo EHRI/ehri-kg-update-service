@@ -15,6 +15,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX loc: <http://id.loc.gov/datatypes/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX n2t: <https://n2t.net/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#>
 PREFIX ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#>
@@ -268,6 +269,7 @@ SOURCE holdings <stdin>
 ITERATOR components_iterator <jsonpath: $.data.documentaryUnits.items[*]> {
 	PUSHED_FIELD holding_id <id>
 	FIELD parentId <parent.id>
+	FIELD ark <ark>
 	FIELD identifier <identifier>
 	FIELD itemCount <itemCount>
 	FIELD repositoryId <repository.id>
@@ -377,6 +379,7 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:hasOrHadHolder ehri_institutions:[holding.repositoryId] ;
 	rdfs:seeAlso [holding.descriptions.ref IF validators.isURL(holding.descriptions.ref)] ;
 	rico:hasOrHadIdentifier @ehri:AlternateIds ;
+	schema:sameAs n2t:[holding.ark] ;
 }
 
 ehri:Institution ehri_institutions:[holding.repositoryId] {

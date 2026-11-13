@@ -166,6 +166,11 @@ ehri:Coordinates  a     sh:NodeShape ;
         sh:targetClass  rico:Coordinates .
 
 ehri:Institution  a     sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
         sh:nodeKind     sh:IRI ;
         sh:property     [ sh:nodeKind  sh:IRIOrLiteral ;
                           sh:path      ehri:findingAids

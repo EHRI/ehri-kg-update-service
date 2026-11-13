@@ -2,6 +2,7 @@
   concepts(ids: [\"<id>\"]) {
     items {
       id
+      ark
       type
       identifier
       uri

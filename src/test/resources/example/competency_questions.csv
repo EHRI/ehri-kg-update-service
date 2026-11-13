@@ -408,3 +408,20 @@ GROUP BY ?record ?recordLabel
 HAVING (COUNT(?periodStart) = COUNT(?date) && COUNT(?periodEnd) = COUNT(?date)
   && MIN(?periodStart) >= ""1942-01-01""^^xsd:date && MAX(?periodEnd) <= ""1944-12-31""^^xsd:date)
 ORDER BY ?beginning ?end ?record"
+CQ_031,Look up an item by its ARK,"Item URI, type and label",,"Resolving an item's persistent identifier, which unlike its URI stays the same when its Portal id changes",Proposed,Low,,,,"PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX schema: <http://schema.org/>
+
+# An item's ARK is the IRI it's schema:sameAs, the ARK at the n2t.net resolver, e.g.
+# <https://n2t.net/ark:41045/p0000000000003>. The ARK can be given in any of its forms, such as
+# ""ark:41045/p0000000000003"", ""ark:/41045/p0000000000003"" or a URL at another resolver, e.g.
+# ""https://arks.org/ark:/41045/p0000000000003"".
+SELECT ?item ?type ?label WHERE {
+  VALUES ?input { ""https://arks.org/ark:/41045/p0000000000003"" }
+  BIND(IRI(CONCAT(""https://n2t.net/"", REPLACE(?input, ""^.*ark:/?"", ""ark:""))) AS ?ark)
+  ?item schema:sameAs ?ark ;
+    a ?type .
+  OPTIONAL {
+    ?item rico:title|rico:name ?label .
+    FILTER(lang(?label) IN (""en"", """"))
+  }
+}"

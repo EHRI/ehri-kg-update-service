@@ -1,3 +1,4 @@
+@prefix schema: <http://schema.org/> .
 @prefix ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/> .
 @prefix ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/> .
 @prefix ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/> .
@@ -113,6 +114,11 @@ ehri:AuthorityMandate
         sh:targetClass  rico:Mandate .
 
 ehri:CBAndFamily  a     sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
         sh:nodeKind     sh:IRI ;
         sh:property     [ sh:node  ehri:AuthorityMandate ;
                           sh:path  rico:authorizedBy

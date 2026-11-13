@@ -14,6 +14,11 @@
 @prefix ehri_institutions: <http://lod.ehri-project-test.eu/institutions/> .
 
 ehri:Country  a         sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
         sh:nodeKind     sh:IRI ;
         sh:property     [ sh:languageIn  ( "en" ) ;
                           sh:path        ehri:archivalSituation ;

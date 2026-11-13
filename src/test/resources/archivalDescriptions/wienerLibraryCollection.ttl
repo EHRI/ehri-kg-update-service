@@ -79,3 +79,6 @@
 <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#beginningDate> "1957-01-30"^^<http://www.w3.org/2001/XMLSchema#date> .
 <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#endDate> "1957-07-18"^^<http://www.w3.org/2001/XMLSchema#date> .
 <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#isCreationDateOf> <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1> .
+
+# ARK
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0f9tt50d6kd45> .

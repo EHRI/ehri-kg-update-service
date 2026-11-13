@@ -4,19 +4,41 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.apache.jena.rdf.model.Model
+import org.apache.jena.riot.RDFDataMgr
+import org.apache.jena.riot.RDFFormat
 import java.io.File
+import java.io.FileOutputStream
+import kotlin.time.Duration
+import kotlin.time.TimeSource
 
 @Serializable
 data class SourceReport(val name: String, val items: Int, val chunks: Int, val triples: Long, val violations: Int)
 
+/**
+ * The time each step of a run took, in whole seconds. A step that an earlier run completed takes no time, e.g. fetching
+ * the responses a resumed run already has.
+ */
 @Serializable
-data class BatchReport(val sources: List<SourceReport>, val output: String, val violations: String)
+data class StepTimes(val fetching: Long = 0, val chunking: Long = 0, val mapping: Long = 0, val writing: Long = 0,
+                     val total: Long = 0)
+
+/**
+ * @param triples the number of triples written to the output, the sources' and the static files', which may include
+ * triples that more than one chunk mapped, e.g. those about the entities they link to
+ */
+@Serializable
+data class BatchReport(val sources: List<SourceReport>, val output: String, val violations: String,
+                       val staticTriples: Long = 0, val triples: Long = 0, val seconds: StepTimes = StepTimes())
 
 /**
  * Converts all the entities of the [sources] to N-Triples: fetching each source's streamed response, splitting it into
  * chunks, mapping and validating the chunks, and writing their data to [output]. Each step resumes where an earlier
  * run left off, in [dir]: responses already fetched aren't fetched again, nor chunks already mapped. To fetch a source
  * again, delete its response in `<dir>/responses`.
+ *
+ * @param staticFiles RDF files whose data is added to the output, such as instances that the mapped data refers to but
+ * doesn't define
  */
 class BatchRun(
     private val sources: List<BatchSource>,
@@ -25,6 +47,7 @@ class BatchRun(
     private val chunkSize: Int,
     private val dir: File,
     private val output: File = File(dir, "kg.nt"),
+    private val staticFiles: List<File> = emptyList(),
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -37,25 +60,52 @@ class BatchRun(
     private val mappedDir = File(dir, "mapped")
 
     fun run(): BatchReport {
+        val start = TimeSource.Monotonic.markNow()
+        // Read first, so that an invalid file fails the run before the fetching and mapping
+        val staticData = staticFiles.map { file -> file to RDFDataMgr.loadModel(file.path) }
+
+        var fetching = Duration.ZERO
+        var chunking = Duration.ZERO
         val items = sources.associate { source ->
+            val fetchStart = TimeSource.Monotonic.markNow()
             val response = runBlocking { fetcher.fetch(source, responsesDir) }
-            source.name to chunk(source, response)
+            fetching += fetchStart.elapsedNow()
+            val chunkStart = TimeSource.Monotonic.markNow()
+            source.name to chunk(source, response).also { chunking += chunkStart.elapsedNow() }
         }
+        val mapStart = TimeSource.Monotonic.markNow()
         forgetMappingsWithAnotherConfiguration()
         val jobs = MapJob.forChunks(sources, chunksDir, mappedDir)
         mapper.map(jobs, File(dir, "work"))
+        val mapping = mapStart.elapsedNow()
+        val writeStart = TimeSource.Monotonic.markNow()
         val violations = File(dir, "violations.txt")
         val counts = BatchMapper.writeOutput(jobs, output, violations)
+        val staticTriples = appendStaticData(staticData)
+        val writing = writeStart.elapsedNow()
         val report = BatchReport(
             sources.map { source ->
                 val (triples, sourceViolations) = counts[source.name] ?: (0L to 0)
                 SourceReport(source.name, items.getValue(source.name), jobs.count { it.source == source.name },
                     triples, sourceViolations)
             },
-            output.path, violations.path)
-        File(dir, "report.json").writeText(Json { prettyPrint = true }.encodeToString(report))
+            output.path, violations.path, staticTriples,
+            counts.values.sumOf { it.first } + staticTriples,
+            StepTimes(fetching.inWholeSeconds, chunking.inWholeSeconds, mapping.inWholeSeconds, writing.inWholeSeconds,
+                start.elapsedNow().inWholeSeconds))
+        File(dir, "report.json").writeText(Json { prettyPrint = true; encodeDefaults = true }.encodeToString(report))
         return report
     }
+
+    /** Appends the static files' data to the output as N-Triples, returning the number of triples. */
+    private fun appendStaticData(staticData: List<Pair<File, Model>>): Long =
+        FileOutputStream(output, true).buffered().use { out ->
+            staticData.sumOf { (file, model) ->
+                logger.info { "Adding the ${model.size()} triples of $file" }
+                RDFDataMgr.write(out, model, RDFFormat.NTRIPLES)
+                model.size()
+            }
+        }
 
     /**
      * Removes the data mapped by an earlier run if its mapping configuration differs from this run's, e.g. because the

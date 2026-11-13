@@ -1,6 +1,8 @@
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
+PREFIX n2t: <https://n2t.net/>
+PREFIX schema: <http://schema.org/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -259,6 +261,7 @@ SOURCE concepts <stdin>
 ITERATOR concept_iterator <jsonpath: $.data.concepts.items[*]> {
 	PUSHED_FIELD item_id <identifier>
 	FIELD uri <uri>
+	FIELD ark <ark>
 	FIELD see_also <seeAlso>
 	FIELD latitude <latitude>
 	FIELD longitude <longitude>
@@ -291,6 +294,7 @@ ehri:Concept ehri_vocabs:[transformers.generateVocabUri(concept.vocabulary_id, c
   skos:narrower ehri_vocabs:[transformers.generateVocabUri(concept.narrower.vocabulary_set, concept.narrower.id)] ;
   rdfs:seeAlso [concept.see_also] ;
   skos:inScheme ehri_vocabs:[concept.vocabulary_id] ;
+  schema:sameAs n2t:[concept.ark] ;
   geo:lat [concept.latitude] xsd:decimal ;
   geo:long [concept.longitude] xsd:decimal ;
   skos:scopeNote [concept.descriptions.scope_note] @[concept.descriptions.langcode MATCHING langcode_two_digit_equivalent] ;

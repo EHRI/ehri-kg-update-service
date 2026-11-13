@@ -65,3 +65,6 @@
 # other triples
 <http://lod.ehri-project-test.eu/units/nl-002896-nl_asdniod_imagecollection-81773> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004284> .
 <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004284> <https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf> <http://lod.ehri-project-test.eu/units/nl-002896-nl_asdniod_imagecollection-81773> .
+
+# ARK
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/004284> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0dzvjhtfvjsnt> .

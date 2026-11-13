@@ -4,6 +4,7 @@
       "items": [
         {
           "id": "nl",
+          "ark": "ark:41045/p0000000000015",
           "type": "Country",
           "identifier": "nl",
           "name": "Netherlands",

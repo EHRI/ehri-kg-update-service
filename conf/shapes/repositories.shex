@@ -38,6 +38,7 @@ ehri:Institution IRI {
 	rico:authorizedBy @ehri:Mandate * ;
 	ehri:isCopyOf [ ehri_units:~ ehri_institutions:~ ] * ;
 	ehri:hasCopy [ ehri_units:~ ehri_institutions:~ ] * ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
 }
 ehri:InstitutionLocation IRI {
 	rdf:type [ rico:Place ] ;

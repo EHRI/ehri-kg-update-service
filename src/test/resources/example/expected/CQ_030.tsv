@@ -1,0 +1,3 @@
+?record	?recordLabel	?beginning	?end
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1-1>	"Example item"@en	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001-1>	"Example sub-collection"@en	"1942-08-04"^^<http://www.w3.org/2001/XMLSchema#date>	"1944-07-31"^^<http://www.w3.org/2001/XMLSchema#date>

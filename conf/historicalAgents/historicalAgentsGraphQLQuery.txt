@@ -2,6 +2,7 @@
   historicalAgents(ids: [\"<id>\"]) {
     items {
       id
+      ark
       identifier
       seeAlso
       description {

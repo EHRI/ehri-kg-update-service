@@ -11,6 +11,7 @@ PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX n2t: <https://n2t.net/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
@@ -263,6 +264,7 @@ SOURCE repositories <stdin>
 ITERATOR repositories_iterator <jsonpath: $.data.repositories.items[*]> {
 	PUSHED_FIELD id <id>
   	FIELD type <type>
+	FIELD ark <ark>
 	FIELD identifier <identifier>
 	PUSHED_FIELD lat <latitude>
 	PUSHED_FIELD long <longitude>
@@ -354,6 +356,7 @@ ehri:Institution ehri_institutions:[organization.id] {
 	rico:hasOrHadAgentName @ehri:AgentParallelName ;
 	rico:hasOrHadAgentName @ehri:AgentOtherName ;
 	rico:authorizedBy @ehri:Mandate ;
+	schema:sameAs n2t:[organization.ark] ;
 }
 
 ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 

@@ -10,6 +10,8 @@ PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
 PREFIX loc: <http://id.loc.gov/datatypes/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX n2t: <https://n2t.net/>
+PREFIX schema: <http://schema.org/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
 abk AS ab &
@@ -261,6 +263,7 @@ SOURCE people <stdin>
 
 ITERATOR people_iterator <jsonpath: $.data.historicalAgents.items[*]> {
 	PUSHED_FIELD id <identifier>
+    FIELD ark <ark>
     FIELD name <description.name>
     FIELD lastName <description.lastName>
     FIELD firstName <description.firstName>
@@ -323,6 +326,7 @@ ehri:Person ehri_pers:[person.id] {
     ehri:structureOrGenealogy [person.structure] @[person.languageCode MATCHING langcode_two_digit_equivalent] ; # This can be divided in structure of cb and genealogy of family if needed
     rico:generalDescription [person.generalContext] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
     rdfs:seeAlso [person.seeAlso] ;
+    schema:sameAs n2t:[person.ark] ;
 }
 
 ehri:AgentOtherName ehri_pers:[helpers.entityOtherNamePath(people.people_iterator.otherFormsOfName.person_id, people.people_iterator.otherFormsOfName.name)] {
