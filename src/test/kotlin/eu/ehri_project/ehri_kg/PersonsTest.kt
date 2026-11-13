@@ -14,7 +14,7 @@ import kotlin.test.Test
 class PersonsTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.PERSON)
     override val getTriplesSparqlPath = "src/test/resources/historicalAgents/getAllHistoricalAgentsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/historicalAgents/getAllHistoricalAgentsIds.rq"

@@ -1,0 +1,9 @@
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_ghettos: <http://lod.ehri-project-test.eu/vocabularies/ehri-ghettos/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+ehri:Ghetto IRI {
+	rico:hasOrHadSubject [ ehri_ghettos:~ ] + ;
+}

@@ -8,13 +8,15 @@ PREFIX ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/>
 PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX n2t: <https://n2t.net/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 SOURCE countries <stdin>
 
-ITERATOR countries_iterator <jsonpath: $.data.query> {
+ITERATOR countries_iterator <jsonpath: $.data.countries.items[*]> {
 	FIELD id <id>
   FIELD type <type>
+  FIELD ark <ark>
   FIELD identifier <identifier>
   FIELD name <name>
   FIELD history <history>
@@ -34,4 +36,5 @@ ehri:Country ehri_countries:[country.id] {
 	ehri:archivalSituation [country.situation] @en ;
 	ehri:researchSummary [country.summary] @en ;
 	ehri:researchExtensive [country.extensive] @en ;
+	schema:sameAs n2t:[country.ark] ;
 }

@@ -59,13 +59,12 @@
         a                       ehri:CorporateBody ;
         ehri:sources            "The Jewish Virtual Library (retrieved on 29/10/2017)\r\nhttp://www.jewishvirtuallibrary.org/jewish-telegraphic-agency-jta"@en ;
         rico:date               "1917 - Present" ;
-        rico:hasBeginningDate   <dates/1917> ;
+        rico:isAssociatedWithDate <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433/dates/1917_> ;
         rico:hasOrHadAgentName  <vocabularies/ehri-cb/005433/otherNames/J.T.A.> ;
         rico:history            "The Jewish Telegraphic Agency - former Jewish Correspondence Bureau - was created by the journalist Jacob Landau with the purpose of collecting and disseminating news among and affecting the Jewish communities of the diaspora. \r\n"@en ;
         rico:name               "Jewish Telegraphic Agency (JTA)"@en .
 
 # other triples
-<http://lod.ehri-project-test.eu/dates/1917> <https://www.ica.org/standards/RiC/ontology#isBeginningDateOf> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> .
 <http://lod.ehri-project-test.eu/units/us-005578-irn507373-irn599813> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> .
 <http://lod.ehri-project-test.eu/units/us-005578-irn558247> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> .
 <http://lod.ehri-project-test.eu/units/us-005578-irn557943> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> .
@@ -90,4 +89,8 @@
 <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> <https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf> <http://lod.ehri-project-test.eu/units/us-005578-irn533286> .
 <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> <https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf> <http://lod.ehri-project-test.eu/units/us-005578-irn503546> .
 
-
+# Dates
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433/dates/1917_> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.ica.org/standards/RiC/ontology#Date> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433/dates/1917_> <https://www.ica.org/standards/RiC/ontology#normalizedDateValue> "1917/"^^<http://id.loc.gov/datatypes/edtf> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433/dates/1917_> <https://www.ica.org/standards/RiC/ontology#beginningDate> "1917-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433/dates/1917_> <https://www.ica.org/standards/RiC/ontology#isDateAssociatedWith> <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/005433> .

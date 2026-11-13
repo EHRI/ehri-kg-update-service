@@ -19,4 +19,14 @@ DELETE {
         FILTER(?o = ehri_is_copy_of_relations:<$entityId>
             || ?o = ehri_has_copy_relations:<$entityId>)
     }
+    UNION
+    {
+        # Direct copy links between the source and target of the n-ary relations
+        ?relation a ?relationType ;
+            rico:relationHasSource ?s ;
+            rico:relationHasTarget ?o .
+        VALUES (?relationType ?p) { (ehri:HasCopyRelation ehri:hasCopy) (ehri:IsCopyOfRelation ehri:isCopyOf) }
+        FILTER(?relation = ehri_is_copy_of_relations:<$entityId>
+            || ?relation = ehri_has_copy_relations:<$entityId>)
+    }
 }

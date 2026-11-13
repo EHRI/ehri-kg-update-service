@@ -1,0 +1,37 @@
+{
+  "data": {
+    "historicalAgents": {
+      "items": [
+        {
+          "id": "ehri_pers-000002",
+          "ark": "ark:41045/p0000000000010",
+          "identifier": "000002",
+          "seeAlso": [
+            "http://dati.cdec.it/lod/shoah/person/example-1"
+          ],
+          "description": {
+            "languageCode": "eng",
+            "name": "Example person",
+            "identifier": null,
+            "dates": [],
+            "lastName": null,
+            "firstName": null,
+            "source": null,
+            "typeOfEntity": "person",
+            "datesOfExistence": null,
+            "biographicalHistory": null,
+            "legalStatus": null,
+            "structure": null,
+            "generalContext": null,
+            "occupation": null,
+            "otherFormsOfName": [],
+            "parallelFormsOfName": [],
+            "place": [],
+            "functions": [],
+            "mandates": []
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "countries": {
+      "items": [
+        {
+          "id": "be",
+          "ark": "ark:41045/p0000000000005",
+          "type": "Country",
+          "identifier": "be",
+          "name": "Belgium",
+          "history": "Example archival history of Belgium.",
+          "situation": "Example archival situation in Belgium.",
+          "summary": "Example summary of EHRI research in Belgium.",
+          "extensive": "Example extensive account of EHRI research in Belgium."
+        }
+      ]
+    }
+  }
+}

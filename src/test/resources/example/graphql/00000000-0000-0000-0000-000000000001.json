@@ -1,0 +1,29 @@
+{
+  "data": {
+    "links": {
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000001",
+          "type": "Link",
+          "description": "Example description of the copy.",
+          "field": "locationOfCopies",
+          "body": [],
+          "targets": [
+            {
+              "id": "be-000001-kd_00001",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "nl-000002-example_copy",
+              "type": "DocumentaryUnit"
+            }
+          ],
+          "source": {
+            "id": "be-000001-kd_00001",
+            "type": "DocumentaryUnit"
+          }
+        }
+      ]
+    }
+  }
+}

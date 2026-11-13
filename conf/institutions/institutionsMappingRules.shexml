@@ -11,10 +11,12 @@ PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX n2t: <https://n2t.net/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Transformers.scala>
-FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Validators.scala>
+FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
+FUNCTIONS validators <scala: conf/functions/Validators.scala>
+FUNCTIONS helpers <scala: conf/functions/EHRIFunctions.scala>
 MATCHER langcode_two_digit_equivalent <aar AS aa & 
 abk AS ab & 
 afr AS af & 
@@ -259,9 +261,10 @@ chi  AS zh &
 zho  AS zh & 
 zul AS zu>
 SOURCE repositories <stdin>
-ITERATOR repositories_iterator <jsonpath: $.data.query> {
+ITERATOR repositories_iterator <jsonpath: $.data.repositories.items[*]> {
 	PUSHED_FIELD id <id>
   	FIELD type <type>
+	FIELD ark <ark>
 	FIELD identifier <identifier>
 	PUSHED_FIELD lat <latitude>
 	PUSHED_FIELD long <longitude>
@@ -287,7 +290,6 @@ ITERATOR repositories_iterator <jsonpath: $.data.query> {
 		FIELD publicAreas <publicAreas>
 		FIELD rulesAndConventions <rulesAndConventions>
 		FIELD status <status>
-		FIELD datesOfDescription <datesOfDescription>
 		FIELD maintenanceNotes <maintenanceNotes>
 		FIELD languages <languages>
 		FIELD scripts <scripts>
@@ -326,8 +328,6 @@ ITERATOR repositories_iterator <jsonpath: $.data.query> {
 }
 
 EXPRESSION organization <repositories.repositories_iterator>
-EXPRESSION parallel_name_id <repositories.repositories_iterator.descriptions.parallelFormsOfName.repository_id + "/parallelNames/" + repositories.repositories_iterator.descriptions.parallelFormsOfName.name>
-EXPRESSION other_name_id <repositories.repositories_iterator.descriptions.otherFormsOfName.repository_id + "/otherNames/" + repositories.repositories_iterator.descriptions.otherFormsOfName.name>
 
 
 ####################
@@ -356,6 +356,7 @@ ehri:Institution ehri_institutions:[organization.id] {
 	rico:hasOrHadAgentName @ehri:AgentParallelName ;
 	rico:hasOrHadAgentName @ehri:AgentOtherName ;
 	rico:authorizedBy @ehri:Mandate ;
+	schema:sameAs n2t:[organization.ark] ;
 }
 
 ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
@@ -367,7 +368,7 @@ ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitution
 ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
 	a ehri:InstitutionAddress ;
 	rico:hasOrHadCoordinates @ehri:Coordinates ;
-	schema:postalCode [organization.descriptions.addresses.postalCode] ;
+	schema:postalCode [organization.descriptions.addresses.postalCode] xsd:string ;
 	rico:name [organization.descriptions.addresses.street] ;
 	schema:faxNumber [organization.descriptions.addresses.fax] ;
   	schema:telephone [organization.descriptions.addresses.telephone] ;
@@ -377,10 +378,10 @@ ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionA
 	rico:isOrWasPhysicalLocationOf ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ;
 }
 
-ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id)] {
+ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id) IF validators.nonEmpty(organization.descriptions.addresses.lat)] {
 	a rico:Coordinates ;
-	rico:latitude [organization.descriptions.addresses.lat] ;
-	rico:longitude [organization.descriptions.addresses.long] ;
+	rico:latitude [organization.descriptions.addresses.lat] xsd:decimal ;
+	rico:longitude [organization.descriptions.addresses.long] xsd:decimal ;
 	rico:isOrWasCoordinatesOf ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ; 
 }
 
@@ -399,13 +400,13 @@ ehri:City ehri_cities:[organization.descriptions.addresses.municipality] {
 	# To be implemented owl:sameAs
 }
 
-ehri:AgentParallelName ehri_institutions:[parallel_name_id] {
+ehri:AgentParallelName ehri_institutions:[helpers.entityParallelNamePath(repositories.repositories_iterator.descriptions.parallelFormsOfName.repository_id, repositories.repositories_iterator.descriptions.parallelFormsOfName.name)] {
 	a ehri:ParallelAgentName ;
 	rico:name [organization.descriptions.parallelFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.parallelFormsOfName.repository_id] ;
 }
 
-ehri:AgentOtherName ehri_institutions:[other_name_id] { 
+ehri:AgentOtherName ehri_institutions:[helpers.entityOtherNamePath(repositories.repositories_iterator.descriptions.otherFormsOfName.repository_id, repositories.repositories_iterator.descriptions.otherFormsOfName.name)] { 
 	a ehri:AlternateAgentName ;
 	rico:name [organization.descriptions.otherFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_institutions:[organization.descriptions.otherFormsOfName.repository_id] ;

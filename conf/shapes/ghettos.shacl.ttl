@@ -1,0 +1,15 @@
+@prefix ehri_units: <http://lod.ehri-project-test.eu/units/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix ehri_ghettos: <http://lod.ehri-project-test.eu/vocabularies/ehri-ghettos/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+ehri:Ghetto  a          sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasOrHadSubject
+                        ] ;
+        sh:targetSubjectsOf rico:hasOrHadSubject .

@@ -1,57 +1,73 @@
-{"query": "{query:
-  DocumentaryUnit(id: \"<id>\") {
-    id
-    type
-    identifier
-    otherIdentifiers
-    descriptions {
-      languageCode
-      name
+{"query": "{
+  documentaryUnits(ids: [\"<id>\"]) {
+    items {
+      id
+      ark
+      type
       identifier
-      accessPoints {
-        id
+      otherIdentifiers
+      descriptions {
+        languageCode
         name
-        type
+        identifier
+        accessPoints {
+          id
+          name
+          type
+        }
+        dates {
+          startDate
+          endDate
+          precision
+        }
+        archivistNote
+        archivalHistory
+        acquisition
+        appraisal
+        accruals
+        biographicalHistory
+        conditionsOfAccess
+        conditionsOfReproduction
+        datesOfDescriptions
+        extentAndMedium
+        levelOfDescription
+        relatedUnitsOfDescription
+        physicalCharacteristics
+        publicationNote
+        ref
+        rulesAndConventions
+        scopeAndContent
+        separatedUnitsOfDescription
+        systemOfArrangement
+        findingAids
+        languageOfMaterial
+        locationOfOriginals
+        locationOfCopies
+        parallelFormsOfName
+        physicalLocation
+        notes
+        scriptOfMaterial
+        sources
+        unitDates
       }
-      dates {
-        startDate
-        endDate
+      parent {
+        id
       }
-      archivistNote
-      archivalHistory
-      acquisition
-      appraisal
-      accruals
-      biographicalHistory
-      conditionsOfAccess
-      conditionsOfReproduction
-      datesOfDescriptions
-      extentAndMedium
-      levelOfDescription
-      relatedUnitsOfDescription
-      physicalCharacteristics
-      publicationNote
-      ref
-      rulesAndConventions
-      scopeAndContent
-      separatedUnitsOfDescription
-      systemOfArrangement
-      findingAids
-      languageOfMaterial
-      locationOfOriginals
-      locationOfCopies
-      parallelFormsOfName
-      physicalLocation
-      notes
-      scriptOfMaterial
-      sources
-      unitDates
-    }
-    parent {
-      id
-    }
-    itemCount
-    repository {
-      id
+      itemCount
+      repository {
+        id
+      }
+      creators: connected(accessPointType: [creator], direction: outgoing) {
+        item {
+          id
+          type
+        }
+      }
+      subjects: connected(accessPointType: [subject, person, corporateBody, family, place], direction: outgoing) {
+        item {
+          id
+          type
+        }
+      }
     }
   } }" }

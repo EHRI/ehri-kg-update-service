@@ -12,14 +12,22 @@ class ShExMLMappingLauncherProxy {
 
     fun convert(mappingRules: String, fileInput: String): Dataset {
         logger.info { "Transforming received data to RDF using ShExML" }
-        logger.debug { "Mapping rules $mappingRules" }
-        val inputStream = fileInput.byteInputStream()
-        System.setIn(inputStream)
-        inputStream.close()
-        val result = MappingLauncher("", "", "", true, true, ParallelExecutionConfigurator.empty(), Path.of(""))
-            .launchMapping(mappingRules)
-        System.setIn(System.`in`)
-        return result
+        logger.trace { "Mapping rules $mappingRules" }
+        // ShExML reads <stdin> sources from System.in, so take the lock shexml-streaming takes for the same, in case
+        // it maps an SSE message meanwhile
+        synchronized(MappingLauncher::class.java) {
+            val original = System.`in`
+            System.setIn(fileInput.byteInputStream())
+            try {
+                // Not inferring datatypes (the first boolean), as numeric-looking values such as identifiers and years
+                // would become xsd:integer or xsd:decimal; values without a datatype in the mapping rules are strings.
+                // The second normalises URIs.
+                return MappingLauncher("", "", "", false, true, ParallelExecutionConfigurator.empty(), Path.of(""))
+                    .launchMapping(mappingRules)
+            } finally {
+                System.setIn(original)
+            }
+        }
     }
 
 }

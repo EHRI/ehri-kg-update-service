@@ -16,18 +16,20 @@ class DatabaseManager(config: Config) {
     private val creationScriptPath = config.get("databaseCreationScript")
 
     init {
-        createDatabaseIfNotExists()
+        initialiseSchema()
     }
 
     private fun connect(): Connection = DriverManager.getConnection("jdbc:sqlite:$databasePath")
 
-    private fun createDatabaseIfNotExists() {
+    // We can run initialiseSchema on existing databases, if, e.g. they
+    // don't have the index...
+    private fun initialiseSchema() {
         if (!File(databasePath).isFile) {
             logger.info { "Creating database for registering the events history at $databasePath" }
-            connect().use { connection ->
-                connection.createStatement().use { statement ->
-                    statement.executeUpdate(SourceHelper.readFile(creationScriptPath))
-                }
+        }
+        connect().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeUpdate(SourceHelper.readFile(creationScriptPath))
             }
         }
     }
@@ -52,6 +54,21 @@ class DatabaseManager(config: Config) {
                     statement.executeUpdate()
                 } catch (e: SQLException) {
                     logger.error(e) { "Error while inserting the event report into the database" }
+                }
+            }
+        }
+    }
+
+    /**
+     * The id of the last event recorded, whether or not it was processed successfully, if any. Rows are compared in
+     * the order they were inserted, which is the order the events were processed in, as the timestamps, without
+     * trailing zeros, don't sort as text.
+     */
+    fun lastEventId(): String? {
+        connect().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeQuery("SELECT event_id FROM events_history ORDER BY rowid DESC LIMIT 1;").use { rs ->
+                    return if (rs.next()) rs.getString("event_id") else null
                 }
             }
         }

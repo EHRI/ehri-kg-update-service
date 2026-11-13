@@ -1,0 +1,34 @@
+{
+  "data": {
+    "concepts": {
+      "items": [
+        {
+          "id": "ehri_camps-1",
+          "ark": "ark:41045/p0000000000006",
+          "type": "CvocConcept",
+          "identifier": "1",
+          "uri": null,
+          "seeAlso": [],
+          "latitude": 51.033,
+          "longitude": 4.475,
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Mechelen",
+              "identifier": null,
+              "altLabel": [],
+              "scopeNote": []
+            }
+          ],
+          "broader": [],
+          "narrower": [],
+          "vocabulary": {
+            "id": "ehri_camps",
+            "type": "CvocVocabulary",
+            "identifier": "ehri-camps"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -14,7 +14,7 @@ import kotlin.test.Test
 class LinksTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.LINK)
     override val getTriplesSparqlPath = "src/test/resources/links/getAllLinksTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/links/getAllLinksIds.rq"

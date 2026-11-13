@@ -1,0 +1,226 @@
+@prefix schema: <http://schema.org/> .
+@prefix ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/> .
+@prefix ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/> .
+@prefix ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/> .
+@prefix ehri_activity: <http://lod.ehri-project-test.eu/activities/> .
+@prefix ehri_units: <http://lod.ehri-project-test.eu/units/> .
+@prefix ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix ehri_mandate: <http://lod.ehri-project-test.eu/mandates/> .
+
+ehri:AgentParallelName
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasAgentNameOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:ParallelAgentName ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:ParallelAgentName .
+
+ehri:Link  a            sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasOrHadSubject
+                        ] .
+
+ehri:AuthorityLegalStatus
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasLegalStatusOf
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( rico:LegalStatus ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:LegalStatus .
+
+ehri:AgentOtherName  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasAgentNameOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:AlternateAgentName ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:AlternateAgentName .
+
+ehri:AuthorityFunction
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasPerformedBy
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( ehri_activity_types:function ) ;
+                          sh:path  rico:hasActivityType
+                        ] ;
+        sh:property     [ sh:in    ( rico:Activity ) ;
+                          sh:path  rdf:type
+                        ] .
+
+ehri:AuthorityMandate
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:authorizes
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( rico:Mandate ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Mandate .
+
+ehri:CBAndFamily  a     sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:node  ehri:AuthorityMandate ;
+                          sh:path  rico:authorizedBy
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:Literal ;
+                          sh:path      rico:date
+                        ] ;
+        sh:property     [ sh:node  ehri:CBDate ;
+                          sh:path  rico:isAssociatedWithDate
+                        ] ;
+        sh:property     [ sh:path  rico:hasOrHadAgentName ;
+                          sh:or (
+                            [
+                              sh:node  ehri:AgentParallelName ;
+                            ]
+                            [
+                              sh:node  ehri:AgentOtherName ;
+                            ]
+                          ) 
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rdfs:seeAlso
+                        ] ;
+        sh:property     [ sh:in    ( ehri:CorporateBody ehri:Family ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:structureOrGenealogy
+                        ] ;
+        sh:property     [ sh:node  ehri:AuthorityLegalStatus ;
+                          sh:path  rico:hasOrHadLegalStatus
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:sources
+                        ] ;
+        sh:property     [ sh:path  rico:performsOrPerformed ;
+                          sh:or (
+                            [
+                              sh:node  ehri:AuthorityFunction ;
+                            ]
+                            [
+                              sh:node  ehri:AuthorityOccupation ; 
+                            ]
+                          ) 
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:history
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:targetClass  ehri:CorporateBody, ehri:Family .
+
+ehri:AuthorityOccupation
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasPerformedBy
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( ehri_activity_types:occupation ) ;
+                          sh:path  rico:hasActivityType
+                        ] ;
+        sh:property     [ sh:in    ( rico:Activity ) ;
+                          sh:path  rdf:type
+                        ] .
+
+ehri:CBDate  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:in    ( rico:Date ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  <http://id.loc.gov/datatypes/edtf> ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:normalizedDateValue
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:beginningDate
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:endDate
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:pattern   "^http://lod.ehri-project-test.eu/vocabularies/ehri-(cb|fm)/" ;
+                          sh:path      rico:isDateAssociatedWith
+                        ] .

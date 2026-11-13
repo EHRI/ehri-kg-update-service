@@ -4,10 +4,14 @@ PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
 PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
 PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
 PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
 PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
+PREFIX loc: <http://id.loc.gov/datatypes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX n2t: <https://n2t.net/>
+PREFIX schema: <http://schema.org/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
 abk AS ab &
@@ -252,12 +256,14 @@ zha AS za &
 chi  AS zh &
 zho  AS zh &
 zul AS zu>
-FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Transformers.scala>
-FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Validators.scala>
+FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
+FUNCTIONS validators <scala: conf/functions/Validators.scala>
+FUNCTIONS helpers <scala: conf/functions/EHRIFunctions.scala>
 SOURCE people <stdin>
 
-ITERATOR people_iterator <jsonpath: $.data.query> {
+ITERATOR people_iterator <jsonpath: $.data.historicalAgents.items[*]> {
 	PUSHED_FIELD id <identifier>
+    FIELD ark <ark>
     FIELD name <description.name>
     FIELD lastName <description.lastName>
     FIELD firstName <description.firstName>
@@ -270,15 +276,9 @@ ITERATOR people_iterator <jsonpath: $.data.query> {
     FIELD structure <description.structure>
     FIELD generalContext <description.generalContext>
     FIELD occupation <description.occupation>
-  	ITERATOR links <links[*]> {
-        ITERATOR targets <targets[?(@.type=='DocumentaryUnit')]> {
-            FIELD unit_id <id>
-            POPPED_FIELD person_id <id>
-        }
-    }
-    ITERATOR dates <description.dates[*]> {
-        FIELD startDate <startDate>
-        FIELD endDate <endDate>
+    FIELD seeAlso <seeAlso>
+    ITERATOR dates <description.dates> {
+        FIELD period <[*]>
         POPPED_FIELD person_id <id>
     }
     ITERATOR otherFormsOfName <description.otherFormsOfName> {
@@ -306,8 +306,6 @@ ITERATOR people_iterator <jsonpath: $.data.query> {
 }
 
 EXPRESSION person <people.people_iterator>
-EXPRESSION other_name_id <people.people_iterator.otherFormsOfName.person_id + "/otherNames/" + people.people_iterator.otherFormsOfName.name>
-EXPRESSION parallel_name_id <people.people_iterator.parallelFormsOfName.person_id + "/parallelNames/" + people.people_iterator.parallelFormsOfName.name>
 
 ehri:Person ehri_pers:[person.id] {
     a ehri:Person ;
@@ -318,8 +316,8 @@ ehri:Person ehri_pers:[person.id] {
     rdfs:seeAlso [transformers.removeSquareBrackets(person.sourceLink) IF validators.isURL(person.sourceLink)] ;
     ehri:sources [transformers.removeSquareBrackets(person.sourceLink) IF validators.nonURL(person.sourceLink)] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
     rico:date [person.datesOfExistence] ;
-	rico:hasBirthDate @ehri:PersonBeginningDate ;
-	rico:hasDeathDate @ehri:PersonEndDate ;
+	rico:hasBirthDate @ehri:PersonBirthDate ;
+	rico:hasDeathDate @ehri:PersonDeathDate ;
     # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # It will be difficult to determine the correct prefix among cities, countries and regions.
     rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus ;
     rico:performsOrPerformed @ehri:AuthorityOccupation ;
@@ -327,61 +325,59 @@ ehri:Person ehri_pers:[person.id] {
     rico:authorizedBy @ehri:AuthorityMandate ;
     ehri:structureOrGenealogy [person.structure] @[person.languageCode MATCHING langcode_two_digit_equivalent] ; # This can be divided in structure of cb and genealogy of family if needed
     rico:generalDescription [person.generalContext] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+    rdfs:seeAlso [person.seeAlso] ;
+    schema:sameAs n2t:[person.ark] ;
 }
 
-ehri:Link ehri_units:[person.links.targets.unit_id] {
-    rico:hasOrHadSubject ehri_pers:[person.links.targets.person_id] ;
-}
-
-ehri:LinkInverse ehri_pers:[person.links.targets.person_id] {
-    rico:isOrWasSubjectOf ehri_units:[person.links.targets.unit_id] ;
-}
-
-ehri:AgentOtherName ehri_pers:[other_name_id] {
+ehri:AgentOtherName ehri_pers:[helpers.entityOtherNamePath(people.people_iterator.otherFormsOfName.person_id, people.people_iterator.otherFormsOfName.name)] {
 	a ehri:AlternateAgentName ;
 	rico:name [person.otherFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_pers:[person.otherFormsOfName.person_id] ;
 }
 
-ehri:AgentParallelName ehri_pers:[parallel_name_id] {
+ehri:AgentParallelName ehri_pers:[helpers.entityParallelNamePath(people.people_iterator.parallelFormsOfName.person_id, people.people_iterator.parallelFormsOfName.name)] {
 	a ehri:ParallelAgentName ;
 	rico:name [person.parallelFormsOfName.name] ;
 	rico:isOrWasAgentNameOf ehri_pers:[person.parallelFormsOfName.person_id] ;
 }
 
-ehri:PersonBeginningDate ehri_dates:[person.dates.startDate] {
+ehri:PersonBirthDate ehri_pers:[helpers.entityStartDatePath(person.dates.person_id, person.dates.period) IF helpers.hasStartDate(person.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.startDate] ;
+	rico:normalizedDateValue [helpers.startDate(person.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestDate(person.dates.period) IF helpers.hasEarliestDate(person.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestStartDate(person.dates.period) IF helpers.hasLatestStartDate(person.dates.period)] xsd:date ;
 	rico:isBirthDateOf ehri_pers:[person.dates.person_id] ;
 }
 
-ehri:PersonEndDate ehri_dates:[person.dates.endDate] {
+ehri:PersonDeathDate ehri_pers:[helpers.entityEndDatePath(person.dates.person_id, person.dates.period) IF helpers.hasEndDate(person.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.endDate] ;
+	rico:normalizedDateValue [helpers.endDate(person.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestEndDate(person.dates.period) IF helpers.hasEarliestEndDate(person.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestDate(person.dates.period) IF helpers.hasLatestDate(person.dates.period)] xsd:date ;
 	rico:isDeathDateOf ehri_pers:[person.dates.person_id] ;
 }
 
-ehri:AuthorityLegalStatus ehri_pers:[transformers.combinedPathPersonLegalStatus(person.id) IF validators.nonEmpty(person.legalStatus)] {
+ehri:AuthorityLegalStatus ehri_pers:[transformers.combinedPathHistoricalAgentLegalStatus(person.id) IF validators.nonEmpty(person.legalStatus)] {
     a rico:LegalStatus ;
     rico:generalDescription [person.legalStatus] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
     rico:isOrWasLegalStatusOf ehri_pers:[person.id] ;
 }
 
-ehri:AuthorityOccupation ehri_pers:[transformers.combinedPathPersonOccupation(person.id) IF validators.nonEmpty(person.occupation)] {
+ehri:AuthorityOccupation ehri_pers:[transformers.combinedPathHistoricalAgentOccupation(person.id) IF validators.nonEmpty(person.occupation)] {
     a rico:Activity ;
-    rico:hasActivityType rico:OccupationType ;
+    rico:hasActivityType ehri_activity_types:occupation ;
     rico:generalDescription [person.occupation] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
     rico:isOrWasPerformedBy ehri_pers:[person.id] ;
 }
 
-ehri:AuthorityFunction ehri_pers:[transformers.combinedPathPersonFunction(person.funcs.person_id, person.funcs.func.index())] {
+ehri:AuthorityFunction ehri_pers:[transformers.combinedPathHistoricalAgentFunction(person.funcs.person_id, person.funcs.func.index())] {
     a rico:Activity ;
-    rico:hasActivityType ehri:FunctionType ;
+    rico:hasActivityType ehri_activity_types:function ;
     rico:generalDescription [person.funcs.func] @[person.funcs.langCode MATCHING langcode_two_digit_equivalent] ;
     rico:isOrWasPerformedBy ehri_pers:[person.funcs.person_id] ;
 }
 
-ehri:AuthorityMandate ehri_pers:[transformers.combinedPathPersonMandate(person.mandates.person_id, person.mandates.mandate.index())] {
+ehri:AuthorityMandate ehri_pers:[transformers.combinedPathHistoricalAgentMandate(person.mandates.person_id, person.mandates.mandate.index())] {
     a rico:Mandate ;
     rico:generalDescription [person.mandates.mandate] @[person.mandates.langCode MATCHING langcode_two_digit_equivalent] ;
     rico:authorizes ehri_pers:[person.mandates.person_id] ;

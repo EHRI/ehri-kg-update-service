@@ -1,36 +1,34 @@
-{"query": "{query:
-  HistoricalAgent(id: \"<id>\") {
-    id
-    identifier
-    description {
-      languageCode
-      name
+{"query": "{
+  historicalAgents(ids: [\"<id>\"]) {
+    items {
+      id
+      ark
       identifier
-      dates {
-        startDate
-        endDate
+      seeAlso
+      description {
+        languageCode
+        name
+        identifier
+        dates {
+          startDate
+          endDate
+          precision
+        }
+        lastName
+        firstName
+        source
+        typeOfEntity
+        datesOfExistence
+        biographicalHistory
+        legalStatus
+        structure
+        generalContext
+        occupation
+        otherFormsOfName
+        parallelFormsOfName
+        place
+        functions
+        mandates
       }
-      lastName
-      firstName
-      source
-      typeOfEntity
-      datesOfExistence
-      biographicalHistory
-      legalStatus
-      structure
-      generalContext
-      occupation
-      otherFormsOfName
-      parallelFormsOfName
-      place
-      functions
-      mandates
     }
-    links {
-      targets {
-        id
-        type
-      }
-    }
-  }
-}" }
+  } }" }

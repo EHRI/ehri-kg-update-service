@@ -1,40 +1,33 @@
-{"query": "{query:
-  CvocConcept(id: \"<id>\") {
-    id
-    type
-    identifier
-    uri
-    seeAlso
-    latitude
-    longitude
-    descriptions {
-      languageCode
-      name
-      identifier
-      altLabel
-      scopeNote
-    }
-    broader {
+{"query": "{
+  concepts(ids: [\"<id>\"]) {
+    items {
       id
-      identifier
-    }
-    narrower {
-      id
-      identifier
-    }
-    links {
-      id
+      ark
       type
-      field
-      targets {
+      identifier
+      uri
+      seeAlso
+      latitude
+      longitude
+      descriptions {
+        languageCode
+        name
+        identifier
+        altLabel
+        scopeNote
+      }
+      broader {
+        id
+        identifier
+      }
+      narrower {
+        id
+        identifier
+      }
+      vocabulary {
         id
         type
+        identifier
       }
     }
-    vocabulary {
-      id
-      type
-      identifier
-    }
-  }
-}" }
+  } }" }

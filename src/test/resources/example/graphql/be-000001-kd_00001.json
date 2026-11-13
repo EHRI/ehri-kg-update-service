@@ -1,0 +1,140 @@
+{
+  "data": {
+    "documentaryUnits": {
+      "items": [
+        {
+          "id": "be-000001-kd_00001",
+          "ark": "ark:41045/p0000000000003",
+          "type": "DocumentaryUnit",
+          "identifier": "KD_00001",
+          "otherIdentifiers": [
+            "JMDV-0001"
+          ],
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Miscellaneous documents collected to create the Jewish Museum of Deportation and Resistance. Collection",
+              "identifier": null,
+              "accessPoints": [],
+              "dates": [
+                {
+                  "startDate": "1940-01-01",
+                  "endDate": "1945-12-31"
+                }
+              ],
+              "archivistNote": "Example archivist note.",
+              "archivalHistory": "Example archival history.",
+              "acquisition": "Example immediate source of acquisition.",
+              "appraisal": "Example appraisal, destruction and scheduling information.",
+              "accruals": "Example accruals.",
+              "biographicalHistory": "Example biographical history of the creator.",
+              "conditionsOfAccess": "Example conditions governing access.",
+              "conditionsOfReproduction": "Example conditions of reproduction.",
+              "datesOfDescriptions": null,
+              "extentAndMedium": "Example extent and medium.",
+              "levelOfDescription": "collection",
+              "relatedUnitsOfDescription": "Example related units of description.",
+              "physicalCharacteristics": "Example physical characteristics.",
+              "publicationNote": "Example publication note.",
+              "ref": "https://portal.ehri-project.eu/units/be-000001-kd_00001",
+              "rulesAndConventions": null,
+              "scopeAndContent": "Example scope and content.",
+              "separatedUnitsOfDescription": "Example separated units of description.",
+              "systemOfArrangement": "Example system of arrangement.",
+              "findingAids": [
+                "Example finding aids."
+              ],
+              "languageOfMaterial": [
+                "nld",
+                "fra"
+              ],
+              "locationOfOriginals": [],
+              "locationOfCopies": [
+                "Example existence and location of copies."
+              ],
+              "parallelFormsOfName": [],
+              "physicalLocation": [],
+              "notes": [
+                "Example general note."
+              ],
+              "scriptOfMaterial": [
+                "Latn"
+              ],
+              "sources": [
+                "Example sources used to prepare the description."
+              ],
+              "unitDates": [
+                "1940-1945"
+              ]
+            },
+            {
+              "languageCode": "nld",
+              "name": "Diverse documenten verzameld voor de oprichting van het Joods Museum van Deportatie en Verzet. Collectie",
+              "identifier": null,
+              "accessPoints": [],
+              "dates": [],
+              "archivistNote": null,
+              "archivalHistory": null,
+              "acquisition": null,
+              "appraisal": null,
+              "accruals": null,
+              "biographicalHistory": null,
+              "conditionsOfAccess": null,
+              "conditionsOfReproduction": null,
+              "datesOfDescriptions": null,
+              "extentAndMedium": null,
+              "levelOfDescription": "collection",
+              "relatedUnitsOfDescription": null,
+              "physicalCharacteristics": null,
+              "publicationNote": null,
+              "ref": null,
+              "rulesAndConventions": null,
+              "scopeAndContent": "Voorbeeld van bereik en inhoud.",
+              "separatedUnitsOfDescription": null,
+              "systemOfArrangement": null,
+              "findingAids": [],
+              "languageOfMaterial": [],
+              "locationOfOriginals": [],
+              "locationOfCopies": [],
+              "parallelFormsOfName": [
+                "Verzameling JMDV"
+              ],
+              "physicalLocation": [],
+              "notes": [],
+              "scriptOfMaterial": [],
+              "sources": [],
+              "unitDates": []
+            }
+          ],
+          "parent": null,
+          "itemCount": 0,
+          "repository": {
+            "id": "be-000001"
+          },
+          "creators": [
+            {
+              "item": {
+                "id": "ehri_cb-000001",
+                "type": "HistoricalAgent"
+              }
+            }
+          ],
+          "subjects": [
+            {
+              "item": {
+                "id": "ehri_terms-1",
+                "type": "CvocConcept"
+              }
+            },
+            {
+              "item": {
+                "id": "ehri_camps-1",
+                "type": "CvocConcept"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

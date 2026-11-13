@@ -1,6 +1,8 @@
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
+PREFIX n2t: <https://n2t.net/>
+PREFIX schema: <http://schema.org/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -253,12 +255,13 @@ zha AS za &
 chi  AS zh &
 zho  AS zh &
 zul AS zu>
-FUNCTIONS transformers <scala: conf/vocabularies/Transformers.scala>
-FUNCTIONS validators <scala: conf/vocabularies/Validators.scala>
+FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
+FUNCTIONS validators <scala: conf/functions/Validators.scala>
 SOURCE concepts <stdin>
-ITERATOR concept_iterator <jsonpath: $.data.query> {
+ITERATOR concept_iterator <jsonpath: $.data.concepts.items[*]> {
 	PUSHED_FIELD item_id <identifier>
 	FIELD uri <uri>
+	FIELD ark <ark>
 	FIELD see_also <seeAlso>
 	FIELD latitude <latitude>
 	FIELD longitude <longitude>
@@ -279,20 +282,8 @@ ITERATOR concept_iterator <jsonpath: $.data.query> {
     FIELD alt_label <altLabel>
     FIELD scope_note <scopeNote>
   }
-  ITERATOR links <links[*]> {
-    ITERATOR targets <targets[?(@.type=='DocumentaryUnit')]> {
-        FIELD unit_id <id>
-        POPPED_FIELD parent_id <item_id>
-        POPPED_FIELD vocabulary_set <vocabulary_id>
-    }
-  }
-}
-ITERATOR data <jsonpath: $.data> {
-  FIELD item_id <query.identifier>
-  FIELD test <query>
 }
 EXPRESSION concept <concepts.concept_iterator>
-EXPRESSION test2 <concepts.data>
 
 ehri:Concept ehri_vocabs:[transformers.generateVocabUri(concept.vocabulary_id, concept.item_id)] {
   a skos:Concept ;
@@ -303,19 +294,12 @@ ehri:Concept ehri_vocabs:[transformers.generateVocabUri(concept.vocabulary_id, c
   skos:narrower ehri_vocabs:[transformers.generateVocabUri(concept.narrower.vocabulary_set, concept.narrower.id)] ;
   rdfs:seeAlso [concept.see_also] ;
   skos:inScheme ehri_vocabs:[concept.vocabulary_id] ;
-  geo:lat [concept.latitude] xsd:double ;
-  geo:long [concept.longitude] xsd:double ;
+  schema:sameAs n2t:[concept.ark] ;
+  geo:lat [concept.latitude] xsd:decimal ;
+  geo:long [concept.longitude] xsd:decimal ;
   skos:scopeNote [concept.descriptions.scope_note] @[concept.descriptions.langcode MATCHING langcode_two_digit_equivalent] ;
   # This cannot be generated at the moment, JSONPath functions are not supported in ShExML
   #skos:topConceptOf ehri_vocabs:[concept.vocabulary_id IF validators.greaterThanZero(concept.broader_length)] ;
-}
-
-ehri:ConceptLink ehri_units:[concept.links.targets.unit_id] {
-  	rico:hasOrHadSubject ehri_vocabs:[transformers.generateVocabUri(concept.links.targets.vocabulary_set, concept.links.targets.parent_id)] ;
-}
-
-ehri:ConceptLinkInverse ehri_vocabs:[transformers.generateVocabUri(concept.links.targets.vocabulary_set, concept.links.targets.parent_id)] {
-  	rico:isOrWasSubjectOf ehri_units:[concept.links.targets.unit_id] ;
 }
 
 ehri:ConceptScheme ehri_vocabs:[concept.vocabulary_id] {

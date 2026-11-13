@@ -1,0 +1,75 @@
+{
+  "data": {
+    "documentaryUnits": {
+      "items": [
+        {
+          "id": "be-000001-kd_00001-1",
+          "ark": "ark:41045/p0000000000002",
+          "type": "DocumentaryUnit",
+          "identifier": "1",
+          "otherIdentifiers": [],
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Example sub-collection",
+              "identifier": null,
+              "accessPoints": [],
+              "dates": [{"startDate": "1942-08-04", "endDate": "1944-07-31", "precision": "day"}],
+              "archivistNote": null,
+              "archivalHistory": null,
+              "acquisition": null,
+              "appraisal": null,
+              "accruals": null,
+              "biographicalHistory": null,
+              "conditionsOfAccess": null,
+              "conditionsOfReproduction": null,
+              "datesOfDescriptions": null,
+              "extentAndMedium": null,
+              "levelOfDescription": "subcollection",
+              "relatedUnitsOfDescription": null,
+              "physicalCharacteristics": null,
+              "publicationNote": null,
+              "ref": null,
+              "rulesAndConventions": null,
+              "scopeAndContent": null,
+              "separatedUnitsOfDescription": null,
+              "systemOfArrangement": null,
+              "findingAids": [],
+              "languageOfMaterial": [],
+              "locationOfOriginals": [],
+              "locationOfCopies": [],
+              "parallelFormsOfName": [],
+              "physicalLocation": [],
+              "notes": [],
+              "scriptOfMaterial": [],
+              "sources": [],
+              "unitDates": []
+            }
+          ],
+          "parent": {
+            "id": "be-000001-kd_00001"
+          },
+          "itemCount": 1,
+          "repository": {
+            "id": "be-000001"
+          },
+          "creators": [],
+          "subjects": [
+            {
+              "item": {
+                "id": "ehri_terms-2",
+                "type": "CvocConcept"
+              }
+            },
+            {
+              "item": {
+                "id": "ehri_cb-000001",
+                "type": "HistoricalAgent"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

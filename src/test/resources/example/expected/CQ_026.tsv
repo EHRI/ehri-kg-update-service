@@ -1,0 +1,2 @@
+?record	?creator	?creatorName	?period	?beginning	?end
+<http://lod.ehri-project-test.eu/units/be-000001-kd_00001>	<http://lod.ehri-project-test.eu/vocabularies/ehri-cb/000001>	"Comité de Défense des Juifs"@en	"1942/1944"^^<http://id.loc.gov/datatypes/edtf>	"1942-01-01"^^<http://www.w3.org/2001/XMLSchema#date>	"1944-12-31"^^<http://www.w3.org/2001/XMLSchema#date>

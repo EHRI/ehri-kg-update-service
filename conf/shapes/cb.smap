@@ -1,0 +1,2 @@
+{FOCUS a <http://lod.ehri-project-test.eu/ontology#Family>}@<http://lod.ehri-project-test.eu/ontology#CBAndFamily>
+{FOCUS a <http://lod.ehri-project-test.eu/ontology#CorporateBody>}@<http://lod.ehri-project-test.eu/ontology#CBAndFamily>

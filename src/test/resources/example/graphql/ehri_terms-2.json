@@ -1,0 +1,48 @@
+{
+  "data": {
+    "concepts": {
+      "items": [
+        {
+          "id": "ehri_terms-2",
+          "ark": "ark:41045/p0000000000012",
+          "type": "CvocConcept",
+          "identifier": "2",
+          "uri": null,
+          "seeAlso": [],
+          "latitude": null,
+          "longitude": null,
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Jewish resistance",
+              "identifier": null,
+              "altLabel": [],
+              "scopeNote": [
+                "Example scope note."
+              ]
+            },
+            {
+              "languageCode": "nld",
+              "name": "Joods verzet",
+              "identifier": null,
+              "altLabel": [],
+              "scopeNote": []
+            }
+          ],
+          "broader": [
+            {
+              "id": "ehri_terms-1",
+              "identifier": "1"
+            }
+          ],
+          "narrower": [],
+          "vocabulary": {
+            "id": "ehri_terms",
+            "type": "CvocVocabulary",
+            "identifier": "ehri-terms"
+          }
+        }
+      ]
+    }
+  }
+}

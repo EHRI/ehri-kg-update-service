@@ -1,0 +1,32 @@
+{
+  "data": {
+    "links": {
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000002",
+          "type": "Link",
+          "description": null,
+          "field": null,
+          "body": [
+            {
+              "id": "00000000-0000-0000-0000-000000000003",
+              "name": "Comité de Défense des Juifs",
+              "type": "creator"
+            }
+          ],
+          "targets": [
+            {
+              "id": "ehri_cb-000001",
+              "type": "HistoricalAgent"
+            },
+            {
+              "id": "be-000001-kd_00001",
+              "type": "DocumentaryUnit"
+            }
+          ],
+          "source": null
+        }
+      ]
+    }
+  }
+}

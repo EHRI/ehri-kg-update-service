@@ -1,12 +1,13 @@
 PREFIX : <http://example.com/>
 
 SELECT ?eventId ?eventType ?date ?ids ?types WHERE {
-    ?eventId a :Event ;
+    ?event a :Event ;
         :eventType ?eventType ;
         :date ?date ;
         :hasTypedIds [
             a :TypedId ;
             :id ?ids ;
             :type ?types
-        ]
+        ] .
+    BIND(STRAFTER(STR(?event), STR(:)) AS ?eventId)
 }

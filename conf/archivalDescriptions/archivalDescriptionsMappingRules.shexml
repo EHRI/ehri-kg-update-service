@@ -8,16 +8,20 @@ PREFIX ehri_languages: <http://lod.ehri-project-test.eu/languages/>
 PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
 PREFIX ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/>
 PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
-PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
+PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
 PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX schema: <http://schema.org/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX loc: <http://id.loc.gov/datatypes/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX n2t: <https://n2t.net/>
 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
 PREFIX ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#>
 PREFIX ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#>
-FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Transformers.scala>
-FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/main/src/ShExMLTemplates/functions/Validators.scala>
+FUNCTIONS transformers <scala: conf/functions/Transformers.scala>
+FUNCTIONS validators <scala: conf/functions/Validators.scala>
+FUNCTIONS helpers <scala: conf/functions/EHRIFunctions.scala>
 MATCHER langcode_two_digit_equivalent <aar AS aa &
 abk AS ab &
 afr AS af &
@@ -262,9 +266,10 @@ chi  AS zh &
 zho  AS zh &
 zul AS zu>
 SOURCE holdings <stdin>
-ITERATOR components_iterator <jsonpath: $.data.query> {
+ITERATOR components_iterator <jsonpath: $.data.documentaryUnits.items[*]> {
 	PUSHED_FIELD holding_id <id>
 	FIELD parentId <parent.id>
+	FIELD ark <ark>
 	FIELD identifier <identifier>
 	FIELD itemCount <itemCount>
 	FIELD repositoryId <repository.id>
@@ -281,7 +286,6 @@ ITERATOR components_iterator <jsonpath: $.data.query> {
 		FIELD conditionsOfUse <conditionsOfUse>
 		FIELD conditionsOfAccess <conditionsOfAccess>
 		FIELD conditionsOfReproduction <conditionsOfReproduction>
-		FIELD datesOfDescription <datesOfDescription>
 		FIELD extentAndMedium <extentAndMedium>
 		FIELD levelOfDescription <levelOfDescription>
 		FIELD relatedUnitsOfDescription <relatedUnitsOfDescription>
@@ -303,9 +307,8 @@ ITERATOR components_iterator <jsonpath: $.data.query> {
 			FIELD lang <[*]>
 			POPPED_FIELD holding_id <holding_id>
 		}
-		ITERATOR dates <dates[*]> {
-			FIELD startDate <startDate>
-			FIELD endDate <endDate>
+		ITERATOR dates <dates> {
+			FIELD period <[*]>
 			POPPED_FIELD holding_id <holding_id>
 		}
 		ITERATOR scriptOfMaterial <scriptOfMaterial> {
@@ -322,10 +325,19 @@ ITERATOR components_iterator <jsonpath: $.data.query> {
 		FIELD identifier <[*]>
 		POPPED_FIELD holding_id <holding_id>
 	}
+	ITERATOR creators <creators[*]> {
+		FIELD type <item.type>
+		FIELD id <item.id>
+		POPPED_FIELD holding_id <holding_id>
+	}
+	ITERATOR subjects <subjects[*]> {
+		FIELD type <item.type>
+		FIELD id <item.id>
+		POPPED_FIELD holding_id <holding_id>
+	}
 }
 
 EXPRESSION holding <holdings.components_iterator>
-EXPRESSION parallel_name_id <holdings.components_iterator.descriptions.parallelFormsOfName.holding_id + "/parallelNames/" + holdings.components_iterator.descriptions.parallelFormsOfName.name>
 
 #########################
 ### Documentary Units ###
@@ -337,17 +349,15 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:hasRecordSetType ric_rst:[transformers.getRecordSetType(holding.descriptions.levelOfDescription) IF validators.isRecordSetTypeDefinedInRiC(holding.descriptions.levelOfDescription)] ;
 	rico:hasRecordSetType ehri_rst:[transformers.getEHRIDefinedRecordSetType(holding.descriptions.levelOfDescription) IF validators.isRecordSetTypeDefinedInEHRI(holding.descriptions.levelOfDescription)] ;
 	rico:title [holding.descriptions.name] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	rico:hasOrHadTitle @ehri:HoldingParralelFormOfName ;
+	rico:hasOrHadTitle @ehri:HoldingParallelFormOfName ;
 	rico:scopeAndContent [holding.descriptions.scopeAndContent] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceExtent [holding.descriptions.extentAndMedium] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceStructure [holding.descriptions.systemOfArrangement] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	rico:date [holding.descriptions.datesOfDescription] ;
 	rico:date [holding.descriptions.unitDates] ;
-	rico:hasBeginningDate @ehri:HoldingBeginningDate ;
-	rico:hasEndDate @ehri:HoldingEndDate ;
+	rico:hasCreationDate @ehri:HoldingCreationDate ;
 	rico:isOrWasIncludedIn ehri_units:[holding.parentId] ;
 	rico:resultsOrResultedFrom @ehri:Acquisition ;
-	rico:identifier [holding.identifier] ;
+	rico:identifier [holding.identifier] xsd:string ;
 	ehri:biographicalHistory [holding.descriptions.biographicalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:archivalHistory [holding.descriptions.archivalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:appraisal [holding.descriptions.appraisal] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
@@ -369,28 +379,25 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:hasOrHadHolder ehri_institutions:[holding.repositoryId] ;
 	rdfs:seeAlso [holding.descriptions.ref IF validators.isURL(holding.descriptions.ref)] ;
 	rico:hasOrHadIdentifier @ehri:AlternateIds ;
+	schema:sameAs n2t:[holding.ark] ;
 }
 
 ehri:Institution ehri_institutions:[holding.repositoryId] {
 	rico:isOrWasHolderOf ehri_units:[holding.holding_id] ;
 }
 
-ehri:HoldingParralelFormOfName ehri_units:[parallel_name_id] {
+ehri:HoldingParallelFormOfName ehri_units:[helpers.entityParallelNamePath(holdings.components_iterator.descriptions.parallelFormsOfName.holding_id, holdings.components_iterator.descriptions.parallelFormsOfName.name)] {
 	a rico:Title ;
 	rico:name [holding.descriptions.parallelFormsOfName.name] @[holding.descriptions.parallelFormsOfName.langCode MATCHING langcode_two_digit_equivalent] ;
 	rico:isOrWasTitleOf ehri_units:[holding.descriptions.parallelFormsOfName.holding_id] ;
 }
 
-ehri:HoldingBeginningDate ehri_dates:[holding.descriptions.dates.startDate] {
+ehri:HoldingCreationDate ehri_units:[helpers.entityPeriodPath(holding.descriptions.dates.holding_id, holding.descriptions.dates.period) IF helpers.hasPeriod(holding.descriptions.dates.period)] {
 	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.startDate] ;
-	rico:isBeginningDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
-}
-
-ehri:HoldingEndDate ehri_dates:[holding.descriptions.dates.endDate] {
-	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.endDate] ;
-	rico:isEndDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
+	rico:normalizedDateValue [helpers.periodValue(holding.descriptions.dates.period)] loc:edtf ;
+	rico:beginningDate [helpers.earliestDate(holding.descriptions.dates.period) IF helpers.hasEarliestDate(holding.descriptions.dates.period)] xsd:date ;
+	rico:endDate [helpers.latestDate(holding.descriptions.dates.period) IF helpers.hasLatestDate(holding.descriptions.dates.period)] xsd:date ;
+	rico:isCreationDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
 }
 
 ehri:ArchiveComponent ehri_units:[holding.parentId] {
@@ -405,7 +412,7 @@ ehri:Language ehri_languages:[holding.descriptions.languageOfMaterial.lang] {
 
 ehri:Acquisition ehri_units:[transformers.combinedPathHoldingAcquisition(holding.holding_id) IF validators.nonEmpty(holding.descriptions.acquisition)] {
 	a rico:Activity ;
-	rico:hasActivityType ehri:AcquisitionType ;
+	rico:hasActivityType ehri_activity_types:acquisition ;
 	rico:generalDescription [holding.descriptions.acquisition] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 }
 
@@ -419,4 +426,18 @@ ehri:AlternateIds ehri_units:[transformers.combinedPathHoldingAlternateIDs(holdi
 	a rico:Identifier ;
 	rico:textualValue [holding.otherIdentifiers.identifier] ;
 	rico:isOrWasIdentifierOf ehri_units:[holding.otherIdentifiers.holding_id] ;
+}
+
+# Agents linked via the unit's access points as its creators, and agents and concepts as its subjects
+ehri:HoldingAccessPoints ehri_units:[holding.holding_id] {
+	rico:hasCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type)] ;
+	rico:hasOrHadSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type)] ;
+}
+
+ehri:HoldingCreator ehri_vocabs:[helpers.vocabularyPath(holding.creators.id) IF helpers.isAgent(holding.creators.type)] {
+	rico:isCreatorOf ehri_units:[holding.creators.holding_id] ;
+}
+
+ehri:HoldingSubject ehri_vocabs:[helpers.vocabularyPath(holding.subjects.id) IF helpers.isAgentOrConcept(holding.subjects.type)] {
+	rico:isOrWasSubjectOf ehri_units:[holding.subjects.holding_id] ;
 }

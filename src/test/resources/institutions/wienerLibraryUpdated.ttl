@@ -74,3 +74,6 @@
         rico:name                     "Wiener Holocaust Library"@en ;
         rico:thingIsSourceOfRelation  <hasCopyRelations/af3c4fe3-4b69-11f0-9849-899181ace71c> ;
         rico:thingIsTargetOfRelation  <isCopyOfRelations/af3c4fe3-4b69-11f0-9849-899181ace71c> .
+
+# ARK
+<http://lod.ehri-project-test.eu/institutions/gb-003348> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0hm49vkpwkh1h> .

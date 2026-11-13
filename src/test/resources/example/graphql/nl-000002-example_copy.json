@@ -1,0 +1,62 @@
+{
+  "data": {
+    "documentaryUnits": {
+      "items": [
+        {
+          "id": "nl-000002-example_copy",
+          "ark": "ark:41045/p0000000000013",
+          "type": "DocumentaryUnit",
+          "identifier": "example_copy",
+          "otherIdentifiers": [],
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Example copy of KD_00001",
+              "identifier": null,
+              "accessPoints": [],
+              "dates": [{"startDate": "1942", "endDate": null, "precision": "year"}, {"startDate": "1950", "endDate": "1955", "precision": "year"}],
+              "archivistNote": null,
+              "archivalHistory": null,
+              "acquisition": null,
+              "appraisal": null,
+              "accruals": null,
+              "biographicalHistory": null,
+              "conditionsOfAccess": null,
+              "conditionsOfReproduction": null,
+              "datesOfDescriptions": null,
+              "extentAndMedium": null,
+              "levelOfDescription": "otherlevel",
+              "relatedUnitsOfDescription": null,
+              "physicalCharacteristics": null,
+              "publicationNote": null,
+              "ref": null,
+              "rulesAndConventions": null,
+              "scopeAndContent": null,
+              "separatedUnitsOfDescription": null,
+              "systemOfArrangement": null,
+              "findingAids": [],
+              "languageOfMaterial": [],
+              "locationOfOriginals": [
+                "Example existence and location of originals."
+              ],
+              "locationOfCopies": [],
+              "parallelFormsOfName": [],
+              "physicalLocation": [],
+              "notes": [],
+              "scriptOfMaterial": [],
+              "sources": [],
+              "unitDates": []
+            }
+          ],
+          "parent": null,
+          "itemCount": 0,
+          "repository": {
+            "id": "nl-000002"
+          },
+          "creators": [],
+          "subjects": []
+        }
+      ]
+    }
+  }
+}

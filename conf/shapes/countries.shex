@@ -1,0 +1,24 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+ehri:Country IRI {
+	rdf:type [ ehri:Country ] ;
+	rico:name [ @en ] ;
+	owl:sameAs IRI  ;
+	ehri:archivalHistory [ @en ] ? ;
+	ehri:archivalSituation [ @en ] ? ;
+	ehri:researchSummary [ @en ] ? ;
+	ehri:researchExtensive [ @en ] ? ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
+}

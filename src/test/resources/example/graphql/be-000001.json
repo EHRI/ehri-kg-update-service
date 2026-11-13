@@ -1,0 +1,79 @@
+{
+  "data": {
+    "repositories": {
+      "items": [
+        {
+          "id": "be-000001",
+          "ark": "ark:41045/p0000000000004",
+          "type": "Repository",
+          "identifier": "000001",
+          "latitude": 51.033,
+          "longitude": 4.475,
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Kazerne Dossin",
+              "identifier": null,
+              "addresses": [
+                {
+                  "addressName": "Visitor address",
+                  "contactPerson": "Example contact person",
+                  "street": "Goswin de Stassartstraat 153",
+                  "municipality": "Mechelen",
+                  "firstdem": "Antwerpen",
+                  "countryCode": "BE",
+                  "postalCode": "2800",
+                  "email": [
+                    "archives@example.org"
+                  ],
+                  "telephone": [
+                    "+32 15 00 00 00"
+                  ],
+                  "fax": [
+                    "+32 15 00 00 01"
+                  ],
+                  "webpage": [
+                    "https://www.kazernedossin.eu/EN/"
+                  ]
+                }
+              ],
+              "typeOfEntity": null,
+              "history": "Example history of the institution.",
+              "geoculturalContext": "Example geographical and cultural context.",
+              "mandates": "Example mandate.",
+              "administrativeStructure": "Example administrative structure.",
+              "records": "Example records management and collecting policies.",
+              "buildings": "Example description of the buildings.",
+              "holdings": "Example description of the institution's holdings.",
+              "findingAids": "Example overview of the institution's finding aids.",
+              "openingTimes": "Example opening hours.",
+              "conditions": "Example conditions of access to the institution.",
+              "accessibility": "Example accessibility information.",
+              "researchServices": "Example research services.",
+              "reproductionServices": "Example reproduction services.",
+              "publicAreas": "Example description of public areas.",
+              "rulesAndConventions": null,
+              "status": null,
+              "datesOfDescriptions": null,
+              "maintenanceNotes": null,
+              "otherFormsOfName": [
+                "JMDV"
+              ],
+              "parallelFormsOfName": [
+                "Caserne Dossin"
+              ],
+              "languages": [],
+              "scripts": [],
+              "sources": [
+                "Example sources used to prepare the institution description."
+              ]
+            }
+          ],
+          "country": {
+            "id": "be"
+          }
+        }
+      ]
+    }
+  }
+}

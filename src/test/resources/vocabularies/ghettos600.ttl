@@ -58,8 +58,8 @@
 <vocabularies/ehri-ghettos/600>
         a               skos:Concept ;
         rdfs:seeAlso    "http://www.yadvashem.org/yv/he/research/ghettos_encyclopedia/ghetto_details.asp?cid=604" , "http://www.wikidata.org/entity/Q153336" , "https://www.ushmm.org/wlc/en/article.php?ModuleId=10005187" ;
-        geo:lat         "53.9"^^xsd:double ;
-        geo:long        "27.566666666"^^xsd:double ;
+        geo:lat         "53.9"^^xsd:decimal ;
+        geo:long        "27.566666666"^^xsd:decimal ;
         skos:altLabel   "גיטו מינסק"@iw , "Миншки гето"@sr , "Ghetto von Minsk"@de , "Minsker Ghetto"@de , "Minsk, Ghetou"@ro , "Гетто в Минске"@ru ;
         skos:inScheme   <vocabularies/ehri-ghettos> ;
         skos:prefLabel  "Ghetto van Minsk"@nl , "Gheto de Minsk"@fr , "Minsk Ghetto"@en , "Ghetto Minsk"@cs , "Ghetto Minsk"@de , "Ghetoul Minsk"@ro , "Ghetto di Minsk"@it , "Mińsk (Getto)"@pl , "Минск (Гетто)"@ru , "Минск (Гето)"@bg , "Minsk (Geto)"@hr , "Minsk (Geto)"@sh , "Минск (Гето)"@sr , "Minszk (Gettó)"@hu , "גטו מינסק"@iw , "Мінськ (Гетто)"@uk ;

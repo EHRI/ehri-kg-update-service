@@ -14,7 +14,7 @@ import kotlin.test.Test
 class VocabulariesTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.VOCABULARY)
     override val getTriplesSparqlPath = "src/test/resources/vocabularies/getAllVocabulariesTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/vocabularies/getAllVocabulariesIds.rq"

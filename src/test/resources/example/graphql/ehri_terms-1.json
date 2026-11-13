@@ -1,0 +1,41 @@
+{
+  "data": {
+    "concepts": {
+      "items": [
+        {
+          "id": "ehri_terms-1",
+          "ark": "ark:41045/p0000000000011",
+          "type": "CvocConcept",
+          "identifier": "1",
+          "uri": null,
+          "seeAlso": [],
+          "latitude": null,
+          "longitude": null,
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "Resistance",
+              "identifier": null,
+              "altLabel": [
+                "Resistance movements"
+              ],
+              "scopeNote": []
+            }
+          ],
+          "broader": [],
+          "narrower": [
+            {
+              "id": "ehri_terms-2",
+              "identifier": "2"
+            }
+          ],
+          "vocabulary": {
+            "id": "ehri_terms",
+            "type": "CvocVocabulary",
+            "identifier": "ehri-terms"
+          }
+        }
+      ]
+    }
+  }
+}

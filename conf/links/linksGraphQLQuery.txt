@@ -1,21 +1,22 @@
-{"query": "{query:
-  Link(id: \"<id>\") {
-    id
-    type
-    description
-    field
-    body {
-      id
-      name
-      type
-    }
-    targets {
+{"query": "{
+  links(ids: [\"<id>\"]) {
+    items {
       id
       type
+      description
+      field
+      body {
+        id
+        name
+        type
+      }
+      targets {
+        id
+        type
+      }
+      source {
+        id
+        type
+      }
     }
-    source {
-      id
-      type
-    }
-  }
-}" }
+  } }" }

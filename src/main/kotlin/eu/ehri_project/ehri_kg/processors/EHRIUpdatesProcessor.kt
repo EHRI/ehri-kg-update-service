@@ -1,62 +1,89 @@
 package eu.ehri_project.ehri_kg.processors
 
+import eu.ehri_project.ehri_kg.consumers.ResumeCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
-import eu.ehri_project.ehri_kg.helpers.SourceHelper
+import eu.ehri_project.ehri_kg.helpers.timed
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
-import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
+import eu.ehri_project.ehri_kg.model.NotInKgException
+import eu.ehri_project.ehri_kg.model.UnsupportedEntityTypeException
+import eu.ehri_project.ehri_kg.validation.TypeValidators
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import org.apache.jena.query.Dataset
 
-class EHRIUpdatesProcessor(val config: Config) {
+class EHRIUpdatesProcessor(
+    val config: Config,
+    val database: DatabaseManager,
+    private val createUpdateProcessor: (EHRITypes) -> UpdatesProcessor,
+    private val dryRun: Boolean = false,
+    private val resumeCheck: ResumeCheck = ResumeCheck(null),
+) {
 
-    val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
+    private val eventExtractor = EventExtractor(config.get("eventDetailsSparqlQuery"))
+    private val kgSets = KgSets(config)
     val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
-    val database = DatabaseManager(config)
     var previousEventErroredOrNotProcessed = false
-
-    init {
-        org.apache.jena.query.ARQ.init()
-    }
 
     private val logger = KotlinLogging.logger {}
 
     fun process(observable: Single<Flowable<Dataset>>): Single<Flowable<EHRIUpdateReport>> {
         return observable.map {
             it.concatMap {
-                Flowable.fromIterable(getEventTypeAndId(it)).map {
+                Flowable.fromIterable(eventExtractor.events(it)).map {
+                   resumeCheck.received(it.eventId)
                    processEvent(it)
-                }.defaultIfEmpty(emptyEventReport)
+                }
             }
         }
     }
 
     fun processEvent(event: EHRIEvent): EHRIUpdateReport {
         try {
-            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+            val type = selectEntityTypeCase(event.type, event.id)
+            with(createUpdateProcessor(type)) {
                 if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
                     logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
                     return emptyEventReport
                 } else {
                     previousEventErroredOrNotProcessed = true
-                    val graphQLContent = downloadContents(event)
-                    val dataBefore = getDataStatus(event)
-                    val turtleResult = transformToRDF(graphQLContent)
-                    val executedQueries = update(event, turtleResult)
+                    logger.debug { "Processing ${event.eventType} ${event.eventId} of $type ${event.id}" }
+                    val (graphQLContent, fetchMs) = timed { fetchGraphQLData(event) }
+                    logger.debug { "Fetched ${graphQLContent.length} characters in ${fetchMs}ms: ${graphQLContent.take(2000)}" }
+                    val (dataBefore, beforeMs) = timed { getDataStatus(event) }
+                    logger.debug { "The store had ${dataBefore.size()} triples for ${event.id}, queried in ${beforeMs}ms" }
+                    val (turtleResult, mapMs) = timed { transformToRDF(graphQLContent) }
+                    logger.debug { "Mapped to ${turtleResult.defaultModel.size()} triples in ${mapMs}ms" }
+                    val (violations, validateMs) = timed { validate(type, turtleResult) }
+                    logger.debug { "Validated with ${violations.size} violations in ${validateMs}ms" }
+                    val (executedQueries, updateMs) = timed { update(event, turtleResult) }
+                    logger.debug { "Ran ${executedQueries.size} SPARQL updates in ${updateMs}ms" }
                     val dataAfter = getDataStatus(event)
                     val dataDiff = compareGraphs(dataBefore, dataAfter)
-                    return EHRIUpdateReport(event, executedQueries, dataDiff)
+                    logger.debug { "The store has ${dataAfter.size()} triples for ${event.id}, ${dataDiff.size} changed subject-predicate pairs" }
+                    return EHRIUpdateReport(event, executedQueries, dataDiff, violations = violations, dryRun = dryRun)
                 }
             }
-        } catch (_: IllegalStateException) {
+        } catch (e: NotInKgException) {
+            logger.info { "Ignoring event ${event.eventId}: ${e.message}" }
+            return emptyEventReport
+        } catch (e: UnsupportedEntityTypeException) {
+            logger.debug { "Ignoring event ${event.eventId}: ${e.message}" }
             return emptyEventReport
         } catch (e: Exception) {
-            return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString())
+            return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString(), dryRun = dryRun)
         }
+    }
+
+    private val validators = TypeValidators(config)
+
+    private fun validate(type: EHRITypes, mapped: Dataset): List<String> {
+        val violations = validators.validate(type, mapped.defaultModel.graph).map { it.toString() }
+        violations.forEach { logger.warn { "Mapped data does not conform to its shapes: $it" } }
+        return violations
     }
 
     private fun selectEntityTypeCase(type: String, id: String? = "null"): EHRITypes {
@@ -64,32 +91,13 @@ class EHRIUpdatesProcessor(val config: Config) {
             "Country" -> EHRITypes.COUNTRY
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
-            "CvocConcept" -> EHRITypes.VOCABULARY
+            "CvocConcept" -> if (kgSets.hasConcept(id.orEmpty())) EHRITypes.VOCABULARY
+                else throw NotInKgException("Concept $id is not in a vocabulary in the KG (see vocabularySets)")
             "Link" -> EHRITypes.LINK
-            "HistoricalAgent" -> id?.let {
-                if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
-                else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
-                else null
-            } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
-            else -> error("Unknown or unsupported type $type")
+            "HistoricalAgent" -> kgSets.agentType(id.orEmpty())
+                ?: throw NotInKgException("Historical Agent $id is not in an authority set in the KG (see personSets and corporateBodySets)")
+            else -> throw UnsupportedEntityTypeException("Unknown or unsupported type $type")
         }
-    }
-
-    private fun getEventTypeAndId(dataset: Dataset): List<EHRIEvent> {
-        logger.info { "Extracting event information" }
-        val sparqlQuery = SourceHelper.readFile(eventDetailsSparqlQuery)
-        val resultSet = SparqlDatasetQueryProcessor(dataset).query(sparqlQuery)
-        val events = resultSet.asSequence().toList().map {
-            EHRIEvent(
-                it.getResource("eventId").localName,
-                it.getLiteral("eventType").string,
-                it.getLiteral("date").string,
-                it.getLiteral("ids").string,
-                it.getLiteral("types").string,
-            )
-        }
-        return events
-            .ifEmpty { emptyList<EHRIEvent>().also { logger.debug { "Empty event received or impossible to extract its information" } } }
     }
 }
 

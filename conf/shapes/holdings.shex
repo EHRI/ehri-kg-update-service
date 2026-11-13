@@ -1,0 +1,104 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://data.ehri-project.eu/vocabularies/ehri-terms/>
+PREFIX ehri_languages: <http://lod.ehri-project-test.eu/languages/>
+PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
+PREFIX ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/>
+PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
+PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
+PREFIX ehri_fm: <http://lod.ehri-project-test.eu/vocabularies/ehri-fm/>
+PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
+PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#>
+PREFIX ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+ehri:Holding IRI { 
+	rdf:type [ ehri:RecordSet ] ;
+	rico:hasOrHadSomeMembersWithLanguage @ehri:Language * ;
+	rico:hasRecordSetType [ ric_rst:~  ehri_rst:~ ] ? ;
+	rico:title rdf:langString + ;
+	rico:hasOrHadTitle @ehri:HoldingParallelFormOfName * ;
+	rico:scopeAndContent rdf:langString * ;
+	rico:recordResourceExtent rdf:langString * ;
+	rico:recordResourceStructure rdf:langString * ;
+	rico:date xsd:string * ;
+	rico:hasCreationDate @ehri:HoldingCreationDate * ;
+	rico:isOrWasIncludedIn [ ehri_units:~ ] ? ;
+	rico:resultsOrResultedFrom @ehri:Acquisition ? ;
+	rico:identifier xsd:string ?  ;
+	ehri:biographicalHistory rdf:langString * ;
+	ehri:archivalHistory rdf:langString * ;
+	ehri:appraisal rdf:langString * ;
+	rico:accruals rdf:langString * ;
+	rico:conditionsOfAccess rdf:langString * ;
+	rico:conditionsOfUse rdf:langString * ;
+	ehri:hasOrHadScript @ehri:MaterialScript * ;
+	ehri:physicalCharacteristicsAndTechnicalRequirements rdf:langString * ;
+	ehri:otherFindingAids rdf:langString * ;
+	ehri:locationOfOriginals rdf:langString * ;
+	ehri:locationOfCopies rdf:langString * ;
+	ehri:publicationNote rdf:langString * ;
+	rico:recordResourceSourceOfInformation rdf:langString * ;
+	rico:note rdf:langString * ;
+	ehri:archivistNote rdf:langString * ;
+	ehri:relatedMaterial rdf:langString * ;
+	ehri:separatedMaterial rdf:langString * ;
+	rico:hasOrHadHolder [ ehri_institutions:~ ]  ;
+	rdfs:seeAlso IRI ? ;
+	rico:hasOrHadIdentifier @ehri:AlternateIds * ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
+	rico:includesOrIncluded [ ehri_units:~ ] * ;
+	ehri:isCopyOf [ ehri_units:~ ] * ;
+	ehri:isCopyOf [ ehri_institutions:~ ] * ;
+	ehri:hasCopy [ ehri_units:~ ] * ;
+	ehri:hasCopy [ ehri_institutions:~ ] * ;
+	rico:hasCreator [ ehri_cb:~ ehri_fm:~ ehri_pers:~ ] * ;
+	rico:hasOrHadSubject [ ehri_vocabs:~ ] * ;
+}
+ehri:HoldingParallelFormOfName IRI {
+	rdf:type [ rico:Title ] ;
+	rico:name rdf:langString  ;
+	rico:isOrWasTitleOf [ ehri_units:~ ]  ;
+}
+ehri:Language IRI {
+	rdf:type [ rico:Language ] ;
+	rico:name xsd:string  ;
+	rico:isOrWasLanguageOfSomeMembersOf [ ehri_units:~ ] + ;
+}
+ehri:Acquisition IRI {
+	rdf:type [ rico:Activity ] ;
+	rico:hasActivityType [ ehri_activity_types:acquisition ] ;
+	rico:generalDescription rdf:langString  ;
+}
+ehri:MaterialScript IRI {
+	rdf:type [ ehri:MaterialScript ] ;
+	rico:name xsd:string  ;
+	ehri:isOrWasScriptOf [ ehri_units:~ ] + ;
+}
+ehri:AlternateIds IRI {
+	rdf:type [ rico:Identifier ] ;
+	rico:textualValue xsd:string  ;
+	rico:isOrWasIdentifierOf [ ehri_units:~ ]  ;
+}
+ehri:HoldingLocationOfCopiesInverseInstitutionSubject IRI {
+	ehri:isCopyOf [ ehri_units:~ ] ? ;
+}
+ehri:HoldingCreatorInverse IRI {
+	rico:isCreatorOf [ ehri_units:~ ] ? ;
+}
+ehri:HoldingCreationDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isCreationDateOf [ ehri_units:~ ] ;
+}

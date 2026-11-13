@@ -2,7 +2,7 @@ name: ehri-kg-update-service-test
 
 services:
   oxigraph:
-    image: oxigraph/oxigraph
+    image: docker.io/oxigraph/oxigraph
     container_name: oxigraph
     ports:
       - "7878:7878"

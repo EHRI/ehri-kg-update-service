@@ -1,0 +1,35 @@
+{
+  "data": {
+    "historicalAgents": {
+      "items": [
+        {
+          "id": "ehri_fm-000002",
+          "ark": "ark:41045/p0000000000008",
+          "identifier": "000002",
+          "seeAlso": [],
+          "description": {
+            "languageCode": "eng",
+            "name": "Example family",
+            "identifier": null,
+            "dates": [],
+            "lastName": null,
+            "firstName": null,
+            "source": null,
+            "typeOfEntity": "family",
+            "datesOfExistence": null,
+            "biographicalHistory": null,
+            "legalStatus": null,
+            "structure": "Example genealogy.",
+            "generalContext": null,
+            "occupation": null,
+            "otherFormsOfName": [],
+            "parallelFormsOfName": [],
+            "place": [],
+            "functions": [],
+            "mandates": []
+          }
+        }
+      ]
+    }
+  }
+}

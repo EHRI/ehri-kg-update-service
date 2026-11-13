@@ -14,11 +14,15 @@ application {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.herminiogarcia:shexml-streaming_3:0.0.2")
+    testImplementation("org.apache.commons:commons-csv:1.8")
+    implementation("com.herminiogarcia:shexml-streaming_3:0.0.2-SNAPSHOT")
+    // shexml-streaming's SSE handler uses Jackson without declaring it; it came with Jena 3, but not Jena 5
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
     implementation("io.ktor:ktor-client-core:3.3.1")
     implementation("io.ktor:ktor-client-cio:3.3.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -27,6 +31,10 @@ dependencies {
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
     implementation("org.apache.kafka", "kafka-clients", "4.1.0")
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
+    implementation(platform("org.apache.jena:jena-bom:5.5.0"))
+    implementation("org.apache.jena:jena-shex")
+    implementation("org.apache.jena:jena-shacl")
+    implementation("com.google.code.gson:gson:2.13.1")
 }
 
 tasks.test {

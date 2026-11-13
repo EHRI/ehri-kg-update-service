@@ -44,3 +44,11 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Misc fuseki-related ###
+DB/
+run/
+
+### Conversion ###
+batch-local
+/batch/

@@ -1,0 +1,283 @@
+@prefix schema: <http://schema.org/> .
+@prefix ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix ehri_material_script: <http://lod.ehri-project-test.eu/materialScripts/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ehri_terms: <http://data.ehri-project.eu/vocabularies/ehri-terms/> .
+@prefix wd:    <http://www.wikidata.org/entity/> .
+@prefix ehri_units: <http://lod.ehri-project-test.eu/units/> .
+@prefix ehri_languages: <http://lod.ehri-project-test.eu/languages/> .
+@prefix ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/> .
+@prefix ric_rst: <https://www.ica.org/standards/RiC/vocabularies/recordSetTypes#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix dbr:   <http://dbpedia.org/resource/> .
+@prefix ehri_rst: <http://lod.ehri-project-test.eu/vocabularies/recordSetTypes#> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/> .
+@prefix ehri_institutions: <http://lod.ehri-project-test.eu/institutions/> .
+
+ehri:MaterialScript  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:isOrWasScriptOf 
+                        ] ;
+        sh:property     [ sh:in    ( ehri:MaterialScript ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:MaterialScript .
+
+ehri:HoldingParallelFormOfName
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasTitleOf
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( rico:Title ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Title .
+
+
+ehri:Holding  a         sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasRecordSetType
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:locationOfOriginals
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:otherFindingAids
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:scopeAndContent
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:recordResourceSourceOfInformation
+                        ] ;
+        sh:property     [ sh:node  ehri:MaterialScript ;
+                          sh:path  ehri:hasOrHadScript
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:publicationNote
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasIncludedIn
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:archivistNote
+                        ] ;
+        sh:property     [ sh:node  ehri:HoldingCreationDate ;
+                          sh:path  rico:hasCreationDate
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:recordResourceStructure
+                        ] ;
+        sh:property     [ sh:node  ehri:Acquisition ;
+                          sh:path  rico:resultsOrResultedFrom ;
+                          sh:maxCount  1 
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:appraisal
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:relatedMaterial
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:physicalCharacteristicsAndTechnicalRequirements
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:conditionsOfUse
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:locationOfCopies
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:accruals
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:recordResourceExtent
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rdfs:seeAlso ;
+                          sh:maxCount  1 ;
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:minCount  1 ;
+                          sh:path      rico:title
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:path      rico:date
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:note
+                        ] ;
+        sh:property     [ sh:node  ehri:AlternateIds ;
+                          sh:path  rico:hasOrHadIdentifier
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
+        sh:property     [ sh:node  ehri:HoldingParallelFormOfName ;
+                          sh:path  rico:hasOrHadTitle ;
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:biographicalHistory
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:archivalHistory
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:identifier
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasOrHadHolder
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      ehri:separatedMaterial
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:path      rico:conditionsOfAccess
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:includesOrIncluded
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:isCopyOf
+                        ] ;                         
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:hasCopy
+                        ] ;      
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasCreator
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:hasOrHadSubject
+                        ] ;                                              
+        sh:property     [ 
+                          sh:node  ehri:Language ;
+                          sh:path  rico:hasOrHadSomeMembersWithLanguage
+                        ] ;
+        sh:property     [ 
+                          sh:in    ( ehri:RecordSet ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:RecordSet ;
+        sh:nodeKind     sh:IRI .
+
+ehri:AlternateIds  a    sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasIdentifierOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:textualValue
+                        ] ;
+        sh:property     [ sh:in    ( rico:Identifier ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Identifier .
+
+
+ehri:Acquisition  a     sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( ehri_activity_types:acquisition ) ;
+                          sh:path  rico:hasActivityType
+                        ] ;
+        sh:property     [ sh:in    ( rico:Activity ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetObjectsOf  rico:resultsOrResultedFrom .
+
+ehri:Institution  a     sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasHolderOf
+                        ] ;
+        sh:targetClass  ehri:Institution .
+
+ehri:Language  a        sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( rico:Language ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Language .
+
+ehri:HoldingLocationOfCopiesInverseInstitutionSubject
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:isCreatorOf
+                        ] .
+
+ehri:HoldingCreatorInverse
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isCreatorOf
+                        ] .
+
+ehri:HoldingCreationDate  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:in    ( rico:Date ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  <http://id.loc.gov/datatypes/edtf> ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:normalizedDateValue
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:beginningDate
+                        ] ;
+        sh:property     [ sh:datatype  xsd:date ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:endDate
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:pattern   "^http://lod.ehri-project-test.eu/units/" ;
+                          sh:path      rico:isCreationDateOf
+                        ] .

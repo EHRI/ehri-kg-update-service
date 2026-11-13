@@ -14,7 +14,7 @@ import kotlin.test.Test
 class ArchivalDescriptionsTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
     override val getTriplesSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsIds.rq"
@@ -69,20 +69,16 @@ class ArchivalDescriptionsTest : EntityTest() {
         val kdCollectionPersistedData = retrieveEntityTriples("be-002157-kd_00017")
         val kdCollectionDataStatements = kdCollectionData.defaultModel.listStatements().toList()
 
-        //These should have been deleted
+        //These should have been deleted, including the unit's access points (subjects and creators)
         assertStatementsNotExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
-            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
             "https://www.ica.org/standards/RiC/ontology#thingIsTargetOfRelation",
-            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation",
-            "https://www.ica.org/standards/RiC/ontology#hasCreator"
+            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation"
         ))
 
         //These should have been preserved
         assertStatementsExist(kdCollectionDataStatements, kdCollectionPersistedData, listOf(
-            "https://www.ica.org/standards/RiC/ontology#hasOrHadSubject",
             "https://www.ica.org/standards/RiC/ontology#thingIsTargetOfRelation",
-            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation",
-            "https://www.ica.org/standards/RiC/ontology#hasCreator"
+            "https://www.ica.org/standards/RiC/ontology#thingIsSourceOfRelation"
         ))
     }
 

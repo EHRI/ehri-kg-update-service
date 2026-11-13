@@ -59,8 +59,7 @@
         a                          ehri:RecordSet ;
         rdfs:seeAlso               <https://wiener.soutron.net/Portal/Default/en-GB/RecordView/Index/104218> ;
         rico:conditionsOfUse       "<strong style\"text-decoration-color: initial; box-sizing: border-box; color: #ff0000; font-family: Roboto, sans-serif; font-size: 15px; text-align: left\">This material has been digitised. Readers should book a reading room terminal to access it.</strong>"@en ;
-        rico:hasBeginningDate      <dates/1957-01-30> ;
-        rico:hasEndDate            <dates/1957-07-18> ;
+        rico:hasCreationDate <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> ;
         rico:hasOrHadHolder        <institutions/gb-003348> ;
         rico:hasOrHadIdentifier    <units/gb-003348-wl3000_9_1-1/alternateIDs/1> ;
         rico:hasOrHadSomeMembersWithLanguage
@@ -73,3 +72,13 @@
         rico:recordResourceExtent  "18 items"@en ;
         rico:scopeAndContent       "[Test update] Containing internal material from The Wiener Library exclusively, the bundle includes reports on: the conference at the Auschwitz Memorial, a research stay at the Żydowsky Instytut Historyczny (Jewish Historical Institute) in Warsaw, visits at a Jewish cultural association, at the Main Commission for the Investigation of German Crimes in Poland, and at the Polish Institute of International Affairs.&nbsp;"@en ;
         rico:title                 "Correspondence regarding a trip to Poland"@en .
+
+# Dates
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.ica.org/standards/RiC/ontology#Date> .
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#normalizedDateValue> "1957-01-30/1957-07-18"^^<http://id.loc.gov/datatypes/edtf> .
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#beginningDate> "1957-01-30"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#endDate> "1957-07-18"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1/dates/1957-01-30_1957-07-18> <https://www.ica.org/standards/RiC/ontology#isCreationDateOf> <http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1> .
+
+# ARK
+<http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0f9tt50d6kd45> .

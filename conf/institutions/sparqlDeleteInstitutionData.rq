@@ -11,7 +11,9 @@ DELETE {
         FILTER(?s = ehri_institutions:<$entityId>
             && ?p != rico:isOrWasHolderOf
             && ?p != rico:thingIsSourceOfRelation
-            && ?p != rico:thingIsTargetOfRelation)
+            && ?p != rico:thingIsTargetOfRelation
+            && ?p != ehri:hasCopy
+            && ?p != ehri:isCopyOf)
     }
     UNION
     {

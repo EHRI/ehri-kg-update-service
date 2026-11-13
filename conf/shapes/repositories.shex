@@ -1,0 +1,102 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_countries: <http://lod.ehri-project-test.eu/countries/>
+PREFIX ehri_regions: <http://lod.ehri-project-test.eu/regions/>
+PREFIX ehri_cities: <http://lod.ehri-project-test.eu/cities/>
+PREFIX ehri_institutions: <http://lod.ehri-project-test.eu/institutions/>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+ehri:Institution IRI {
+	rdf:type [ ehri:Institution ] ;
+	rico:name rdf:langString ;
+	rico:history rdf:langString ? ;
+	schema:openingHours rdf:langString ? ;
+	rico:generalDescription rdf:langString ? ;
+	ehri:conditionsOfAccess rdf:langString ? ;
+	ehri:reproductionServices rdf:langString ?  ;
+	ehri:generalContext rdf:langString ? ;
+	ehri:administrativeStructure rdf:langString ? ;
+	ehri:recordsManagementAndCollectingPolicies rdf:langString ? ;
+	ehri:buildings rdf:langString OR IRI ? ;
+	ehri:accessibility rdf:langString ? ;
+	ehri:researchServices rdf:langString ? ;
+	ehri:publicAreas rdf:langString ? ;
+	rdfs:seeAlso IRI * ;
+	ehri:findingAids rdf:langString OR IRI * ;
+	ehri:sources rdf:langString OR IRI * ;
+	rico:agentHasOrHadLocation @ehri:InstitutionLocation * ;
+	rico:hasOrHadAgentName @ehri:AgentParallelName OR @ehri:AgentOtherName * ;
+	rico:authorizedBy @ehri:Mandate * ;
+	ehri:isCopyOf [ ehri_units:~ ehri_institutions:~ ] * ;
+	ehri:hasCopy [ ehri_units:~ ehri_institutions:~ ] * ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
+}
+ehri:InstitutionLocation IRI {
+	rdf:type [ rico:Place ] ;
+	rico:isContainedByTransitive @ehri:City * ;
+	rico:hasOrHadPhysicalLocation @ehri:InstitutionAddress ;
+}
+ehri:InstitutionAddress IRI {
+	rdf:type [ ehri:InstitutionAddress ] ;
+	rico:hasOrHadCoordinates @ehri:Coordinates ? ;
+	schema:postalCode Literal ? ;
+	rico:name xsd:string ? ;
+	schema:faxNumber xsd:string * ;
+	schema:telephone xsd:string * ;
+	schema:email xsd:string * ;
+	ehri:contactPerson xsd:string ? ;
+	schema:contactType xsd:string ? ;
+	rico:isOrWasPhysicalLocationOf [ ehri_institutions:~ ]  ;
+}
+ehri:Coordinates IRI {
+	rdf:type [ rico:Coordinates ] ;
+	rico:latitude Literal  ;
+	rico:longitude Literal  ;
+	rico:isOrWasCoordinatesOf [ ehri_institutions:~ ]  ;
+}
+ehri:Region IRI {
+	rdf:type [ ehri:Region ] ;
+	rico:name xsd:string  ;
+	rico:isContainedByTransitive [ ehri_countries:~ ] ? ;
+	rico:containsTransitive [ ehri_cities:~ ] * ;
+}
+ehri:City IRI {
+	rdf:type [ ehri:City ] ;
+	rico:name xsd:string  ;
+	rico:isContainedByTransitive [ ehri_regions:~ ehri_countries:~ ] * ;
+}
+ehri:AgentParallelName IRI {
+	rdf:type [ ehri:ParallelAgentName ] ;
+	rico:name xsd:string ;
+	rico:isOrWasAgentNameOf [ ehri_institutions:~ ] ;
+}
+ehri:AgentOtherName IRI {
+	rdf:type [ ehri:AlternateAgentName ] ;
+	rico:name xsd:string ;
+	rico:isOrWasAgentNameOf [ ehri_institutions:~ ]  ;
+}
+ehri:Mandate IRI {
+	rdf:type [ rico:Mandate ] ;
+	rico:generalDescription rdf:langString ;
+	rico:authorizes [ ehri_institutions:~ ] ;
+}
+ehri:Country IRI {
+	rdf:type [ ehri:Country ] ;
+	rico:isOrWasLocationOfAgent [ ehri_institutions:~ ] + ;
+	rico:containsTransitive [ ehri_regions:~ ehri_cities:~ ] * ;
+}
+ehri:InstitutionLocationOfOriginalsInverseHoldingSubject IRI {
+	ehri:hasCopy [ ehri_institutions:~ ]  ;
+}
+ehri:InstitutionLocationOfCopiesInverseHoldingSubject IRI {
+	ehri:isCopyOf [ ehri_institutions:~ ]  ;
+}

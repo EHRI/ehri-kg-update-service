@@ -16,16 +16,24 @@ object SourceHelper {
 
 }
 
-class Config(propertiesFilePath: String) {
-    private val props = Properties()
+class Config(private val props: Properties) {
 
-    init {
-        props.load(SourceHelper.readFileAsInputStream(propertiesFilePath))
-    }
+    constructor(propertiesFilePath: String) : this(Properties().apply {
+        SourceHelper.readFileAsInputStream(propertiesFilePath).use { load(it) }
+    })
 
     fun get(key: String): String {
         return props.getProperty(key)
     }
+
+    fun getOptional(key: String): String? = props.getProperty(key)?.ifEmpty { null }
+
+    fun propertyNames(): Set<String> = props.stringPropertyNames()
+
+    /** A comma-separated list, which may be empty, but must be set. */
+    fun getList(key: String): List<String> =
+        requireNotNull(props.getProperty(key)) { "The property $key is missing from the configuration" }
+            .split(',').map { it.trim() }.filter { it.isNotEmpty() }
 }
 
 class KafkaEmitter(val url: String, val topic: String) {

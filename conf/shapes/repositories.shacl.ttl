@@ -1,0 +1,325 @@
+@prefix schema: <http://schema.org/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ehri_countries: <http://lod.ehri-project-test.eu/countries/> .
+@prefix ehri_regions: <http://lod.ehri-project-test.eu/regions/> .
+@prefix ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/> .
+@prefix wd:    <http://www.wikidata.org/entity/> .
+@prefix ehri_cities: <http://lod.ehri-project-test.eu/cities/> .
+@prefix ehri_units: <http://lod.ehri-project-test.eu/units/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix dbr:   <http://dbpedia.org/resource/> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix ehri_institutions: <http://lod.ehri-project-test.eu/institutions/> .
+
+ehri:Country  a         sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:containsTransitive
+                        ] ;
+        sh:property     [ sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasLocationOfAgent
+                        ] ;
+        sh:property     [ sh:in    ( ehri:Country ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:Country .
+
+ehri:InstitutionAddress
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:path      schema:email
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:path      schema:contactType
+                        ] ;
+        sh:property     [ sh:in    ( ehri:InstitutionAddress ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:contactPerson
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:Literal ;
+                          sh:maxCount  1 ;
+                          sh:path      schema:postalCode
+                        ] ;
+        sh:property     [ sh:node  ehri:Coordinates ;
+                          sh:path  rico:hasOrHadCoordinates ;
+                          sh:maxCount  1
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasPhysicalLocationOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:path      schema:telephone
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:path      schema:faxNumber
+                        ] ;
+        sh:targetClass  ehri:InstitutionAddress .
+
+ehri:InstitutionLocationOfOriginalsInverseHoldingSubject
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:hasCopy
+                        ] .
+
+ehri:InstitutionLocationOfCopiesInverseHoldingSubject
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:isCopyOf
+                        ] .
+
+ehri:AgentParallelName
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasAgentNameOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:ParallelAgentName ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:ParallelAgentName .
+
+ehri:Region  a          sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:containsTransitive
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isContainedByTransitive
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:Region ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:Region .
+
+ehri:AgentOtherName  a  sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasAgentNameOf
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:AlternateAgentName ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:AlternateAgentName .
+
+ehri:Coordinates  a     sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isOrWasCoordinatesOf
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:Literal ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:longitude
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:Literal ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:latitude
+                        ] ;
+        sh:property     [ sh:in    ( rico:Coordinates ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Coordinates .
+
+ehri:Institution  a     sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:nodeKind  sh:IRIOrLiteral ;
+                          sh:path      ehri:findingAids
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:researchServices
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRIOrLiteral ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:buildings
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:conditionsOfAccess
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:history
+                        ] ;
+        sh:property     [ sh:or (
+                            [
+                              sh:node  ehri:AgentOtherName ;
+                            ]
+                            [
+                              sh:node  ehri:AgentParallelName ;
+                            ]
+                          ) ;
+                          sh:path  rico:hasOrHadAgentName
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRIOrLiteral ;
+                          sh:path      ehri:sources
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:publicAreas
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:reproductionServices
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      schema:openingHours
+                        ] ;
+        sh:property     [ sh:in    ( ehri:Institution ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:node  ehri:Mandate ;
+                          sh:path  rico:authorizedBy
+                        ] ;
+        sh:property     [ sh:node  ehri:InstitutionLocation ;
+                          sh:path  rico:agentHasOrHadLocation
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rdfs:seeAlso
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:accessibility
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:recordsManagementAndCollectingPolicies
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:administrativeStructure
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      ehri:generalContext
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:isCopyOf
+                        ] ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      ehri:hasCopy
+                        ] ;                                                
+        sh:targetClass  ehri:Institution .
+
+ehri:City  a            sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:path      rico:isContainedByTransitive
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:name
+                        ] ;
+        sh:property     [ sh:in    ( ehri:City ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  ehri:City .
+
+ehri:Mandate  a         sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      rico:authorizes
+                        ] ;
+        sh:property     [ sh:datatype  rdf:langString ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      rico:generalDescription
+                        ] ;
+        sh:property     [ sh:in    ( rico:Mandate ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Mandate .
+
+ehri:InstitutionLocation
+        a               sh:NodeShape ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:node  ehri:InstitutionAddress ;
+                          sh:path  rico:hasOrHadPhysicalLocation ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 
+                        ] ;
+        sh:property     [ sh:or (
+                            [
+                              sh:nodeKind  sh:IRI ;
+                            ]
+                            [
+                              sh:or (
+                                [
+                                  sh:node  ehri:City ;
+                                ]
+                                [
+                                  sh:node  ehri:Region ;
+                                ]
+                              ) ;
+                              sh:node  ehri:City 
+                            ]
+                          ) ;
+                          sh:path      rico:isContainedByTransitive
+                        ] ;
+        sh:property     [ sh:in    ( rico:Place ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:targetClass  rico:Place .

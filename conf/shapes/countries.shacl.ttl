@@ -1,0 +1,52 @@
+@prefix schema: <http://schema.org/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ehri_countries: <http://lod.ehri-project-test.eu/countries/> .
+@prefix ehri_terms: <http://lod.ehri-project-test.eu/vocabularies/ehri-terms/> .
+@prefix wd:    <http://www.wikidata.org/entity/> .
+@prefix ehri_units: <http://lod.ehri-project-test.eu/units/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix ehri:  <http://lod.ehri-project-test.eu/ontology#> .
+@prefix dbr:   <http://dbpedia.org/resource/> .
+@prefix rico:  <https://www.ica.org/standards/RiC/ontology#> .
+@prefix ehri_institutions: <http://lod.ehri-project-test.eu/institutions/> .
+
+ehri:Country  a         sh:NodeShape ;
+        sh:property     [ sh:nodeKind  sh:IRI ;
+                          sh:maxCount  1 ;
+                          sh:pattern   "^https://n2t.net/ark:" ;
+                          sh:path      schema:sameAs
+                        ] ;
+        sh:nodeKind     sh:IRI ;
+        sh:property     [ sh:languageIn  ( "en" ) ;
+                          sh:path        ehri:archivalSituation ;
+                          sh:maxCount    1 
+                        ] ;
+        sh:property     [ sh:languageIn  ( "en" ) ;
+                          sh:path        rico:name ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:nodeKind  sh:IRI ;
+                          sh:path      owl:sameAs
+                        ] ;
+        sh:property     [ sh:languageIn  ( "en" ) ;
+                          sh:path        ehri:researchSummary ;
+                          sh:maxCount    1 
+                        ] ;
+        sh:property     [ sh:in    ( ehri:Country ) ;
+                          sh:path  rdf:type
+                        ] ;
+        sh:property     [ sh:languageIn  ( "en" ) ;
+                          sh:path        ehri:archivalHistory ;
+                          sh:maxCount    1 
+                        ] ;
+        sh:property     [ sh:languageIn  ( "en" ) ;
+                          sh:path        ehri:researchExtensive ;
+                          sh:maxCount    1 
+                        ] ;
+        sh:targetClass  ehri:Country .

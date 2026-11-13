@@ -1,11 +1,14 @@
-{"query": "{query:
-  Country(id: \"<id>\") {
-    id
-    type
-    identifier
-    name
-    history
-    situation
-    summary
-    extensive
+{"query": "{
+  countries(ids: [\"<id>\"]) {
+    items {
+      id
+      ark
+      type
+      identifier
+      name
+      history
+      situation
+      summary
+      extensive
+    }
   } }" }

@@ -4,6 +4,8 @@ import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessor
 import eu.ehri_project.ehri_kg.sparql.SparqlEndpointQueryProcessor
+import eu.ehri_project.ehri_kg.graphql.GraphQLClient
+import eu.ehri_project.ehri_kg.support.FakeGraphQLClient
 import org.apache.jena.rdf.model.Statement
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -77,6 +79,7 @@ abstract class EntityTest : TestSparqlService {
     protected val config = Config("conf/config.properties")
     protected val queryEndpoint: String = "http://localhost:7878/query"
     protected val updateEndpoint: String = "http://localhost:7878/update"
+    protected val graphQLClient: GraphQLClient = FakeGraphQLClient { error("Integration tests do not download from GraphQL") }
     protected abstract val updatesProcessor: UpdatesProcessor
     protected abstract val getTriplesSparqlPath: String
     protected abstract val getAllIdsSparqlPath: String

@@ -1,0 +1,42 @@
+{
+  "data": {
+    "historicalAgents": {
+      "items": [
+        {
+          "id": "ehri_pers-000001",
+          "ark": "ark:41045/p0000000000009",
+          "identifier": "000001",
+          "seeAlso": [],
+          "description": {
+            "languageCode": "eng",
+            "name": "Hertz Jospa",
+            "identifier": null,
+            "dates": [
+              {
+                "startDate": "1904-01-01",
+                "endDate": "1966-12-31"
+              }
+            ],
+            "lastName": null,
+            "firstName": null,
+            "source": "Example sources.",
+            "typeOfEntity": "person",
+            "datesOfExistence": "1904-1966",
+            "biographicalHistory": "Example biographical history.",
+            "legalStatus": null,
+            "structure": null,
+            "generalContext": null,
+            "occupation": "Example occupation.",
+            "otherFormsOfName": [],
+            "parallelFormsOfName": [
+              "Hertz Jospa"
+            ],
+            "place": [],
+            "functions": [],
+            "mandates": []
+          }
+        }
+      ]
+    }
+  }
+}

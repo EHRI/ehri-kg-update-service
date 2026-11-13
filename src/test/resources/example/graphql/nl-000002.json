@@ -1,0 +1,67 @@
+{
+  "data": {
+    "repositories": {
+      "items": [
+        {
+          "id": "nl-000002",
+          "ark": "ark:41045/p0000000000014",
+          "type": "Repository",
+          "identifier": "000002",
+          "latitude": null,
+          "longitude": null,
+          "descriptions": [
+            {
+              "languageCode": "eng",
+              "name": "NIOD Institute for War, Holocaust and Genocide Studies",
+              "identifier": null,
+              "addresses": [
+                {
+                  "addressName": null,
+                  "contactPerson": null,
+                  "street": "Herengracht 380",
+                  "municipality": "Amsterdam",
+                  "firstdem": "Noord-Holland",
+                  "countryCode": "NL",
+                  "postalCode": "1016 CJ",
+                  "email": [],
+                  "telephone": [],
+                  "fax": [],
+                  "webpage": [
+                    "https://www.niod.nl/en"
+                  ]
+                }
+              ],
+              "typeOfEntity": null,
+              "history": null,
+              "geoculturalContext": null,
+              "mandates": null,
+              "administrativeStructure": null,
+              "records": null,
+              "buildings": null,
+              "holdings": null,
+              "findingAids": null,
+              "openingTimes": null,
+              "conditions": null,
+              "accessibility": null,
+              "researchServices": null,
+              "reproductionServices": null,
+              "publicAreas": null,
+              "rulesAndConventions": null,
+              "status": null,
+              "datesOfDescriptions": null,
+              "maintenanceNotes": null,
+              "otherFormsOfName": [],
+              "parallelFormsOfName": [],
+              "languages": [],
+              "scripts": [],
+              "sources": []
+            }
+          ],
+          "country": {
+            "id": "nl"
+          }
+        }
+      ]
+    }
+  }
+}

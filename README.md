@@ -9,15 +9,22 @@ creating and updating the concerned entities in the designated triple store.
 This service is mainly meant to be operated through the command line for which it offers a convenient CLI:
 
 ```
-Usage: ehri-kg-update-service [<options>]
+Usage: ehri-kg-update-service [<options>] <command> [<args>]...
 
 Options:
-  -m, --mapping=<text>  The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml
-  -c, --conf=<text>     The properties file with the entities configurations. Default: conf/config.properties
-  -o, --output=<text>   File path where to store the reports of this service. Example: output.jsonl
-  --kafkaServer=<text>  Kafka topic where to push the reports of this service. Example: localhost:9092
-  --kafkaTopic=<text>   Kafka topic where to push the reports of this service. Example: my-topic
-  -h, --help            Show this message and exit
+  -m, --mapping=<text>      The mapping rules to be processed by shexml-streaming. Default: conf/ehri_sse_mapping.shexml
+  -c, --conf=<text>         The properties file with the entities configurations. Default: conf/config.properties
+  -o, --output=<text>       File path where to store the reports of this service. Example: output.jsonl
+  -e, --sseEndpoint=<text>  SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events
+  --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property and the last event in the events history, which the stream otherwise resumes from. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
+  -n, --dryRun              Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.
+  --debug                   Log what the service does in detail, with timings: the events received, the GraphQL requests, the mapping, validation and SPARQL updates.
+  --kafkaServer=<text>      Kafka topic where to push the reports of this service. Example: localhost:9092
+  --kafkaTopic=<text>       Kafka topic where to push the reports of this service. Example: my-topic
+  -h, --help                Show this message and exit
+
+Commands:
+  batch  Convert all the Portal's entities to N-Triples, for loading into an empty triple store. Stop the update service first: once the data is loaded, it resumes from the last event in its events history.
 ```
 
 There are no mandatory options to run the service, as by default it assumes that the 
@@ -28,6 +35,23 @@ The service uses a logger to print all the messages of the application, and it w
 after processing each event. Additionally, these reports can also be stored in an output file (using the `-o` option) 
 following the JSON Lines format and in an append-only fashion. Similarly, it is also possible to push the reports to a Kafka
 topic using the `--kafkaServer` and `--kafkaTopic` options.
+
+The service records each event it processes in its events history, the SQLite database at the `databasePath`
+property. When it starts, it resumes the event stream from the last event recorded, so that it applies the changes
+made while it wasn't running; events already processed successfully are skipped. `--resumeFromEventId`, or the
+`resumeFromEventId` property, resumes from another event instead. The Portal replays its events from that event on,
+but if it doesn't have the event, for example because the history is from another Portal instance, it sends only new
+events: the service then logs an error, as the changes made since that event were missed.
+
+With the `--dryRun` option the service processes events as usual but, instead of executing the SPARQL DELETE and
+INSERT statements, prints them to the terminal through the `sparql` logger.
+
+The `--debug` option logs each step in detail, with timings: the events received, the GraphQL requests and
+responses, the data in the store before and after, the triples mapped, the violations and the SPARQL statements.
+`batch --debug` (the option goes after `batch`) logs the requests and the progress of each streamed response, the
+items left out, and each chunk written and mapped; the workers log their chunks' timings
+in `<dir>/work/worker-<n>.log`. Only the service's own loggers debug; set `-DehriKg.logLevel=debug` to do the same
+without the option.
 
 ## Architecture
 The architecture of this service heavily relies on the Reactive programming precepts in order to be able to process the 
@@ -42,6 +66,53 @@ that is transformed following a series of sequential steps:
 5. Execute DELETE and INSERT SPARQL queries
 6. Establish the data status *after* performing the update
 7. Compare the results in 3 and 6 and generate the event report
+
+## Validation
+After mapping an entity, the service validates the mapped data against the ShEx and SHACL shapes of its type, which
+are copies of those in the `src/shapes/1.0.2` folder of the [EHRI-KG-mapping repository](https://github.com/EHRI/ehri-kg-mapping),
+under `conf/shapes`. The `<type>Shapes` properties of `conf/config.properties` name each type's shapes: for
+`conf/shapes/holdings`, the ShEx schema `holdings.shex` with the shape map `holdings.smap`, and the SHACL shapes
+`holdings.shacl.ttl`. Violations are logged and listed under `violations` in the event's report, and the data is
+applied regardless. Types without a `<type>Shapes` property are not validated.
+
+## Batch conversion
+The `batch` command builds the whole KG from the Portal, for loading into an empty triple store, with the same
+queries, mapping rules and shapes as the update stream:
+
+```
+$ java -jar ehri-kg-update-service.jar batch --dir batch --workers 8
+```
+
+1. **Fetch:** each source is fetched with one streamed GraphQL request (the `X-Stream` header), to
+   `<dir>/responses`. A source is a list field, such as `documentaryUnits`, or one of the EHRI authority sets and
+   vocabularies named by the `personSets`, `corporateBodySets` and `vocabularySets` properties of
+   `conf/config.properties`. These also decide which agents and concepts the update stream maintains, and which the
+   mapping rules link to.
+2. **Chunk:** each response is split into chunks of `batchChunkSize` items, in `<dir>/chunks`, as responses to the
+   type's per-entity query. Links that the mapping rules don't map are left out.
+3. **Map:** the chunks are mapped and validated by `--workers` processes, to N-Triples in `<dir>/mapped`, and
+   written together to `<dir>/kg.nt`, with the violations in `<dir>/violations.txt` and a summary in
+   `<dir>/report.json`, which gives the number of triples written and the time each step took. The data of the RDF
+   files named by the `batchStaticFiles` property, such as instances that the mapped data refers to but doesn't
+   define, is added to it.
+
+To replace a Fuseki dataset's data with the output, run `scripts/load-fuseki.sh [<kg.nt>] [<dataset URL>]`, by
+default `batch/kg.nt` and `http://localhost:3030/ehri`, with `FUSEKI_AUTH=<user>:<password>` if the server needs it.
+
+Each step resumes where an earlier run left off: run the same command again after a failure. To fetch a source again,
+delete its response in `<dir>/responses`; its chunks and mapped data are then replaced.
+
+To hand over to the update service, stop it before the batch, and start it again once the data is loaded: it
+resumes from the last event in its events history, replaying the changes made since it stopped, including those made
+during the batch. Replaying a change the batch's data already has is harmless, as updates delete an entity's data
+and insert it again. The batch logs the event the service will resume from, and records it in the report as
+`resumeFromEventId`. It warns if the history is empty, as the service would then start from new events, missing the
+changes made during the batch; and if the service recorded events during the batch, as it would skip them although
+the batch's data may lack them: delete those events from the history before loading the data.
+
+`scripts/rebuild-kg.sh [<batch options>]` does all of this for services run by systemd: it stops the update service,
+runs the batch, bulk loads the output into a new TDB2 database while Fuseki serves the old one, swaps it in, and starts
+the update service again. Its comments list its settings, such as the units' names and the database's location.
 
 ## Requirements
 The minimum versions for this software to work are:
@@ -68,3 +139,4 @@ The following dependencies are used by this software:
 | ch.qos.logback / logback-classic                   | Eclipse Public License v1.0 or LGPL-2.1 |
 | com.github.ajalt.clikt / clikt                     | Apache License 2.0                      |
 | org.apache.kafka / kafka-clients                   | Apache License 2.0                      |
+| org.apache.jena / jena-shex, jena-shacl            | Apache License 2.0                      |

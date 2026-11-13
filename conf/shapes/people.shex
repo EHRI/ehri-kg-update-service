@@ -1,0 +1,81 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri_activity_types: <http://lod.ehri-project-test.eu/activityTypes/>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
+PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
+PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
+PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
+PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
+PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+ehri:Person IRI {
+	rdf:type [ ehri:Person ] ;
+	rico:name xsd:string ;
+	rico:history rdf:langString ? ;
+	rico:hasOrHadAgentName @ehri:AgentParallelName OR @ehri:AgentOtherName * ;
+	rdfs:seeAlso IRI * ;
+	ehri:sources rdf:langString *;
+	rico:date Literal * ;
+	rico:hasBirthDate @ehri:PersonBirthDate * ;
+	rico:hasDeathDate @ehri:PersonDeathDate * ;
+	rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus * ;
+	rico:performsOrPerformed @ehri:AuthorityOccupation OR @ehri:AuthorityFunction * ;
+	rico:authorizedBy @ehri:AuthorityMandate * ;
+	ehri:structureOrGenealogy rdf:langString ? ;
+	rico:generalDescription rdf:langString ? ;
+	schema:sameAs IRI /^https:\/\/n2t\.net\/ark:/ ? ;
+}
+ehri:Link IRI {
+	rico:hasOrHadSubject [ ehri_pers:~ ]  ;
+}
+ehri:AgentOtherName IRI {
+	rdf:type [ ehri:AlternateAgentName ] ;
+	rico:name xsd:string  ;
+	rico:isOrWasAgentNameOf [ ehri_pers:~ ]  ;
+}
+ehri:AgentParallelName IRI {
+	rdf:type [ ehri:ParallelAgentName ] ;
+	rico:name xsd:string  ;
+	rico:isOrWasAgentNameOf [ ehri_pers:~ ]  ;
+}
+ehri:AuthorityLegalStatus IRI {
+	rdf:type [ rico:LegalStatus ] ;
+	rico:generalDescription rdf:langString ;
+	rico:isOrWasLegalStatusOf [ ehri_pers:~ ]  ;
+}
+ehri:AuthorityOccupation IRI {
+	rdf:type [ rico:Activity ] ;
+	rico:hasActivityType [ ehri_activity_types:occupation ] ;
+	rico:generalDescription rdf:langString ;
+	rico:isOrWasPerformedBy [ ehri_pers:~ ]  ;
+}
+ehri:AuthorityFunction IRI {
+	rdf:type [ rico:Activity ] ;
+	rico:hasActivityType [ ehri_activity_types:function ] ;
+	rico:generalDescription rdf:langString ;
+	rico:isOrWasPerformedBy [ ehri_pers:~ ]  ;
+}
+ehri:AuthorityMandate IRI {
+	rdf:type [ rico:Mandate ] ;
+	rico:generalDescription rdf:langString ;
+	rico:authorizes [ ehri_pers:~ ]  ;
+}
+ehri:PersonBirthDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isBirthDateOf [ ehri_pers:~ ] ;
+}
+ehri:PersonDeathDate IRI {
+	rdf:type [ rico:Date ] ;
+	rico:normalizedDateValue <http://id.loc.gov/datatypes/edtf> ;
+	rico:beginningDate xsd:date ? ;
+	rico:endDate xsd:date ? ;
+	rico:isDeathDateOf [ ehri_pers:~ ] ;
+}

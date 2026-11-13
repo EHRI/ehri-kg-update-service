@@ -1,0 +1,2 @@
+{FOCUS a <http://lod.ehri-project-test.eu/ontology#Record>}@<http://lod.ehri-project-test.eu/ontology#Holding>
+{FOCUS a <http://lod.ehri-project-test.eu/ontology#RecordSet>}@<http://lod.ehri-project-test.eu/ontology#Holding>

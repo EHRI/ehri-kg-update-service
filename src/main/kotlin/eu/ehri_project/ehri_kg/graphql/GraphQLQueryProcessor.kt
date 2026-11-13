@@ -7,16 +7,22 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-class GraphQLQueryProcessor(val endpoint: String) {
+fun interface GraphQLClient {
+    suspend fun download(event: EHRIEvent, query: String): String
+}
+
+class GraphQLQueryProcessor(val endpoint: String, private val client: HttpClient) : GraphQLClient {
 
     private val logger = KotlinLogging.logger {}
 
-    suspend fun download(event: EHRIEvent, query: String): String {
+    override suspend fun download(event: EHRIEvent, query: String): String {
         logger.info { "Downloading data from the GraphQL endpoint for the entity with id ${event.id}" }
-        val client = HttpClient()
-        return client.post(endpoint) {
+        logger.debug { "POST $endpoint: $query" }
+        val response = client.post(endpoint) {
             contentType(ContentType.Application.Json)
             setBody(query)
-        }.body<String>()
+        }
+        logger.debug { "GraphQL response: ${response.status}" }
+        return response.body<String>()
     }
 }

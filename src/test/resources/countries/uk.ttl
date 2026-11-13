@@ -64,3 +64,6 @@
         rico:containsTransitive      <regions/Scotland> , <regions/Isle_of_Man> , <regions/London> , <regions/Northern_Ireland> , <regions/England> , <regions/St_Helier> ;
         rico:isOrWasLocationOfAgent  <institutions/gb-003338> , <institutions/gb-005057> , <institutions/gb-003350> , <institutions/gb-003344> , <institutions/gb-003340> , <institutions/gb-006636> , <institutions/gb-006351> , <institutions/gb-006352> , <institutions/gb-003349> , <institutions/gb-003351> , <institutions/gb-006585> , <institutions/gb-006629> , <institutions/gb-006634> , <institutions/gb-006635> , <institutions/gb-006630> , <institutions/gb-006631> , <institutions/gb-006148> , <institutions/gb-004872> , <institutions/gb-004871> , <institutions/gb-006350> , <institutions/gb-003347> , <institutions/gb-003345> , <institutions/gb-003348> , <institutions/gb-005066> , <institutions/gb-003341> , <institutions/gb-003342> , <institutions/gb-006628> , <institutions/gb-003766> , <institutions/gb-006627> , <institutions/gb-006633> , <institutions/gb-003339> ;
         rico:name                    "United Kingdom"@en .
+
+# ARK
+<http://lod.ehri-project-test.eu/countries/gb> <http://schema.org/sameAs> <https://n2t.net/ark:41045/p0j78rztwjt6ss> .

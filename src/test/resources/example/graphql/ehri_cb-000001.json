@@ -1,0 +1,45 @@
+{
+  "data": {
+    "historicalAgents": {
+      "items": [
+        {
+          "id": "ehri_cb-000001",
+          "ark": "ark:41045/p0000000000007",
+          "identifier": "000001",
+          "seeAlso": [],
+          "description": {
+            "languageCode": "eng",
+            "name": "Comité de Défense des Juifs",
+            "identifier": null,
+            "dates": [
+              {
+                "startDate": "1942-01-01",
+                "endDate": "1944-12-31",
+                "precision": "year"
+              }
+            ],
+            "lastName": null,
+            "firstName": null,
+            "source": "Example sources.",
+            "typeOfEntity": "corporateBody",
+            "datesOfExistence": "1942-1944",
+            "biographicalHistory": "Example history of the corporate body.",
+            "legalStatus": "Example legal status.",
+            "structure": "Example internal structure.",
+            "generalContext": "Example general context.",
+            "occupation": null,
+            "otherFormsOfName": [
+              "CDJ"
+            ],
+            "parallelFormsOfName": [],
+            "place": [],
+            "functions": [
+              "Example function."
+            ],
+            "mandates": []
+          }
+        }
+      ]
+    }
+  }
+}
