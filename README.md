@@ -16,7 +16,7 @@ Options:
   -c, --conf=<text>         The properties file with the entities configurations. Default: conf/config.properties
   -o, --output=<text>       File path where to store the reports of this service. Example: output.jsonl
   -e, --sseEndpoint=<text>  SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events
-  --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
+  --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property and the last event in the events history, which the stream otherwise resumes from. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
   -n, --dryRun              Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.
   --debug                   Log what the service does in detail, with timings: the events received, the GraphQL requests, the mapping, validation and SPARQL updates.
   --kafkaServer=<text>      Kafka topic where to push the reports of this service. Example: localhost:9092
@@ -24,7 +24,7 @@ Options:
   -h, --help                Show this message and exit
 
 Commands:
-  batch  Convert all the Portal's entities to N-Triples, for loading into an empty triple store.
+  batch  Convert all the Portal's entities to N-Triples, for loading into an empty triple store. Stop the update service first: once the data is loaded, it resumes from the last event in its events history.
 ```
 
 There are no mandatory options to run the service, as by default it assumes that the 
@@ -35,6 +35,13 @@ The service uses a logger to print all the messages of the application, and it w
 after processing each event. Additionally, these reports can also be stored in an output file (using the `-o` option) 
 following the JSON Lines format and in an append-only fashion. Similarly, it is also possible to push the reports to a Kafka
 topic using the `--kafkaServer` and `--kafkaTopic` options.
+
+The service records each event it processes in its events history, the SQLite database at the `databasePath`
+property. When it starts, it resumes the event stream from the last event recorded, so that it applies the changes
+made while it wasn't running; events already processed successfully are skipped. `--resumeFromEventId`, or the
+`resumeFromEventId` property, resumes from another event instead. The Portal replays its events from that event on,
+but if it doesn't have the event, for example because the history is from another Portal instance, it sends only new
+events: the service then logs an error, as the changes made since that event were missed.
 
 With the `--dryRun` option the service processes events as usual but, instead of executing the SPARQL DELETE and
 INSERT statements, prints them to the terminal through the `sparql` logger.
@@ -94,6 +101,18 @@ default `batch/kg.nt` and `http://localhost:3030/ehri`, with `FUSEKI_AUTH=<user>
 
 Each step resumes where an earlier run left off: run the same command again after a failure. To fetch a source again,
 delete its response in `<dir>/responses`; its chunks and mapped data are then replaced.
+
+To hand over to the update service, stop it before the batch, and start it again once the data is loaded: it
+resumes from the last event in its events history, replaying the changes made since it stopped, including those made
+during the batch. Replaying a change the batch's data already has is harmless, as updates delete an entity's data
+and insert it again. The batch logs the event the service will resume from, and records it in the report as
+`resumeFromEventId`. It warns if the history is empty, as the service would then start from new events, missing the
+changes made during the batch; and if the service recorded events during the batch, as it would skip them although
+the batch's data may lack them: delete those events from the history before loading the data.
+
+`scripts/rebuild-kg.sh [<batch options>]` does all of this for services run by systemd: it stops the update service,
+runs the batch, bulk loads the output into a new TDB2 database while Fuseki serves the old one, swaps it in, and starts
+the update service again. Its comments list its settings, such as the units' names and the database's location.
 
 ## Requirements
 The minimum versions for this software to work are:

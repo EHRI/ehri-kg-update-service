@@ -11,6 +11,7 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import eu.ehri_project.ehri_kg.consumers.EHRISSEConsumer
+import eu.ehri_project.ehri_kg.consumers.ResumeCheck
 import eu.ehri_project.ehri_kg.consumers.SseConnectionException
 import eu.ehri_project.ehri_kg.consumers.SseEndpointCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
@@ -49,7 +50,7 @@ class EhriKgUpdateService : CliktCommand() {
     val sseEndpoint by option("-e", "--sseEndpoint",
             help="SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events")
     val resumeFromEventId by option("--resumeFromEventId",
-            help="Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property. Example: 01a1d504-64aa-764a-ae6c-25adbe186009")
+            help="Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property and the last event in the events history, which the stream otherwise resumes from. Example: 01a1d504-64aa-764a-ae6c-25adbe186009")
     val dryRun by option("-n", "--dryRun",
             help="Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.")
         .flag()
@@ -64,15 +65,24 @@ class EhriKgUpdateService : CliktCommand() {
         if (currentContext.invokedSubcommand != null) return
         val kafkaEmitter = kafkaOptions?.let { KafkaEmitter(it.kafkaServer, it.kafkaTopic) }
         val config = Config(entitiesConfig)
+        val database = DatabaseManager(config)
+        // Without an event to resume from, the stream resumes from the last event it recorded, replaying it and any
+        // event after it that it missed while it wasn't running; the events already processed are skipped
+        val requestedEventId = resumeFromEventId ?: config.getOptional("resumeFromEventId")?.takeIf { it.isNotBlank() }
+        val lastEventId = requestedEventId ?: database.lastEventId()
+        when {
+            requestedEventId != null -> logger.info { "Resuming the event stream from event $requestedEventId" }
+            lastEventId != null -> logger.info { "Resuming the event stream from the last event recorded, $lastEventId" }
+            else -> logger.info { "No events recorded, so starting the event stream from new events" }
+        }
         val consumer = EHRISSEConsumer(
             mappingFile,
-            lastEventId = resumeFromEventId ?: config.getOptional("resumeFromEventId"),
+            lastEventId = lastEventId,
             sseEndpoint = sseEndpoint ?: config.getOptional("sseEndpoint")
         )
         logger.debug { "Configuration $entitiesConfig: GraphQL endpoint ${config.get("graphQLEndpoint")}, " +
             "SPARQL endpoints ${config.get("querySparqlEndpoint")} and ${config.get("updateSparqlEndpoint")}, " +
             "resuming from event ${consumer.lastEventId ?: "none"}" }
-        val database = DatabaseManager(config)
         val sparqlStore = if (dryRun) LoggingSparqlStore()
             else RemoteSparqlStore(config.get("querySparqlEndpoint"), config.get("updateSparqlEndpoint"))
         if (dryRun) logger.info { "Dry run: SPARQL update statements will be logged, not executed" }
@@ -87,7 +97,7 @@ class EhriKgUpdateService : CliktCommand() {
             }
             val graphQLClient = GraphQLQueryProcessor(config.get("graphQLEndpoint"), httpClient)
             val factory = UpdatesProcessorFactory(config, graphQLClient, sparqlStore = sparqlStore)
-            EHRIUpdatesProcessor(config, database, factory::createUpdateProcessor, dryRun)
+            EHRIUpdatesProcessor(config, database, factory::createUpdateProcessor, dryRun, ResumeCheck(lastEventId))
                 .process(consumer.processEvents())
                 .blockingGet()
                 .blockingForEach { eventReport ->

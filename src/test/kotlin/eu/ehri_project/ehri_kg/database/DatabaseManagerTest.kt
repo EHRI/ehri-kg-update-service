@@ -6,7 +6,9 @@ import eu.ehri_project.ehri_kg.support.testConfig
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class DatabaseManagerTest {
@@ -81,5 +83,30 @@ class DatabaseManagerTest {
         assertFalse(database.checkIfSuccessfullyProcessed(event.copy(id = "nl")))
         assertFalse(database.checkIfSuccessfullyProcessed(event.copy(type = "Repository")))
         assertFalse(database.checkIfSuccessfullyProcessed(event.copy(eventType = "delete-event")))
+    }
+
+    @Test
+    fun `an empty history has no last event`() {
+        assertNull(DatabaseManager(testConfig(dir)).lastEventId())
+    }
+
+    @Test
+    fun `the last event is the last recorded, with or without errors`() {
+        val database = DatabaseManager(testConfig(dir))
+        database.insertReport(report(event, timeStamp = "2026-01-01T00:00:01Z"))
+        database.insertReport(report(event.copy(eventId = "evt-2"), errors = "boom", timeStamp = "2026-01-01T00:00:02Z"))
+
+        assertEquals("evt-2", DatabaseManager(testConfig(dir)).lastEventId())
+    }
+
+    @Test
+    fun `the last event is the last recorded even when the timestamps don't sort as text`() {
+        val database = DatabaseManager(testConfig(dir))
+        database.insertReport(report(event, timeStamp = "2026-01-01T00:00:01.5Z"))
+        // Later, but sorts first as text, as ISO_INSTANT drops trailing zeros
+        database.insertReport(report(event.copy(eventId = "evt-2"), timeStamp = "2026-01-01T00:00:01.123456789Z"))
+        database.insertReport(report(event.copy(eventId = "evt-3"), timeStamp = "2026-01-01T00:00:02Z"))
+
+        assertEquals("evt-3", database.lastEventId())
     }
 }

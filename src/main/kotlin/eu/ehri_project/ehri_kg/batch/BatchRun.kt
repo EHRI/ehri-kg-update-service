@@ -24,11 +24,14 @@ data class StepTimes(val fetching: Long = 0, val chunking: Long = 0, val mapping
                      val total: Long = 0)
 
 /**
+ * @param resumeFromEventId the last event in the update stream's events history when the batch started, which the
+ * stream resumes from once the data is loaded, if any
  * @param triples the number of triples written to the output, the sources' and the static files', which may include
  * triples that more than one chunk mapped, e.g. those about the entities they link to
  */
 @Serializable
 data class BatchReport(val sources: List<SourceReport>, val output: String, val violations: String,
+                       val resumeFromEventId: String? = null,
                        val staticTriples: Long = 0, val triples: Long = 0, val seconds: StepTimes = StepTimes())
 
 /**
@@ -37,6 +40,7 @@ data class BatchReport(val sources: List<SourceReport>, val output: String, val 
  * run left off, in [dir]: responses already fetched aren't fetched again, nor chunks already mapped. To fetch a source
  * again, delete its response in `<dir>/responses`.
  *
+ * @param resumeFromEventId the event the update stream will resume from, reported for reference
  * @param staticFiles RDF files whose data is added to the output, such as instances that the mapped data refers to but
  * doesn't define
  */
@@ -47,6 +51,7 @@ class BatchRun(
     private val chunkSize: Int,
     private val dir: File,
     private val output: File = File(dir, "kg.nt"),
+    private val resumeFromEventId: String? = null,
     private val staticFiles: List<File> = emptyList(),
 ) {
     private val logger = KotlinLogging.logger {}
@@ -89,7 +94,7 @@ class BatchRun(
                 SourceReport(source.name, items.getValue(source.name), jobs.count { it.source == source.name },
                     triples, sourceViolations)
             },
-            output.path, violations.path, staticTriples,
+            output.path, violations.path, resumeFromEventId, staticTriples,
             counts.values.sumOf { it.first } + staticTriples,
             StepTimes(fetching.inWholeSeconds, chunking.inWholeSeconds, mapping.inWholeSeconds, writing.inWholeSeconds,
                 start.elapsedNow().inWholeSeconds))
@@ -149,5 +154,4 @@ class BatchRun(
         complete.writeText("$items\n")
         return items
     }
-
 }

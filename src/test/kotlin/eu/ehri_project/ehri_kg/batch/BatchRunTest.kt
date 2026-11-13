@@ -43,9 +43,9 @@ class BatchRunTest {
         server.stop(0)
     }
 
-    private fun run(staticFiles: List<File> = emptyList()) = BatchRun(
+    private fun run(resumeFromEventId: String? = null, staticFiles: List<File> = emptyList()) = BatchRun(
         sources, StreamFetcher("http://localhost:${server.address.port}/graphql", client),
-        BatchMapper("conf/config.properties", workers = 1), chunkSize = 2, dir = dir,
+        BatchMapper("conf/config.properties", workers = 1), chunkSize = 2, dir = dir, resumeFromEventId = resumeFromEventId,
         staticFiles = staticFiles
     ).run()
 
@@ -58,6 +58,13 @@ class BatchRunTest {
         // Two entities of each of these, and a null item for each source
         assertEquals(listOf(2, 2, 1), report.sources.filter { it.name in setOf("countries", "repositories", "links") }.map { it.items })
         assertEquals(report, Json.decodeFromString<BatchReport>(File(dir, "report.json").readText()))
+        assertEquals(null, report.resumeFromEventId)
+    }
+
+    @Test
+    fun `reports the event the update stream resumes from`() {
+        assertEquals("e1", run(resumeFromEventId = "e1").resumeFromEventId)
+        assertTrue(File(dir, "report.json").readText().contains("\"resumeFromEventId\": \"e1\""))
     }
 
     @Test

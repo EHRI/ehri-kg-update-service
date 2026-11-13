@@ -1,5 +1,6 @@
 package eu.ehri_project.ehri_kg.processors
 
+import eu.ehri_project.ehri_kg.consumers.ResumeCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.timed
@@ -18,7 +19,8 @@ class EHRIUpdatesProcessor(
     val config: Config,
     val database: DatabaseManager,
     private val createUpdateProcessor: (EHRITypes) -> UpdatesProcessor,
-    private val dryRun: Boolean = false
+    private val dryRun: Boolean = false,
+    private val resumeCheck: ResumeCheck = ResumeCheck(null),
 ) {
 
     private val eventExtractor = EventExtractor(config.get("eventDetailsSparqlQuery"))
@@ -32,6 +34,7 @@ class EHRIUpdatesProcessor(
         return observable.map {
             it.concatMap {
                 Flowable.fromIterable(eventExtractor.events(it)).map {
+                   resumeCheck.received(it.eventId)
                    processEvent(it)
                 }
             }

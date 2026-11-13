@@ -14,6 +14,7 @@ import eu.ehri_project.ehri_kg.batch.BatchResponseException
 import eu.ehri_project.ehri_kg.batch.BatchRun
 import eu.ehri_project.ehri_kg.batch.BatchSource
 import eu.ehri_project.ehri_kg.batch.StreamFetcher
+import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.DebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -24,7 +25,8 @@ class BatchCommand : CliktCommand(name = "batch") {
     private val logger = KotlinLogging.logger {}
 
     override fun help(context: Context) =
-        "Convert all the Portal's entities to N-Triples, for loading into an empty triple store."
+        "Convert all the Portal's entities to N-Triples, for loading into an empty triple store. Stop the update " +
+            "service first: once the data is loaded, it resumes from the last event in its events history."
 
     val entitiesConfig by option("-c", "--conf",
             help = "The properties file with the entities configurations. Default: conf/config.properties")
@@ -60,11 +62,18 @@ class BatchCommand : CliktCommand(name = "batch") {
         } ?: allSources
         logger.debug { "Converting ${selected.map { it.name }} from ${graphQLEndpoint ?: config.get("graphQLEndpoint")} " +
             "in $dir, in chunks of ${config.get("batchChunkSize")} with $workers workers of $workerHeap" }
+        // The update stream resumes from the last event in its history, which must stay put until the data is loaded
+        val database = DatabaseManager(config)
+        val resumeFromEventId = database.lastEventId()
+        if (resumeFromEventId == null) logger.warn { "The events history at ${config.get("databasePath")} is empty, " +
+            "so the update stream will start from new events, missing the changes made during the batch" }
+        else logger.info { "The update stream will resume from the last event in its history, $resumeFromEventId" }
         val report = try {
             StreamFetcher.streamingClient().use { client ->
                 BatchRun(selected, StreamFetcher(graphQLEndpoint ?: config.get("graphQLEndpoint"), client),
                     BatchMapper(entitiesConfig, workers, listOf("-Xmx$workerHeap") + DebugLogging.jvmArgs()),
                     config.get("batchChunkSize").toInt(), File(dir), output?.let(::File) ?: File(dir, "kg.nt"),
+                    resumeFromEventId,
                     config.getOptional("batchStaticFiles").orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }
                         .map(::File)
                 ).run()
@@ -85,5 +94,14 @@ class BatchCommand : CliktCommand(name = "batch") {
                 "chunking ${chunking.seconds}, mapping ${mapping.seconds}, writing ${writing.seconds})" }
         }
         logger.info { "Wrote the data to ${report.output}, the violations to ${report.violations} and this report to $dir/report.json" }
+        val lastEventId = database.lastEventId()
+        if (lastEventId != resumeFromEventId) {
+            logger.warn { "The update service recorded events during the batch, up to $lastEventId, so it may skip " +
+                "changes the batch's data lacks. Stop the service, and before loading the data, delete the events " +
+                "recorded after ${resumeFromEventId ?: "the start of the batch"} from the events history." }
+        } else {
+            logger.info { "After loading the data, start the update service: it resumes from " +
+                (resumeFromEventId?.let { "event $it" } ?: "new events") }
+        }
     }
 }

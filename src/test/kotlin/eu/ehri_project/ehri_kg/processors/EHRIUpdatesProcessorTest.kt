@@ -1,5 +1,6 @@
 package eu.ehri_project.ehri_kg.processors
 
+import eu.ehri_project.ehri_kg.consumers.ResumeCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
@@ -213,5 +214,19 @@ class EHRIUpdatesProcessorTest {
 
         assertEquals(listOf("evt-1", "evt-2"), reports.map { it.receivedEvent.eventId })
         assertEquals(2, graphQL.requests.size)
+    }
+
+    @Test
+    fun `the event resumed from is checked, even when it is skipped`() {
+        val event = EHRIEvent("evt-1", "update-event", "2026-01-01T00:00:00Z", "gb", "Country")
+        database.insertReport(EHRIUpdateReport(event, emptyList(), emptyList()))
+        val config = testConfig(dir)
+        val check = ResumeCheck("evt-1")
+        processor = EHRIUpdatesProcessor(config, database,
+            UpdatesProcessorFactory(config, graphQL, sparqlStore = store)::createUpdateProcessor, resumeCheck = check)
+
+        run(sseEvent("evt-1", "update-event", "gb" to "Country"), sseEvent("evt-2", "update-event", "gb" to "Country"))
+
+        assertEquals(true, check.replayed)
     }
 }

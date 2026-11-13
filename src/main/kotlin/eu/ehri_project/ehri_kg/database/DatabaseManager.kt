@@ -59,6 +59,21 @@ class DatabaseManager(config: Config) {
         }
     }
 
+    /**
+     * The id of the last event recorded, whether or not it was processed successfully, if any. Rows are compared in
+     * the order they were inserted, which is the order the events were processed in, as the timestamps, without
+     * trailing zeros, don't sort as text.
+     */
+    fun lastEventId(): String? {
+        connect().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeQuery("SELECT event_id FROM events_history ORDER BY rowid DESC LIMIT 1;").use { rs ->
+                    return if (rs.next()) rs.getString("event_id") else null
+                }
+            }
+        }
+    }
+
     fun checkIfSuccessfullyProcessed(event: EHRIEvent): Boolean {
         connect().use { connection ->
             connection.prepareStatement(
