@@ -4,6 +4,7 @@ import com.herminiogarcia.shexml.MappingLauncher
 import com.herminiogarcia.shexml.helper.ParallelExecutionConfigurator
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.jena.query.Dataset
+import java.nio.file.Path
 
 class ShExMLMappingLauncherProxy {
 
@@ -15,7 +16,7 @@ class ShExMLMappingLauncherProxy {
         val inputStream = fileInput.byteInputStream()
         System.setIn(inputStream)
         inputStream.close()
-        val result = MappingLauncher("", "", "", true, true, ParallelExecutionConfigurator.empty())
+        val result = MappingLauncher("", "", "", true, true, ParallelExecutionConfigurator.empty(), Path.of(""))
             .launchMapping(mappingRules)
         System.setIn(System.`in`)
         return result

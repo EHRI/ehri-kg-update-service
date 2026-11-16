@@ -8,6 +8,7 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import eu.ehri_project.ehri_kg.consumers.EHRISSEConsumer
+import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.KafkaEmitter
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
@@ -35,15 +36,22 @@ class EhriKgUpdateService : CliktCommand() {
 
     override fun run() {
         val kafkaEmitter = kafkaOptions?.let { KafkaEmitter(it.kafkaServer, it.kafkaTopic) }
-        val observable = EHRISSEConsumer(mappingFile).processEvents()
-        EHRIUpdatesProcessor(Config(entitiesConfig))
+        val config = Config(entitiesConfig)
+        val lastEventId = config.get("resumeFromEventId").ifEmpty { null }
+        val observable = EHRISSEConsumer(mappingFile, lastEventId = lastEventId).processEvents()
+        val database = DatabaseManager(config)
+        EHRIUpdatesProcessor(config)
             .process(observable)
             .blockingGet()
             .blockingForEach { eventReport ->
                 val jsonReport = Json.encodeToString(eventReport)
                 logger.info { "Report for the processed event:\n${jsonReport}" }
-                outputToFile?.let {
-                    SourceHelper.writeToFile(it, "${jsonReport}\n")
+                if (eventReport.receivedEvent.eventId.isNotEmpty()) {
+                    outputToFile?.let {
+                        val filteredJsonReport = Json.encodeToString(listOf(eventReport))
+                        SourceHelper.writeToFile(it, "${filteredJsonReport}\n")
+                    }
+                    database.insertReport(eventReport)
                 }
                 kafkaEmitter?.sendMessage(jsonReport)
             }

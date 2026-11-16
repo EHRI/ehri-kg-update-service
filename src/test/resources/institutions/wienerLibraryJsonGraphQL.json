@@ -1,0 +1,74 @@
+{
+  "data": {
+    "query": {
+      "id": "gb-003348",
+      "type": "Repository",
+      "identifier": "003348",
+      "latitude": 51.5216032,
+      "longitude": -0.1279667,
+      "descriptions": [
+        {
+          "languageCode": "eng",
+          "name": "Wiener Holocaust Library",
+          "identifier": null,
+          "addresses": [
+            {
+              "addressName": "The Wiener Holocaust Library",
+              "contactPerson": null,
+              "street": "29 Russell Square",
+              "municipality": "London",
+              "firstdem": "England",
+              "countryCode": "GB",
+              "postalCode": "WC1B 5DP",
+              "email": [
+                "info@wienerholocaustlibrary.org",
+                "library@wienerholocaustlibrary.org"
+              ],
+              "telephone": [
+                "+44 20 7636 7247"
+              ],
+              "fax": [
+                "+44 20 7436 6428"
+              ],
+              "webpage": [
+                "https://wienerholocaustlibrary.org/"
+              ]
+            }
+          ],
+          "typeOfEntity": null,
+          "history": "The Wiener Holocaust Library traces its roots back to Germany in the 1920s. Dr Alfred Wiener, a German Jew, having fought in WWI, returned to Germany in 1919 and was horrified at the surge of right-wing antisemitism, which blamed Jews for the defeat. Dr Wiener worked with the Central Association of German Citizens of Jewish Faith to combat antisemitism, writing, lobbying and speaking publicly. From 1925 (the year Hitler published Mein Kampf) he perceived a greater threat from the Nazi Party than any other antisemitic group or party. Under his influence an archive was started just to collect information about the Nazis, which formed the basis of campaigns to undermine their activities.Dr Wiener and his family fled Germany in 1933 and settled in Amsterdam. Dr Wiener's archive is believed to have been destroyed. Later that year he set up the Central Jewish Information Office at the request of the Board of Deputies of British Jews and the Anglo-Jewish Association. The JCIO essentially continued the work of the earlier archive. Following the November Pogrom of 1938, Wiener prepared to bring his collection to the UK. It arrived the following summer and is believed to have opened on the day the Nazis invaded Poland.Throughout the War the JCIO served the British Government as it fought the Nazi regime. Increasingly the collection was referred to as‘Dr Wiener's Library' and eventually this led to its renaming. Post-war, the Library assisted the prosecutors at the Nuremberg Trial, amassed early survivor testimony and helped to shape the emerging academic study of the Holocaust.",
+          "geoculturalContext": null,
+          "mandates": "The Wiener Holocaust Library is a non-profit making company limited by guarantee. https://wienerholocaustlibrary.org/who-we-are/trustees/",
+          "administrativeStructure": "https://wienerholocaustlibrary.org/who-we-are/staff/",
+          "records": null,
+          "buildings": null,
+          "holdings": "The Wiener Holocaust Library has been collecting material related to the Holocaust, its causes and legacies since 1933. Our holdings contain approximately 65,000 books and pamphlets, 2,000 document collections, over 17,000 photographs, and over 3,000 titles of periodicals, as well as audio-visual testimonies, press cuttings, posters and some objects. The Wiener Library also holds a (digital) copy of the ITS archive.",
+          "findingAids": "[Collections Guide](http://www.wienerlibrary.co.uk/Collections)\r\n\r\n[Wiener Library Portal](https://wiener.soutron.net/Portal/Default/en-GB/Search/SimpleSearch)",
+          "openingTimes": "The Library is open Monday – Friday, 10 a.m. – 5 p.m.",
+          "conditions": "[Test update] Anyone is welcome to visit The Wiener Holocaust Library and study its books, documents, photographs and other materials in the Wolfson Reading Room. It is not necessary to make an appointment, but all first-time readers are required to register and obtain a user’s ticket.",
+          "accessibility": "[Test update] There is a disabled lift outside of our historic building in Russell Square, and once inside the building, all floors are accessible via the indoor lift.\r\n\r\nIn the case of an emergency evacuation of the building, evacuation chairs are available. Visitors with mobility impairments or conditions which preclude them from using evacuation chairs are advised to inform the Library prior to their visit.\r\n\r\nAn accessible toilet is available in the basement and can be reached via the lift.\r\n\r\nFor visitors with hearing impairment, an induction loop in the exhibition area and the Wolfson Reading Room is compatible with T-coil equipped hearing aids.\r\n\r\nWe welcome Guide and Assistance dogs in the exhibition area and the Wolfson Reading Room.",
+          "researchServices": null,
+          "reproductionServices": "All material to be copied has to be approved by staff at the Enquiry Desk. Approval depends on physical condition, copyright and whether it is restricted. Some materials may not be copied at all.\r\n\r\nFor all unpublished materials, e.g. documents, photographs, microfilms, an Unpublished Material Form has to be filled out prior to copying the material, stating that the copies are for private research only.\r\n\r\nThere are a number of methods you can obtain copies: Digital book scanner, Microfilm reader, Digital camera/mobile phone.\r\nhttps://wienerholocaustlibrary.org/visit/visit-the-wolfson-reading-room/",
+          "publicAreas": null,
+          "rulesAndConventions": "ISDIAH",
+          "status": null,
+          "datesOfDescriptions": null,
+          "maintenanceNotes": "ICA-AtoM identifier: r001511GB\r\n\r\nDescription sources: ClaimsCon'06 www.wienerlibrary.co.uk\r\n\r\nPriority: 5",
+          "otherFormsOfName": [
+            "Wiener Library for the Study of the Holocaust & Genocide"
+          ],
+          "parallelFormsOfName": [],
+          "languages": [],
+          "scripts": [],
+          "sources": [
+            "ClaimsCon'06 ",
+            "[The Wiener Holocaust Library](https://wienerholocaustlibrary.org/who-we-are/history/)"
+          ]
+        }
+      ],
+      "country": {
+        "id": "gb"
+      }
+    }
+  }
+}

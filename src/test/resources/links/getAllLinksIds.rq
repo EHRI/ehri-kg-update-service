@@ -1,0 +1,8 @@
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+
+SELECT DISTINCT ?s WHERE {
+  ?s ?p ?o ;
+    a ?copyLinkClass .
+  # For now we only test one class as performing a distinct between two different subpaths will be more complicated
+  VALUES ?copyLinkClass { ehri:HasCopyRelation }
+}

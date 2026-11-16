@@ -1,0 +1,121 @@
+{
+  "data": {
+    "query": {
+      "id": "gb-003348-wl3000_9_1-1",
+      "type": "DocumentaryUnit",
+      "identifier": "WL3000/9/1/1",
+      "otherIdentifiers": [
+        "104218"
+      ],
+      "descriptions": [
+        {
+          "languageCode": "eng",
+          "name": "Correspondence regarding a trip to Poland",
+          "identifier": "104218#ENG",
+          "accessPoints": [
+            {
+              "id": "fdca3a90-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Warsaw",
+              "type": "place"
+            },
+            {
+              "id": "fdca3a8e-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Poland",
+              "type": "place"
+            },
+            {
+              "id": "fdca3a8c-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Oswiecim",
+              "type": "place"
+            },
+            {
+              "id": "fdca3a8a-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Zydowski Instytut Historyczny",
+              "type": "creator"
+            },
+            {
+              "id": "fdca3a88-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Polish Institute of International Affairs",
+              "type": "creator"
+            },
+            {
+              "id": "fdca3a86-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Glowna Komisja Badania Zbrodni Niemieckich w Polsce",
+              "type": "creator"
+            },
+            {
+              "id": "fdca3a84-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Auschwitz (memorial site)",
+              "type": "subject"
+            },
+            {
+              "id": "fdca3a82-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Survivors",
+              "type": "subject"
+            },
+            {
+              "id": "fdca3a80-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Remembrance",
+              "type": "subject"
+            },
+            {
+              "id": "fdca3a7e-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Libraries and Archives",
+              "type": "subject"
+            },
+            {
+              "id": "fdca3a7c-d3fd-11ef-a67e-cf65454a9d26",
+              "name": "Conferences",
+              "type": "subject"
+            }
+          ],
+          "dates": [
+            {
+              "startDate": "1957-01-30",
+              "endDate": "1957-07-18"
+            }
+          ],
+          "archivistNote": null,
+          "archivalHistory": null,
+          "acquisition": null,
+          "appraisal": null,
+          "accruals": "Test update",
+          "biographicalHistory": null,
+          "conditionsOfAccess": null,
+          "conditionsOfReproduction": "<strong style=\"text-decoration-color: initial; box-sizing: border-box; color: #ff0000; font-family: Roboto, sans-serif; font-size: 15px; text-align: left;\">This material has been digitised. Readers should book a reading room terminal to access it.</strong>",
+          "datesOfDescriptions": null,
+          "extentAndMedium": "18 items",
+          "levelOfDescription": "collection",
+          "relatedUnitsOfDescription": null,
+          "physicalCharacteristics": null,
+          "publicationNote": null,
+          "ref": "https://wiener.soutron.net/Portal/Default/en-GB/RecordView/Index/104218",
+          "rulesAndConventions": null,
+          "scopeAndContent": "[Test update] Containing internal material from The Wiener Library exclusively, the bundle includes reports on: the conference at the Auschwitz Memorial, a research stay at the Żydowsky Instytut Historyczny (Jewish Historical Institute) in Warsaw, visits at a Jewish cultural association, at the Main Commission for the Investigation of German Crimes in Poland, and at the Polish Institute of International Affairs.&nbsp;",
+          "separatedUnitsOfDescription": null,
+          "systemOfArrangement": null,
+          "findingAids": [],
+          "languageOfMaterial": [
+            "eng",
+            "deu"
+          ],
+          "locationOfOriginals": [],
+          "locationOfCopies": [],
+          "parallelFormsOfName": [],
+          "physicalLocation": [],
+          "notes": [],
+          "scriptOfMaterial": [],
+          "sources": [],
+          "unitDates": []
+        }
+      ],
+      "parent": {
+        "id": "gb-003348-wl3000_9_1"
+      },
+      "itemCount": 0,
+      "repository": {
+        "id": "gb-003348"
+      }
+    }
+  }
+}

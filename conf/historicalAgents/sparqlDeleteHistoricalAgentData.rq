@@ -1,0 +1,32 @@
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX ehri_vocabs: <http://lod.ehri-project-test.eu/vocabularies/>
+
+DELETE {
+    ?s ?p ?o .
+} WHERE {
+    {
+        # All the main triples where the concept is the subject except those that are not re-generated
+        ?s ?p ?o .
+        FILTER(?s = ehri_vocabs:<$entityId>
+            && ?p != rico:isOrWasSubjectOf
+            && ?p != rico:isCreatorOf)
+    }
+    UNION
+    {
+        # Connected instances that can be completely removed as they are only bound to the institution
+        ?s ?p ?o ;
+            a ?connectedClasses ;
+            ?inverseProperty ?agent .
+        VALUES ?connectedClasses { ehri:AlternateAgentName ehri:ParallelAgentName rico:LegalStatus rico:Activity rico:Mandate }
+        FILTER(?agent = ehri_vocabs:<$entityId>)
+    }
+    UNION
+    {
+        # Other triples that need to be cleaned up on a per-case basis
+        ?s ?p ?o .
+        VALUES ?p { rico:isEndDateOf rico:isBeginningDateOf rico:isDeathDateOf rico:isBirthDateOf }
+        FILTER(?o = ehri_vocabs:<$entityId>)
+    }
+}

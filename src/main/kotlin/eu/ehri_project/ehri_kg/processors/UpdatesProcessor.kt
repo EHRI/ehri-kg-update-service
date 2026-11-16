@@ -14,8 +14,11 @@ import org.apache.jena.rdf.model.Model
 import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.riot.RDFLanguages
 import java.io.ByteArrayOutputStream
+import kotlin.text.replace
 
-class UpdatesProcessorFactory(val config: Config) {
+class UpdatesProcessorFactory(val config: Config,
+                              val querySparqlEndpoint: String = config.get("querySparqlEndpoint"),
+                              val updateSparqlEndpoint: String = config.get("updateSparqlEndpoint")) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -28,7 +31,9 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("countriesShexmlMappingRules"),
                     config.get("countriesDeleteSparqlQuery"),
                     config.get("countriesConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
             EHRITypes.INSTITUTION ->
                 CountriesUpdatesProcessor(
@@ -36,7 +41,9 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("institutionsShexmlMappingRules"),
                     config.get("institutionsDeleteSparqlQuery"),
                     config.get("institutionsConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
             EHRITypes.ARCHIVAL_DESCRIPTION ->
                 ArchivalDescriptionsUpdatesProcessor(
@@ -44,11 +51,52 @@ class UpdatesProcessorFactory(val config: Config) {
                     config.get("archivalDescriptionsShexmlMappingRules"),
                     config.get("archivalDescriptionsDeleteSparqlQuery"),
                     config.get("archivalDescriptionsConstructSparqlQuery"),
-                    config
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
+            EHRITypes.VOCABULARY ->
+                VocabulariesUpdatesProcessor(
+                    config.get("vocabulariesGraphQLQuery"),
+                    config.get("vocabulariesShexmlMappingRules"),
+                    config.get("vocabulariesDeleteSparqlQuery"),
+                    config.get("vocabulariesConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
+            EHRITypes.CORPORATE_BODY ->
+                HistoricalAgentsUpdatesProcessor(
+                    config.get("historicalAgentsGraphQLQuery"),
+                    config.get("corporateBodiesShexmlMappingRules"),
+                    config.get("historicalAgentsDeleteSparqlQuery"),
+                    config.get("historicalAgentsConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
+            EHRITypes.PERSON ->
+                HistoricalAgentsUpdatesProcessor(
+                    config.get("historicalAgentsGraphQLQuery"),
+                    config.get("personsShexmlMappingRules"),
+                    config.get("historicalAgentsDeleteSparqlQuery"),
+                    config.get("historicalAgentsConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
+                )
+            EHRITypes.LINK ->
+                LinksUpdatesProcessor(
+                    config.get("linksGraphQLQuery"),
+                    config.get("linksShexmlMappingRules"),
+                    config.get("linksDeleteSparqlQuery"),
+                    config.get("linksConstructSparqlQuery"),
+                    config,
+                    querySparqlEndpoint,
+                    updateSparqlEndpoint
                 )
         }
     }
-
 }
 
 abstract class UpdatesProcessor(config: Config) {
@@ -56,10 +104,10 @@ abstract class UpdatesProcessor(config: Config) {
     abstract val shexmlMappingRules: String
     abstract val deleteSparqlQuery: String
     abstract val constructSparqlQuery: String
+    abstract val querySparqlEndpoint: String
+    abstract val updateSparqlEndpoint: String
 
     val graphQLEndpoint = config.get("graphQLEndpoint")
-    val querySparqlEndpoint = config.get("querySparqlEndpoint")
-    val updateSparqlEndpoint = config.get("updateSparqlEndpoint")
     val insertSparqlQuery = config.get("insertSparqlQuery")
 
     private val logger = KotlinLogging.logger {}
@@ -92,8 +140,7 @@ abstract class UpdatesProcessor(config: Config) {
 
     fun delete(event: EHRIEvent): List<String> {
         logger.info { "Launching DELETE query against the SPARQL endpoint" }
-        val deleteQuery = SourceHelper.readFile(deleteSparqlQuery)
-            .replace("<\$entityId>", event.id)
+        val deleteQuery = replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
         logger.debug { "Delete query: $deleteQuery" }
         SparqlEndpointQueryProcessor(updateSparqlEndpoint).update(deleteQuery)
         return listOf(deleteQuery)
@@ -129,9 +176,12 @@ abstract class UpdatesProcessor(config: Config) {
     }
 
     fun getDataStatus(event: EHRIEvent): Model {
-        val query = SourceHelper.readFile(constructSparqlQuery)
-            .replace("<\$entityId>", event.id)
+        val query = replaceEntityId(event, SourceHelper.readFile(constructSparqlQuery))
         return SparqlEndpointQueryProcessor(querySparqlEndpoint).construct(query)
+    }
+
+    open fun replaceEntityId(event: EHRIEvent, fileContent: String): String {
+        return fileContent.replace("<\$entityId>", event.id)
     }
 }
 
@@ -140,7 +190,9 @@ class InstitutionsUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)
 
 class CountriesUpdatesProcessor(
@@ -148,7 +200,9 @@ class CountriesUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)
 
 class ArchivalDescriptionsUpdatesProcessor(
@@ -156,5 +210,51 @@ class ArchivalDescriptionsUpdatesProcessor(
     override val shexmlMappingRules: String,
     override val deleteSparqlQuery: String,
     override val constructSparqlQuery: String,
-    config: Config
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config)
+
+class LinksUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String,
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
+) : UpdatesProcessor(config)
+
+class VocabulariesUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String,
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
+) : UpdatesProcessor(config) {
+    override fun replaceEntityId(event: EHRIEvent, fileContent: String): String {
+        val eventId = event.id
+            .replaceFirst("-", "\\/")
+            .replaceFirst('_', '-')
+        return fileContent.replace("<\$entityId>", eventId)
+    }
+}
+
+class HistoricalAgentsUpdatesProcessor(
+    override val graphQLQuery: String,
+    override val shexmlMappingRules: String,
+    override val deleteSparqlQuery: String,
+    override val constructSparqlQuery: String,
+    config: Config,
+    override val querySparqlEndpoint: String,
+    override val updateSparqlEndpoint: String
+) : UpdatesProcessor(config) {
+    override fun replaceEntityId(event: EHRIEvent, fileContent: String): String {
+        val eventId = event.id
+            .replaceFirst("-", "\\/")
+            .replaceFirst('_', '-')
+        return fileContent.replace("<\$entityId>", eventId)
+    }
+}

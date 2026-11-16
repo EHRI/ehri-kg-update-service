@@ -19,6 +19,13 @@ class SparqlDatasetQueryProcessor(val dataset: Dataset) {
 
 class SparqlEndpointQueryProcessor(val endpoint: String) {
 
+    fun query(query: String): ResultSet {
+        val compiledQuery = QueryFactory.create(query)
+        return QueryExecutionFactory
+            .sparqlService(endpoint, compiledQuery)
+            .execSelect()
+    }
+
     fun construct(query: String): Model {
         val compiledQuery = QueryFactory.create(query)
         return QueryExecutionFactory

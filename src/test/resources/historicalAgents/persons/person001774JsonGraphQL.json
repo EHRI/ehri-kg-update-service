@@ -1,0 +1,65 @@
+{
+  "data": {
+    "query": {
+      "id": "ehri_pers-001774",
+      "identifier": "001774",
+      "description": {
+        "languageCode": "eng",
+        "name": "Pierre Masse",
+        "identifier": "ehri-pers-001774",
+        "dates": [
+          {
+            "startDate": "1879-12-13",
+            "endDate": "1942-09-30"
+          }
+        ],
+        "lastName": null,
+        "firstName": null,
+        "source": "Cataloguing system of the Yad Vashem (Jerusalem/Israel) http://www.yadvashem.org.",
+        "typeOfEntity": "person",
+        "datesOfExistence": null,
+        "biographicalHistory": "[Test Update] Senator and member of the Georges Clémenceau governmet",
+        "legalStatus": null,
+        "structure": null,
+        "generalContext": null,
+        "occupation": null,
+        "otherFormsOfName": [
+          "פייר מאס"
+        ],
+        "parallelFormsOfName": [],
+        "place": [
+          "Compiegne,מחנה,France",
+          "Drancy,מחנה,צרפת"
+        ],
+        "functions": [],
+        "mandates": []
+      },
+      "links": [
+        {
+          "targets": [
+            {
+              "id": "il-002798-4019673-3690853",
+              "type": "DocumentaryUnit"
+            },
+            {
+              "id": "ehri_pers-001774",
+              "type": "HistoricalAgent"
+            }
+          ]
+        },
+        {
+          "targets": [
+            {
+              "id": "ehri_pers-001774",
+              "type": "HistoricalAgent"
+            },
+            {
+              "id": "il-002798-4019673-3690853",
+              "type": "DocumentaryUnit"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

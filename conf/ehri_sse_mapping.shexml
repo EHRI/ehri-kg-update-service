@@ -1,5 +1,5 @@
 PREFIX : <http://example.com/>
-STREAM ehri_sse <https://portal.ehri-project-stage.eu/admin/monitor/_events>
+STREAM ehri_sse <https://portal.ehri-project.eu/admin/monitor/_events>
 ITERATOR event <jsonpath: $> {
     FIELD event <event>
     FIELD id <id>

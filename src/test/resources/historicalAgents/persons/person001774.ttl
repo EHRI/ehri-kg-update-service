@@ -1,0 +1,12 @@
+<http://lod.ehri-project-test.eu/units/il-002798-4019673-3690853> <https://www.ica.org/standards/RiC/ontology#hasOrHadSubject> <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774/otherNames/פייר_מאס> <https://www.ica.org/standards/RiC/ontology#name> "פייר מאס" .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774/otherNames/פייר_מאס> <https://www.ica.org/standards/RiC/ontology#isOrWasAgentNameOf> <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774/otherNames/פייר_מאס> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.ehri-project-test.eu/ontology#AlternateAgentName> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#hasDeathDate> <http://lod.ehri-project-test.eu/dates/1942-09-30> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#hasBirthDate> <http://lod.ehri-project-test.eu/dates/1879-12-13> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <http://lod.ehri-project-test.eu/ontology#sources> "Cataloguing system of the Yad Vashem (Jerusalem/Israel) http://www.yadvashem.org."@en .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#history> "Senator and member of the Georges Clémenceau governmet"@en .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#hasOrHadAgentName> <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774/otherNames/פייר_מאס> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#name> "Pierre Masse" .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.ehri-project-test.eu/ontology#Person> .
+<http://lod.ehri-project-test.eu/vocabularies/ehri-pers/001774> <https://www.ica.org/standards/RiC/ontology#isOrWasSubjectOf> <http://lod.ehri-project-test.eu/units/il-002798-4019673-3690853> .

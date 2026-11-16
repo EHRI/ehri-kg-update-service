@@ -1,0 +1,388 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
+PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
+PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
+PREFIX ehri_other_name: <http://lod.ehri-project-test.eu/otherNames/>
+PREFIX ehri_parallel_name: <http://lod.ehri-project-test.eu/parallelNames/>
+PREFIX ehri_dates: <http://lod.ehri-project-test.eu/dates/>
+PREFIX ehri_legal_status: <http://lod.ehri-project-test.eu/legalStatuses/>
+PREFIX ehri_mandate: <http://lod.ehri-project-test.eu/mandates/>
+PREFIX ehri_activity: <http://lod.ehri-project-test.eu/activities/>
+PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+MATCHER langcode_two_digit_equivalent <aar AS aa &
+abk AS ab &
+afr AS af &
+aka AS ak &
+alb  AS sq &
+sqi  AS sq &
+amh AS am &
+ara AS ar &
+arg AS an &
+arm  AS hy &
+hye  AS hy &
+asm AS "as" &
+ava AS av &
+ave AS ae &
+aym AS ay &
+aze AS az &
+bak AS ba &
+bam AS bm &
+baq  AS eu &
+eus  AS eu &
+bel AS be &
+ben AS bn &
+bis AS bi &
+tib  AS bo &
+bod  AS bo &
+bos AS bs &
+bre AS br &
+bul AS bg &
+bur  AS my &
+mya  AS my &
+cat AS ca &
+cze  AS cs &
+ces  AS cs &
+cha AS ch &
+che AS ce &
+chi  AS zh &
+zho  AS zh &
+chu AS cu &
+chv AS cv &
+cor AS kw &
+cos AS co &
+cre AS cr &
+wel  AS cy &
+cym  AS cy &
+cze  AS cs &
+ces  AS cs &
+dan AS da &
+ger  AS de &
+deu  AS de &
+div AS dv &
+dut  AS nl &
+nld  AS nl &
+dzo AS dz &
+gre  AS el &
+ell  AS el &
+eng AS en &
+epo AS eo &
+est AS et &
+baq  AS eu &
+eus  AS eu &
+ewe AS ee &
+fao AS fo &
+per  AS fa &
+fas  AS fa &
+fij AS fj &
+fin AS fi &
+fre  AS fr &
+fra  AS fr &
+fre  AS fr &
+fra  AS fr &
+fry AS fy &
+ful AS ff &
+geo  AS ka &
+kat  AS ka &
+ger  AS de &
+deu  AS de &
+gla AS gd &
+gle AS ga &
+glg AS gl &
+glv AS gv &
+gre  AS el &
+ell  AS el &
+grn AS gn &
+guj AS gu &
+hat AS ht &
+hau AS ha &
+heb AS he &
+her AS hz &
+hin AS hi &
+hmo AS ho &
+hrv AS hr &
+hun AS hu &
+arm  AS hy &
+hye  AS hy &
+ibo AS ig &
+ice  AS is &
+isl  AS is &
+ido AS io &
+iii AS ii &
+iku AS iu &
+ile AS ie &
+ina AS ia &
+ind AS id &
+ipk AS ik &
+ice  AS is &
+isl  AS is &
+ita AS it &
+jav AS jv &
+jpn AS ja &
+kal AS kl &
+kan AS kn &
+kas AS ks &
+geo  AS ka &
+kat  AS ka &
+kau AS kr &
+kaz AS kk &
+khm AS km &
+kik AS ki &
+kin AS rw &
+kir AS ky &
+kom AS kv &
+kon AS kg &
+kor AS ko &
+kua AS kj &
+kur AS ku &
+lao AS lo &
+lat AS la &
+lav AS lv &
+lim AS li &
+lin AS ln &
+lit AS lt &
+ltz AS lb &
+lub AS lu &
+lug AS lg &
+mac  AS mk &
+mkd  AS mk &
+mah AS mh &
+mal AS ml &
+mao  AS mi &
+mri  AS mi &
+mar AS mr &
+may  AS ms &
+msa  AS ms &
+mac  AS mk &
+mkd  AS mk &
+mlg AS mg &
+mlt AS mt &
+mon AS mn &
+mao  AS mi &
+mri  AS mi &
+may  AS ms &
+msa  AS ms &
+bur  AS my &
+mya  AS my &
+nau AS na &
+nav AS nv &
+nbl AS nr &
+nde AS nd &
+ndo AS ng &
+nep AS ne &
+dut  AS nl &
+nld  AS nl &
+nno AS nn &
+nob AS nb &
+nor AS no &
+nya AS ny &
+oci AS oc &
+oji AS oj &
+ori AS or &
+orm AS om &
+oss AS os &
+pan AS pa &
+per  AS fa &
+fas  AS fa &
+pli AS pi &
+pol AS pl &
+por AS pt &
+pus AS ps &
+que AS qu &
+roh AS rm &
+rum  AS ro &
+ron  AS ro &
+rum  AS ro &
+ron  AS ro &
+run AS rn &
+rus AS ru &
+sag AS sg &
+san AS sa &
+sin AS si &
+slo  AS sk &
+slk  AS sk &
+slo  AS sk &
+slk  AS sk &
+slv AS sl &
+sme AS se &
+smo AS sm &
+sna AS sn &
+snd AS sd &
+som AS so &
+sot AS st &
+spa AS es &
+alb  AS sq &
+sqi  AS sq &
+srd AS sc &
+srp AS sr &
+ssw AS ss &
+sun AS su &
+swa AS sw &
+swe AS sv &
+tah AS ty &
+tam AS ta &
+tat AS tt &
+tel AS te &
+tgk AS tg &
+tgl AS tl &
+tha AS th &
+tib  AS bo &
+bod  AS bo &
+tir AS ti &
+ton AS to &
+tsn AS tn &
+tso AS ts &
+tuk AS tk &
+tur AS tr &
+twi AS tw &
+uig AS ug &
+ukr AS uk &
+urd AS ur &
+uzb AS uz &
+ven AS ve &
+vie AS vi &
+vol AS vo &
+wel  AS cy &
+cym  AS cy &
+wln AS wa &
+wol AS wo &
+xho AS xh &
+yid AS yi &
+yor AS yo &
+zha AS za &
+chi  AS zh &
+zho  AS zh &
+zul AS zu>
+FUNCTIONS transformers <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Transformers.scala>
+FUNCTIONS validators <scala: https://raw.githubusercontent.com/EHRI/ehri-kg-mapping/refs/heads/enhancement-%2331/src/ShExMLTemplates/functions/Validators.scala>
+SOURCE people <stdin>
+
+ITERATOR people_iterator <jsonpath: $.data.query> {
+	PUSHED_FIELD id <identifier>
+    FIELD name <description.name>
+    FIELD lastName <description.lastName>
+    FIELD firstName <description.firstName>
+    PUSHED_FIELD languageCode <description.languageCode>
+    FIELD sourceLink <description.source>
+    FIELD datesOfExistence <description.datesOfExistence>
+    FIELD biographicalHistory <description.biographicalHistory>
+    FIELD typeOfEntity <description.typeOfEntity>
+    FIELD legalStatus <description.legalStatus>
+    FIELD structure <description.structure>
+    FIELD generalContext <description.generalContext>
+    FIELD occupation <description.occupation>
+  	ITERATOR links <links[*]> {
+        ITERATOR targets <targets[?(@.type=='DocumentaryUnit')]> {
+            FIELD unit_id <id>
+            POPPED_FIELD person_id <id>
+        }
+    }
+    ITERATOR dates <description.dates[*]> {
+        FIELD startDate <startDate>
+        FIELD endDate <endDate>
+        POPPED_FIELD person_id <id>
+    }
+    ITERATOR otherFormsOfName <description.otherFormsOfName> {
+        FIELD name <[*]>
+        POPPED_FIELD person_id <id>
+    }
+    ITERATOR parallelFormsOfName <description.parallelFormsOfName> {
+        FIELD name <[*]>
+        POPPED_FIELD person_id <id>
+    }
+    ITERATOR funcs <description.functions> {
+        FIELD func <[*]>
+        POPPED_FIELD langCode <languageCode>
+        POPPED_FIELD person_id <id>
+    }
+    ITERATOR place <description.place> {
+        FIELD place <[*]>
+        POPPED_FIELD person_id <id>
+    }
+    ITERATOR mandates <description.mandates> {
+        FIELD mandate <[*]>
+        POPPED_FIELD langCode <languageCode>
+        POPPED_FIELD person_id <id>
+    }
+}
+
+EXPRESSION person <people.people_iterator>
+EXPRESSION other_name_id <people.people_iterator.otherFormsOfName.person_id + "/otherNames/" + people.people_iterator.otherFormsOfName.name>
+EXPRESSION parallel_name_id <people.people_iterator.parallelFormsOfName.person_id + "/parallelNames/" + people.people_iterator.parallelFormsOfName.name>
+
+ehri:Person ehri_pers:[person.id] {
+    a ehri:Person ;
+    rico:name [person.name] ;
+    rico:history [person.biographicalHistory] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+    rico:hasOrHadAgentName @ehri:AgentParallelName ;
+    rico:hasOrHadAgentName @ehri:AgentOtherName ;
+    rdfs:seeAlso [transformers.removeSquareBrackets(person.sourceLink) IF validators.isURL(person.sourceLink)] ;
+    ehri:sources [transformers.removeSquareBrackets(person.sourceLink) IF validators.nonURL(person.sourceLink)] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+    rico:date [person.datesOfExistence] ;
+	rico:hasBirthDate @ehri:PersonBeginningDate ;
+	rico:hasDeathDate @ehri:PersonEndDate ;
+    # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # It will be difficult to determine the correct prefix among cities, countries and regions.
+    rico:hasOrHadLegalStatus @ehri:AuthorityLegalStatus ;
+    rico:performsOrPerformed @ehri:AuthorityOccupation ;
+    rico:performsOrPerformed @ehri:AuthorityFunction ;
+    rico:authorizedBy @ehri:AuthorityMandate ;
+    ehri:structureOrGenealogy [person.structure] @[person.languageCode MATCHING langcode_two_digit_equivalent] ; # This can be divided in structure of cb and genealogy of family if needed
+    rico:generalDescription [person.generalContext] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+}
+
+ehri:Link ehri_units:[person.links.targets.unit_id] {
+    rico:hasOrHadSubject ehri_pers:[person.links.targets.person_id] ;
+}
+
+ehri:LinkInverse ehri_pers:[person.links.targets.person_id] {
+    rico:isOrWasSubjectOf ehri_units:[person.links.targets.unit_id] ;
+}
+
+ehri:AgentOtherName ehri_pers:[other_name_id] {
+	a ehri:AlternateAgentName ;
+	rico:name [person.otherFormsOfName.name] ;
+	rico:isOrWasAgentNameOf ehri_pers:[person.otherFormsOfName.person_id] ;
+}
+
+ehri:AgentParallelName ehri_pers:[parallel_name_id] {
+	a ehri:ParallelAgentName ;
+	rico:name [person.parallelFormsOfName.name] ;
+	rico:isOrWasAgentNameOf ehri_pers:[person.parallelFormsOfName.person_id] ;
+}
+
+ehri:PersonBeginningDate ehri_dates:[person.dates.startDate] {
+	a rico:Date ;
+	rico:normalizedDateValue [person.dates.startDate] ;
+	rico:isBirthDateOf ehri_pers:[person.dates.person_id] ;
+}
+
+ehri:PersonEndDate ehri_dates:[person.dates.endDate] {
+	a rico:Date ;
+	rico:normalizedDateValue [person.dates.endDate] ;
+	rico:isDeathDateOf ehri_pers:[person.dates.person_id] ;
+}
+
+ehri:AuthorityLegalStatus ehri_pers:[transformers.combinedPathPersonLegalStatus(person.id) IF validators.nonEmpty(person.legalStatus)] {
+    a rico:LegalStatus ;
+    rico:generalDescription [person.legalStatus] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+    rico:isOrWasLegalStatusOf ehri_pers:[person.id] ;
+}
+
+ehri:AuthorityOccupation ehri_pers:[transformers.combinedPathPersonOccupation(person.id) IF validators.nonEmpty(person.occupation)] {
+    a rico:Activity ;
+    rico:hasActivityType rico:OccupationType ;
+    rico:generalDescription [person.occupation] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
+    rico:isOrWasPerformedBy ehri_pers:[person.id] ;
+}
+
+ehri:AuthorityFunction ehri_pers:[transformers.combinedPathPersonFunction(person.funcs.person_id, person.funcs.func.index())] {
+    a rico:Activity ;
+    rico:hasActivityType ehri:FunctionType ;
+    rico:generalDescription [person.funcs.func] @[person.funcs.langCode MATCHING langcode_two_digit_equivalent] ;
+    rico:isOrWasPerformedBy ehri_pers:[person.funcs.person_id] ;
+}
+
+ehri:AuthorityMandate ehri_pers:[transformers.combinedPathPersonMandate(person.mandates.person_id, person.mandates.mandate.index())] {
+    a rico:Mandate ;
+    rico:generalDescription [person.mandates.mandate] @[person.mandates.langCode MATCHING langcode_two_digit_equivalent] ;
+    rico:authorizes ehri_pers:[person.mandates.person_id] ;
+}

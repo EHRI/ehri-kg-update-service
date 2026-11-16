@@ -1,4 +1,6 @@
 # EHRI KG Update Service
+[![Kotlin CI](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml/badge.svg)](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml)
+
 This service aims to maintain the [EHRI-KG](https://lod.ehri-project-test.eu/) synchronised to the EHRI Portal data.
 For achieving this purpose, it listens for change events coming from the EHRI Portal and processes them deleting, 
 creating and updating the concerned entities in the designated triple store.
@@ -66,3 +68,20 @@ The following dependencies are used by this software:
 | ch.qos.logback / logback-classic                   | Eclipse Public License v1.0 or LGPL-2.1 |
 | com.github.ajalt.clikt / clikt                     | Apache License 2.0                      |
 | org.apache.kafka / kafka-clients                   | Apache License 2.0                      |
+
+## Scientific publications
+This module has been described as the implementation of the update layer of the overarching 
+EHRI-KG mapping architecture in the following paper:
+
+```
+H. García-González and M. Bryant, ‘Implementing the EHRI-KG: From Declarative
+Mapping Rules to a Three-Layered KG Construction Architecture’, in Proceedings
+of the 7th International Workshop on Knowledge Graph Construction (KGCW
+2026) co-located with the Extended Semantic Web Conference 2026 (ESWC
+2026), Dubrovnik, Croatia, May 10, D. C. Fraga, A. Dimou, C. Debruyne, E. Iglesias,
+A. Martínez, and S. M. OO, Eds, CEUR-WS, 2026, pp. 33–47. Available:
+https://ceur-ws.org/Vol-4245/paper7.pdf.
+```
+
+## Funding
+This work has been carried out in the context of the OSCARS project, which has received funding from the European Commission’s Horizon Europe Research and Innovation programme under grant agreement No. 101129751.

@@ -14,8 +14,8 @@ CONSTRUCT {
     ?s ?p ?o ;
       a ?connectedClasses ;
       ?inverseProperty ?unit .
-      VALUES ?connectedClasses { rico:Title rico:Activity rico:Identifier }
-      FILTER(?unit = ehri_units:<$entityId>)
+    VALUES ?connectedClasses { rico:Title rico:Activity rico:Identifier }
+    FILTER(?unit = ehri_units:<$entityId>)
   }
   UNION
   {

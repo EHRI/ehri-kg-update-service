@@ -1,5 +1,6 @@
 package eu.ehri_project.ehri_kg.processors
 
+import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
@@ -7,13 +8,16 @@ import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
 import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import org.apache.jena.query.Dataset
 
 class EHRIUpdatesProcessor(val config: Config) {
 
     val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
+    val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
+    val database = DatabaseManager(config)
+    var previousEventErroredOrNotProcessed = false
 
     init {
         org.apache.jena.query.ARQ.init()
@@ -21,33 +25,52 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     private val logger = KotlinLogging.logger {}
 
-    fun process(observable: Single<Observable<Dataset>>): Single<Observable<List<EHRIUpdateReport>>> {
+    fun process(observable: Single<Flowable<Dataset>>): Single<Flowable<EHRIUpdateReport>> {
         return observable.map {
-            it.map {
-                getEventTypeAndId(it).map {
-                    try {
-                        with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(it.type))) {
-                            val graphQLContent = downloadContents(it)
-                            val dataBefore = getDataStatus(it)
-                            val turtleResult = transformToRDF(graphQLContent)
-                            val executedQueries = update(it, turtleResult)
-                            val dataAfter = getDataStatus(it)
-                            val dataDiff = compareGraphs(dataBefore, dataAfter)
-                            EHRIUpdateReport(it, executedQueries, dataDiff)
-                        }
-                    } catch (e: Exception) {
-                        EHRIUpdateReport(it, emptyList(), emptyList(), e.stackTraceToString())
-                    }
-                }.ifEmpty { listOf(EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())) }
+            it.concatMap {
+                Flowable.fromIterable(getEventTypeAndId(it)).map {
+                   processEvent(it)
+                }.defaultIfEmpty(emptyEventReport)
             }
         }
     }
 
-    private fun selectEntityTypeCase(type: String): EHRITypes {
+    fun processEvent(event: EHRIEvent): EHRIUpdateReport {
+        try {
+            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+                if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
+                    logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
+                    return emptyEventReport
+                } else {
+                    previousEventErroredOrNotProcessed = true
+                    val graphQLContent = downloadContents(event)
+                    val dataBefore = getDataStatus(event)
+                    val turtleResult = transformToRDF(graphQLContent)
+                    val executedQueries = update(event, turtleResult)
+                    val dataAfter = getDataStatus(event)
+                    val dataDiff = compareGraphs(dataBefore, dataAfter)
+                    return EHRIUpdateReport(event, executedQueries, dataDiff)
+                }
+            }
+        } catch (_: IllegalStateException) {
+            return emptyEventReport
+        } catch (e: Exception) {
+            return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString())
+        }
+    }
+
+    private fun selectEntityTypeCase(type: String, id: String? = "null"): EHRITypes {
         return when(type) {
             "Country" -> EHRITypes.COUNTRY
             "Repository" -> EHRITypes.INSTITUTION
             "DocumentaryUnit" -> EHRITypes.ARCHIVAL_DESCRIPTION
+            "CvocConcept" -> EHRITypes.VOCABULARY
+            "Link" -> EHRITypes.LINK
+            "HistoricalAgent" -> id?.let {
+                if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
+                else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
+                else null
+            } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
             else -> error("Unknown or unsupported type $type")
         }
     }

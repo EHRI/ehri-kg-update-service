@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.herminiogarcia:shexml-streaming_3:0.0.1")
+    implementation("com.herminiogarcia:shexml-streaming_3:0.0.2")
     implementation("io.ktor:ktor-client-core:3.3.1")
     implementation("io.ktor:ktor-client-cio:3.3.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -26,10 +26,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.3.5")
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
     implementation("org.apache.kafka", "kafka-clients", "4.1.0")
+    implementation("org.xerial:sqlite-jdbc:3.53.2.1")
 }
 
 tasks.test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
 kotlin {
     jvmToolchain(17)
