@@ -1,0 +1,81 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "@type": [
+        "SoftwareSourceCode",
+        "SoftwareApplication"
+    ],
+    "author": [
+        {
+            "affiliation": {
+                "name": "Kazerne Dossin",
+                "@type": "Organization"
+            },
+            "email": "herminio.garciagonzalez@kazernedossin.eu",
+            "familyName": "García González",
+            "givenName": "Herminio",
+            "@id": "https://orcid.org/0000-0001-5590-4857",
+            "@type": "Person"
+        },
+        {
+            "affiliation": {
+                "name": "NIOD Institute for War, Holocaust and Genocide Studies",
+                "@type": "Organization"
+            },
+            "email": "m.bryant@niod.knaw.nl",
+            "familyName": "Bryant",
+            "givenName": "Mike",
+            "@id": "http://orcid.org/0000-0003-0765-7390",
+            "@type": "Person"
+        }
+    ],
+    "codeRepository": "https://github.com/EHRI/ehri-kg-update-service",
+    "dateCreated": "2025-10-21",
+    "dateModified": "2026-02-03",
+    "description": "A simple yet effective module to handle update events in the EHRI-KG",
+    "downloadUrl": "https://github.com/EHRI/ehri-kg-update-service/releases",
+    "name": "ehri-kg-update-service",
+    "programmingLanguage": "Kotlin",
+    "issueTracker": "https://api.github.com/repos/EHRI/ehri-kg-update-service/issues",
+    "funder": {
+        "name": "OSCARS project",
+        "@type": "Organization"
+    },
+    "license": "https://spdx.org/licenses/EUPL-1.2",
+    "referencePublication": [
+        {
+            "author": [
+                {
+                    "affiliation": {
+                        "name": "Kazerne Dossin",
+                        "@type": "Organization"
+                    },
+                    "email": "herminio.garciagonzalez@kazernedossin.eu",
+                    "familyName": "García-González",
+                    "givenName": "Herminio",
+                    "@id": "https://orcid.org/0000-0001-5590-4857",
+                    "@type": "Person"
+                },
+                {
+                    "affiliation": {
+                        "name": "NIOD Institute for War, Holocaust and Genocide Studies",
+                        "@type": "Organization"
+                    },
+                    "email": "m.bryant@niod.knaw.nl",
+                    "familyName": "Bryant",
+                    "givenName": "Mike",
+                    "@id": "http://orcid.org/0000-0003-0765-7390",
+                    "@type": "Person"
+                }
+            ],
+            "datePublished": "2026",
+            "identifier": "https://ceur-ws.org/Vol-4245/paper7.pdf",
+            "name": "Implementing the EHRI-KG: From Declarative Mapping Rules to a Three-Layered KG Construction Architecture",
+            "url": "https://ceur-ws.org/Vol-4245/paper7.pdf",
+            "@type": "ScholarlyArticle"
+        }
+    ],
+    "runtimePlatform": [
+        "JVM"
+    ],
+    "funding": "101129751"
+}
