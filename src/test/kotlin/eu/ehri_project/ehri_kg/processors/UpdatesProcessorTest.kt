@@ -100,9 +100,11 @@ class UpdatesProcessorTest {
 
         val queries = processor.update(event("update-event"), updated)
 
-        assertEquals(2, queries.size)
-        assertTrue(queries[0].contains("DELETE"))
-        assertTrue(queries[1].startsWith("INSERT DATA"))
+        // One request, deleting then inserting
+        val request = queries.single()
+        assertTrue(request.contains("DELETE"))
+        assertTrue(request.indexOf("INSERT DATA") > request.indexOf("DELETE"))
+        assertEquals(1, store.updates.count { it == request })
         val summaries = processor.getDataStatus(event("update-event"))
             .listStatements(null, store.dataset.defaultModel.createProperty(researchSummary), null as String?)
             .toList()

@@ -131,36 +131,43 @@ abstract class UpdatesProcessor(config: Config) {
     /** The response as the type's mapping rules map it, e.g. without the parts that aren't in the KG. */
     open fun beforeMapping(graphQLResponse: String): String = graphQLResponse
 
-    fun create(newContent: Dataset, event: EHRIEvent? = null): List<String> {
-        logger.info { "Launching INSERT query against the SPARQL endpoint" }
-        val outputStream = ByteArrayOutputStream()
-        RDFDataMgr.write(outputStream, newContent.defaultModel, RDFLanguages.nameToLang("N-Triples"))
-        val nTriplesNewContent = outputStream.toString("UTF-8")
-        outputStream.close()
-        val insertQuery = SourceHelper.readFile(insertSparqlQuery)
-            .replace("<\$ntriplesNewContent>", nTriplesNewContent)
-        logger.debug { "Insert query: $insertQuery" }
-        sparqlStore.update(insertQuery)
-        AuditLogs.update(event, insertQuery)
-        return listOf(insertQuery)
-    }
+    fun create(newContent: Dataset, event: EHRIEvent? = null): List<String> =
+        listOf(execute(event, insertStatement(newContent)))
 
-    fun delete(event: EHRIEvent): List<String> {
-        logger.info { "Launching DELETE query against the SPARQL endpoint" }
-        val deleteQuery = replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
-        logger.debug { "Delete query: $deleteQuery" }
-        sparqlStore.update(deleteQuery)
-        AuditLogs.update(event, deleteQuery)
-        return listOf(deleteQuery)
-    }
+    fun delete(event: EHRIEvent): List<String> = listOf(execute(event, deleteStatement(event)))
 
+    /**
+     * Applies the event's change. An update deletes the entity's data and inserts the new data in one request, which
+     * the store applies in one transaction, so that the entity is never missing, nor half-updated if the request fails.
+     */
     fun update(event: EHRIEvent, newContent: Dataset): List<String> {
         return when(event.eventType) {
             "create-event" -> create(newContent, event)
             "delete-event" -> delete(event)
-            "update-event" -> delete(event) + create(newContent, event)
+            "update-event" ->
+                listOf(execute(event, "${deleteStatement(event).trimEnd()}\n;\n${insertStatement(newContent)}"))
             else -> error("Event ${event.eventType} not supported")
         }
+    }
+
+    private fun insertStatement(newContent: Dataset): String {
+        val outputStream = ByteArrayOutputStream()
+        RDFDataMgr.write(outputStream, newContent.defaultModel, RDFLanguages.nameToLang("N-Triples"))
+        val nTriplesNewContent = outputStream.toString("UTF-8")
+        outputStream.close()
+        return SourceHelper.readFile(insertSparqlQuery).replace("<\$ntriplesNewContent>", nTriplesNewContent)
+    }
+
+    private fun deleteStatement(event: EHRIEvent): String =
+        replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
+
+    /** Executes the update request against the store, returning it. */
+    private fun execute(event: EHRIEvent?, request: String): String {
+        logger.info { "Running a SPARQL update for ${event?.let { "${it.eventType} ${it.eventId} of ${it.id}" } ?: "new data"}" }
+        logger.debug { "SPARQL update: $request" }
+        sparqlStore.update(request)
+        AuditLogs.update(event, request)
+        return request
     }
 
     fun compareGraphs(before: Model, after: Model): List<String> {

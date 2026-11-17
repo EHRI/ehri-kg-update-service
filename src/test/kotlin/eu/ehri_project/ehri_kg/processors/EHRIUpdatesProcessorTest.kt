@@ -74,9 +74,18 @@ class EHRIUpdatesProcessorTest {
         assertEquals(EHRIEvent("evt-1", "update-event", "2026-01-01T00:00:00Z", "gb", "Country"), report.receivedEvent)
         assertEquals("", report.errors)
         assertFalse(report.dryRun)
-        assertEquals(2, report.executedQueries.size)
+        assertEquals(1, report.executedQueries.size)
         assertTrue(report.rdfDiff.any { it.startsWith("Modified:") && "researchSummary" in it })
         assertEquals(1, graphQL.requests.size)
+    }
+
+    @Test
+    fun `an update deletes and inserts in one request, so in one transaction`() {
+        run(sseEvent("evt-1", "update-event", "gb" to "Country"))
+
+        val request = store.updates.single()
+        val operations = org.apache.jena.update.UpdateFactory.create(request).operations
+        assertEquals(listOf("UpdateModify", "UpdateDataInsert"), operations.map { it::class.simpleName })
     }
 
     @Test
@@ -174,8 +183,8 @@ class EHRIUpdatesProcessorTest {
         assertTrue("GraphQL endpoint unavailable" in failed.errors)
         assertTrue(failed.dryRun)
         assertEquals(report.executedQueries.map(LoggingSparqlStore::formatStatement), logged)
-        assertTrue(logged[0].contains("DELETE"))
-        assertTrue(logged[1].startsWith("INSERT DATA"))
+        assertTrue(logged.single().contains("DELETE"))
+        assertTrue(logged.single().contains("INSERT DATA"))
         assertTrue(report.rdfDiff.isEmpty())
     }
 
