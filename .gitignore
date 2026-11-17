@@ -52,3 +52,9 @@ run/
 ### Conversion ###
 batch-local
 /batch/
+
+### Update service logs ###
+/logs/
+
+### Ignore local config ###
+conf/local.properties

@@ -16,6 +16,7 @@ import eu.ehri_project.ehri_kg.consumers.SseConnectionException
 import eu.ehri_project.ehri_kg.consumers.SseEndpointCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
 import eu.ehri_project.ehri_kg.graphql.GraphQLQueryProcessor
+import eu.ehri_project.ehri_kg.helpers.AuditLogs
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.DebugLogging
 import eu.ehri_project.ehri_kg.helpers.KafkaEmitter
@@ -28,6 +29,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import java.io.File
 
 fun main(args: Array<String>) {
     EhriKgUpdateService().subcommands(BatchCommand()).main(args)
@@ -51,6 +53,9 @@ class EhriKgUpdateService : CliktCommand() {
             help="SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events")
     val resumeFromEventId by option("--resumeFromEventId",
             help="Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property and the last event in the events history, which the stream otherwise resumes from. Example: 01a1d504-64aa-764a-ae6c-25adbe186009")
+    val logDir by option("--logDir",
+            help="Directory for the events log, events.log, and the log of the SPARQL updates executed, sparql.log, which roll over daily. Not written in dry runs. Default: logs")
+        .default("logs")
     val dryRun by option("-n", "--dryRun",
             help="Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.")
         .flag()
@@ -86,6 +91,10 @@ class EhriKgUpdateService : CliktCommand() {
         val sparqlStore = if (dryRun) LoggingSparqlStore()
             else RemoteSparqlStore(config.get("querySparqlEndpoint"), config.get("updateSparqlEndpoint"))
         if (dryRun) logger.info { "Dry run: SPARQL update statements will be logged, not executed" }
+        else {
+            AuditLogs.enable(File(logDir))
+            logger.info { "Logging the events to $logDir/events.log and the SPARQL updates to $logDir/sparql.log" }
+        }
         HttpClient().use { httpClient ->
             val sseUrl = consumer.streamUrl()
             logger.debug { "Listening to the SSE stream at $sseUrl" }

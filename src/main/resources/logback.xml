@@ -15,6 +15,10 @@
         <appender-ref ref="SPARQL" />
     </logger>
 
+    <!-- The update service's events and SPARQL update logs, which it writes to files of their own: see AuditLogs -->
+    <logger name="ehriKg.events" level="info" additivity="false"/>
+    <logger name="ehriKg.sparql" level="info" additivity="false"/>
+
     <logger name="com.herminiogarcia.shexml.Main" level="off"/>
     <logger name="com.herminiogarcia.shexml.MappingLauncher" level="off"/>
     <logger name="com.herminiogarcia.shexml.visitor.RDFGeneratorVisitor" level="off"/>

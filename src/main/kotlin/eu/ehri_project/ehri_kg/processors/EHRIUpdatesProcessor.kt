@@ -2,6 +2,7 @@ package eu.ehri_project.ehri_kg.processors
 
 import eu.ehri_project.ehri_kg.consumers.ResumeCheck
 import eu.ehri_project.ehri_kg.database.DatabaseManager
+import eu.ehri_project.ehri_kg.helpers.AuditLogs
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.timed
 import eu.ehri_project.ehri_kg.model.EHRIEvent
@@ -47,6 +48,7 @@ class EHRIUpdatesProcessor(
             with(createUpdateProcessor(type)) {
                 if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
                     logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
+                    AuditLogs.event(event, "skipped")
                     return emptyEventReport
                 } else {
                     previousEventErroredOrNotProcessed = true
@@ -64,16 +66,20 @@ class EHRIUpdatesProcessor(
                     val dataAfter = getDataStatus(event)
                     val dataDiff = compareGraphs(dataBefore, dataAfter)
                     logger.debug { "The store has ${dataAfter.size()} triples for ${event.id}, ${dataDiff.size} changed subject-predicate pairs" }
+                    AuditLogs.event(event, "processed")
                     return EHRIUpdateReport(event, executedQueries, dataDiff, violations = violations, dryRun = dryRun)
                 }
             }
         } catch (e: NotInKgException) {
             logger.info { "Ignoring event ${event.eventId}: ${e.message}" }
+            AuditLogs.event(event, "ignored")
             return emptyEventReport
         } catch (e: UnsupportedEntityTypeException) {
             logger.debug { "Ignoring event ${event.eventId}: ${e.message}" }
+            AuditLogs.event(event, "ignored")
             return emptyEventReport
         } catch (e: Exception) {
+            AuditLogs.event(event, "failed: ${e.message?.lines()?.first() ?: e::class.simpleName}")
             return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString(), dryRun = dryRun)
         }
     }

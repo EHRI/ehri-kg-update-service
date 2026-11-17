@@ -1,6 +1,7 @@
 package eu.ehri_project.ehri_kg.processors
 
 import eu.ehri_project.ehri_kg.graphql.GraphQLClient
+import eu.ehri_project.ehri_kg.helpers.AuditLogs
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
@@ -130,7 +131,7 @@ abstract class UpdatesProcessor(config: Config) {
     /** The response as the type's mapping rules map it, e.g. without the parts that aren't in the KG. */
     open fun beforeMapping(graphQLResponse: String): String = graphQLResponse
 
-    fun create(newContent: Dataset): List<String> {
+    fun create(newContent: Dataset, event: EHRIEvent? = null): List<String> {
         logger.info { "Launching INSERT query against the SPARQL endpoint" }
         val outputStream = ByteArrayOutputStream()
         RDFDataMgr.write(outputStream, newContent.defaultModel, RDFLanguages.nameToLang("N-Triples"))
@@ -140,6 +141,7 @@ abstract class UpdatesProcessor(config: Config) {
             .replace("<\$ntriplesNewContent>", nTriplesNewContent)
         logger.debug { "Insert query: $insertQuery" }
         sparqlStore.update(insertQuery)
+        AuditLogs.update(event, insertQuery)
         return listOf(insertQuery)
     }
 
@@ -148,14 +150,15 @@ abstract class UpdatesProcessor(config: Config) {
         val deleteQuery = replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
         logger.debug { "Delete query: $deleteQuery" }
         sparqlStore.update(deleteQuery)
+        AuditLogs.update(event, deleteQuery)
         return listOf(deleteQuery)
     }
 
     fun update(event: EHRIEvent, newContent: Dataset): List<String> {
         return when(event.eventType) {
-            "create-event" -> create(newContent)
+            "create-event" -> create(newContent, event)
             "delete-event" -> delete(event)
-            "update-event" -> delete(event) + create(newContent)
+            "update-event" -> delete(event) + create(newContent, event)
             else -> error("Event ${event.eventType} not supported")
         }
     }

@@ -17,6 +17,7 @@ Options:
   -o, --output=<text>       File path where to store the reports of this service. Example: output.jsonl
   -e, --sseEndpoint=<text>  SSE endpoint to listen to, overriding the sseEndpoint property and the STREAM URL of the mapping rules. Example: https://portal.ehri-project.eu/admin/monitor/_events
   --resumeFromEventId=<text>  Event to resume the SSE stream from, that event included, overriding the resumeFromEventId property and the last event in the events history, which the stream otherwise resumes from. Example: 01a1d504-64aa-764a-ae6c-25adbe186009
+  --logDir=<text>           Directory for the events log, events.log, and the log of the SPARQL updates executed, sparql.log, which roll over daily. Not written in dry runs. Default: logs
   -n, --dryRun              Log the SPARQL update statements instead of executing them, without accessing the triple store. The events history is not updated.
   --debug                   Log what the service does in detail, with timings: the events received, the GraphQL requests, the mapping, validation and SPARQL updates.
   --kafkaServer=<text>      Kafka topic where to push the reports of this service. Example: localhost:9092
@@ -42,6 +43,16 @@ made while it wasn't running; events already processed successfully are skipped.
 `resumeFromEventId` property, resumes from another event instead. The Portal replays its events from that event on,
 but if it doesn't have the event, for example because the history is from another Portal instance, it sends only new
 events: the service then logs an error, as the changes made since that event were missed.
+
+Besides its console output, the service writes two logs of its own to the `--logDir` directory, `logs` by default,
+which roll over daily, the old files compressed:
+* `events.log`: a line for each item of each event received: the time, the event's id and type, the item's type and
+  id, and what became of it: `processed`, `failed: <error>`, `skipped` (as processed successfully before) or `ignored`
+  (as not in the KG).
+* `sparql.log`: each SPARQL update executed against the triple store, after a comment with the time and the event and
+  item it was for, so that the file is itself a SPARQL update request.
+
+Dry runs don't write them.
 
 With the `--dryRun` option the service processes events as usual but, instead of executing the SPARQL DELETE and
 INSERT statements, prints them to the terminal through the `sparql` logger.
