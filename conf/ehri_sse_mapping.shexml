@@ -18,6 +18,7 @@ EXPRESSION events <ehri_sse.event>
 
 :EhriEvent :[events.id] {
     a :Event ;
+    :eventId [events.id] ;
     :eventType [events.event] ;
     :date [events.datetime] ;
     :hasTypedIds @:Id ;
