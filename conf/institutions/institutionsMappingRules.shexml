@@ -287,7 +287,6 @@ ITERATOR repositories_iterator <jsonpath: $.data.query> {
 		FIELD publicAreas <publicAreas>
 		FIELD rulesAndConventions <rulesAndConventions>
 		FIELD status <status>
-		FIELD datesOfDescription <datesOfDescription>
 		FIELD maintenanceNotes <maintenanceNotes>
 		FIELD languages <languages>
 		FIELD scripts <scripts>

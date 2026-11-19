@@ -281,7 +281,6 @@ ITERATOR components_iterator <jsonpath: $.data.query> {
 		FIELD conditionsOfUse <conditionsOfUse>
 		FIELD conditionsOfAccess <conditionsOfAccess>
 		FIELD conditionsOfReproduction <conditionsOfReproduction>
-		FIELD datesOfDescription <datesOfDescription>
 		FIELD extentAndMedium <extentAndMedium>
 		FIELD levelOfDescription <levelOfDescription>
 		FIELD relatedUnitsOfDescription <relatedUnitsOfDescription>
@@ -341,7 +340,6 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:scopeAndContent [holding.descriptions.scopeAndContent] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceExtent [holding.descriptions.extentAndMedium] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceStructure [holding.descriptions.systemOfArrangement] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
-	rico:date [holding.descriptions.datesOfDescription] ;
 	rico:date [holding.descriptions.unitDates] ;
 	rico:hasBeginningDate @ehri:HoldingBeginningDate ;
 	rico:hasEndDate @ehri:HoldingEndDate ;
