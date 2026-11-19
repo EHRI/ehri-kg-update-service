@@ -68,6 +68,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             "Link" -> EHRITypes.LINK
             "HistoricalAgent" -> id?.let {
                 if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
+                else if(it.startsWith("ehri_fm")) EHRITypes.FAMILY
                 else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
                 else null
             } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
