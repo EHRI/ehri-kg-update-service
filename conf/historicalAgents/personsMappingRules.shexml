@@ -1,4 +1,5 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_pers: <http://lod.ehri-project-test.eu/vocabularies/ehri-pers/>
@@ -317,7 +318,7 @@ ehri:Person ehri_pers:[person.id] {
     rico:hasOrHadAgentName @ehri:AgentOtherName ;
     rdfs:seeAlso [transformers.removeSquareBrackets(person.sourceLink) IF validators.isURL(person.sourceLink)] ;
     ehri:sources [transformers.removeSquareBrackets(person.sourceLink) IF validators.nonURL(person.sourceLink)] @[person.languageCode MATCHING langcode_two_digit_equivalent] ;
-    rico:date [person.datesOfExistence] ;
+    rico:date [person.datesOfExistence] xsd:string ;
 	rico:hasBirthDate @ehri:PersonBeginningDate ;
 	rico:hasDeathDate @ehri:PersonEndDate ;
     # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # It will be difficult to determine the correct prefix among cities, countries and regions.
@@ -351,13 +352,13 @@ ehri:AgentParallelName ehri_pers:[parallel_name_id] {
 
 ehri:PersonBeginningDate ehri_dates:[person.dates.startDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.startDate] ;
+	rico:normalizedDateValue [person.dates.startDate] xsd:string ;
 	rico:isBirthDateOf ehri_pers:[person.dates.person_id] ;
 }
 
 ehri:PersonEndDate ehri_dates:[person.dates.endDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [person.dates.endDate] ;
+	rico:normalizedDateValue [person.dates.endDate] xsd:string ;
 	rico:isDeathDateOf ehri_pers:[person.dates.person_id] ;
 }
 

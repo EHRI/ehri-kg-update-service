@@ -342,12 +342,12 @@ ehri:Holding ehri_units:[holding.holding_id] { # common shape
 	rico:recordResourceExtent [holding.descriptions.extentAndMedium] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:recordResourceStructure [holding.descriptions.systemOfArrangement] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	rico:date [holding.descriptions.datesOfDescription] ;
-	rico:date [holding.descriptions.unitDates] ;
+	rico:date [holding.descriptions.unitDates] xsd:string ;
 	rico:hasBeginningDate @ehri:HoldingBeginningDate ;
 	rico:hasEndDate @ehri:HoldingEndDate ;
 	rico:isOrWasIncludedIn ehri_units:[holding.parentId] ;
 	rico:resultsOrResultedFrom @ehri:Acquisition ;
-	rico:identifier [holding.identifier] ;
+	rico:identifier [holding.identifier] xsd:string ;
 	ehri:biographicalHistory [holding.descriptions.biographicalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:archivalHistory [holding.descriptions.archivalHistory] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
 	ehri:appraisal [holding.descriptions.appraisal] @[holding.descriptions.languageCode MATCHING langcode_two_digit_equivalent] ;
@@ -383,13 +383,13 @@ ehri:HoldingParralelFormOfName ehri_units:[parallel_name_id] {
 
 ehri:HoldingBeginningDate ehri_dates:[holding.descriptions.dates.startDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.startDate] ;
+	rico:normalizedDateValue [holding.descriptions.dates.startDate] xsd:string ;
 	rico:isBeginningDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
 }
 
 ehri:HoldingEndDate ehri_dates:[holding.descriptions.dates.endDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [holding.descriptions.dates.endDate] ;
+	rico:normalizedDateValue [holding.descriptions.dates.endDate] xsd:string ;
 	rico:isEndDateOf ehri_units:[holding.descriptions.dates.holding_id] ;
 }
 
@@ -417,6 +417,6 @@ ehri:MaterialScript ehri_material_script:[holding.descriptions.scriptOfMaterial.
 
 ehri:AlternateIds ehri_units:[transformers.combinedPathHoldingAlternateIDs(holding.otherIdentifiers.holding_id, holding.otherIdentifiers.holding_id.index()) IF validators.nonEmpty(holding.otherIdentifiers.identifier)] {
 	a rico:Identifier ;
-	rico:textualValue [holding.otherIdentifiers.identifier] ;
+	rico:textualValue [holding.otherIdentifiers.identifier] xsd:string ;
 	rico:isOrWasIdentifierOf ehri_units:[holding.otherIdentifiers.holding_id] ;
 }

@@ -1,4 +1,5 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX ehri: <http://lod.ehri-project-test.eu/ontology#>
 PREFIX ehri_units: <http://lod.ehri-project-test.eu/units/>
 PREFIX ehri_cb: <http://lod.ehri-project-test.eu/vocabularies/ehri-cb/>
@@ -333,7 +334,7 @@ ehri:CBAndFamily ehri_vocabularies:[transformers.getFamilyOrCbPrefix(cbs.id, cbs
     rico:hasOrHadAgentName @ehri:AgentOtherName ;
     rdfs:seeAlso [transformers.removeSquareBrackets(cbs.sourceLink) IF validators.isURL(cbs.sourceLink)] ;
     ehri:sources [transformers.removeSquareBrackets(cbs.sourceLink) IF validators.nonURL(cbs.sourceLink)] @[cbs.languageCode MATCHING langcode_two_digit_equivalent] ;
-    rico:date [cbs.datesOfExistence] ;
+    rico:date [cbs.datesOfExistence] xsd:string ;
 	  rico:hasBeginningDate @ehri:CBBeginningDate ;
 	  rico:hasEndDate @ehri:CBEndDate ;
     # rico:agentHasOrHadLocation @ehri:AuthorityPlace ; # This is not present in the API and it will be difficult to determine the correct prefix among cities, countries and regions.
@@ -367,13 +368,13 @@ ehri:AgentParallelName ehri_vocabularies:[transformers.combinedPathParallelNames
 
 ehri:CBBeginningDate ehri_dates:[cbs.dates.startDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [cbs.dates.startDate] ;
+	rico:normalizedDateValue [cbs.dates.startDate] xsd:string ;
 	rico:isBeginningDateOf ehri_vocabularies:[transformers.getFamilyOrCbPrefix(cbs.dates.cb_id, cbs.dates.typeOfEntity)] ;
 }
 
 ehri:CBEndDate ehri_dates:[cbs.dates.endDate] {
 	a rico:Date ;
-	rico:normalizedDateValue [cbs.dates.endDate] ;
+	rico:normalizedDateValue [cbs.dates.endDate] xsd:string ;
 	rico:isEndDateOf ehri_vocabularies:[transformers.getFamilyOrCbPrefix(cbs.dates.cb_id, cbs.dates.typeOfEntity)] ;
 }
 
