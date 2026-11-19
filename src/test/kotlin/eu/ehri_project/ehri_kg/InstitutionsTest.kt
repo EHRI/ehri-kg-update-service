@@ -154,4 +154,18 @@ class InstitutionsTest : EntityTest() {
         Assertions.assertTrue { niodDataStatements.size == niodPersistedData.size }
     }
 
+    @Test
+    @DisplayName("Institutions without coordinates have no coordinates")
+    fun testNoCoordinates() {
+        val coordinates = "http://lod.ehri-project-test.eu/institutions/gb-003348/coordinates/1"
+        val withoutCoordinates = wienerLibraryJsonGraphQLData
+            .replace("\"latitude\": 51.5216032", "\"latitude\": null")
+            .replace("\"longitude\": -0.1279667", "\"longitude\": null")
+
+        val withStatements = updatesProcessor.transformToRDF(wienerLibraryJsonGraphQLData).defaultModel.listStatements().toList()
+        val withoutStatements = updatesProcessor.transformToRDF(withoutCoordinates).defaultModel.listStatements().toList()
+
+        Assertions.assertTrue { withStatements.any { it.subject.uri == coordinates } }
+        Assertions.assertTrue { withoutStatements.none { it.subject.uri == coordinates || it.`object`.toString() == coordinates } }
+    }
 }
