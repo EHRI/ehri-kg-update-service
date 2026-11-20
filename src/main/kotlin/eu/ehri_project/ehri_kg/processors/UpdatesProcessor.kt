@@ -27,7 +27,7 @@ class UpdatesProcessorFactory(val config: Config,
         logger.info { "Detected entity type $type" }
         return when(type) {
             EHRITypes.COUNTRY ->
-                InstitutionsUpdatesProcessor(
+                CountriesUpdatesProcessor(
                     config.get("countriesGraphQLQuery"),
                     config.get("countriesShexmlMappingRules"),
                     config.get("countriesDeleteSparqlQuery"),
@@ -37,7 +37,7 @@ class UpdatesProcessorFactory(val config: Config,
                     updateSparqlEndpoint
                 )
             EHRITypes.INSTITUTION ->
-                CountriesUpdatesProcessor(
+                InstitutionsUpdatesProcessor(
                     config.get("institutionsGraphQLQuery"),
                     config.get("institutionsShexmlMappingRules"),
                     config.get("institutionsDeleteSparqlQuery"),
@@ -66,7 +66,8 @@ class UpdatesProcessorFactory(val config: Config,
                     querySparqlEndpoint,
                     updateSparqlEndpoint
                 )
-            EHRITypes.CORPORATE_BODY ->
+            // The corporate bodies mapping rules map families too
+            EHRITypes.CORPORATE_BODY, EHRITypes.FAMILY ->
                 HistoricalAgentsUpdatesProcessor(
                     config.get("historicalAgentsGraphQLQuery"),
                     config.get("corporateBodiesShexmlMappingRules"),
@@ -262,9 +263,13 @@ class HistoricalAgentsUpdatesProcessor(
     override val updateSparqlEndpoint: String
 ) : UpdatesProcessor(config) {
     override fun replaceEntityId(event: EHRIEvent, fileContent: String): String {
-        val eventId = event.id
-            .replaceFirst("-", "\\/")
-            .replaceFirst('_', '-')
+        // e.g. ehri_pers-001774 -> ehri-pers/001774, except for families, ehri_fm, which the corporate bodies mapping
+        // rules map as ehri-families/<identifier>
+        // TODO: rename ehri-families/ to ehri-fm/, after the family's set, here and in the mapping rules' functions
+        val eventId = if (event.id.startsWith("ehri_fm-")) event.id.replaceFirst("ehri_fm-", "ehri-families\\/")
+            else event.id
+                .replaceFirst("-", "\\/")
+                .replaceFirst('_', '-')
         return fileContent.replace("<\$entityId>", eventId)
     }
 }
