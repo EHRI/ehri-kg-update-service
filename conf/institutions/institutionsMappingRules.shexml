@@ -377,7 +377,7 @@ ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionA
 	rico:isOrWasPhysicalLocationOf ehri_institutions:[transformers.combinedPathInstitutionLocation(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ;
 }
 
-ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id)] {
+ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id) IF validators.nonEmpty(organization.descriptions.addresses.lat)] {
 	a rico:Coordinates ;
 	rico:latitude [organization.descriptions.addresses.lat] ;
 	rico:longitude [organization.descriptions.addresses.long] ;
