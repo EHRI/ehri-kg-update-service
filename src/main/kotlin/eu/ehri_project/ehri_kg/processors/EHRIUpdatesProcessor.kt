@@ -77,19 +77,21 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     private fun getEventTypeAndId(dataset: Dataset): List<EHRIEvent> {
         logger.info { "Extracting event information" }
-        val sparqlQuery = SourceHelper.readFile(eventDetailsSparqlQuery)
-        val resultSet = SparqlDatasetQueryProcessor(dataset).query(sparqlQuery)
-        val events = resultSet.asSequence().toList().map {
-            EHRIEvent(
-                it.getResource("eventId").localName,
-                it.getLiteral("eventType").string,
-                it.getLiteral("date").string,
-                it.getLiteral("ids").string,
-                it.getLiteral("types").string,
-            )
-        }
-        return events
+        return extractEvents(dataset, SourceHelper.readFile(eventDetailsSparqlQuery))
             .ifEmpty { emptyList<EHRIEvent>().also { logger.debug { "Empty event received or impossible to extract its information" } } }
+    }
+
+    companion object {
+        fun extractEvents(dataset: Dataset, eventDetailsSparqlQuery: String): List<EHRIEvent> =
+            SparqlDatasetQueryProcessor(dataset).query(eventDetailsSparqlQuery).asSequence().toList().map {
+                EHRIEvent(
+                    it.getLiteral("eventId").string,
+                    it.getLiteral("eventType").string,
+                    it.getLiteral("date").string,
+                    it.getLiteral("ids").string,
+                    it.getLiteral("types").string,
+                )
+            }
     }
 }
 

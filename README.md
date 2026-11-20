@@ -1,5 +1,7 @@
 # EHRI KG Update Service
 [![Kotlin CI](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml/badge.svg)](https://github.com/EHRI/ehri-kg-update-service/actions/workflows/kotlin.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24277331.svg)](https://doi.org/10.5281/zenodo.24277331)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/EHRI/ehri-kg-update-service/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/EHRI/ehri-kg-update-service)
 
 This service aims to maintain the [EHRI-KG](https://lod.ehri-project-test.eu/) synchronised to the EHRI Portal data.
 For achieving this purpose, it listens for change events coming from the EHRI Portal and processes them deleting, 
