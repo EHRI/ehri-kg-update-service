@@ -58,8 +58,8 @@
 <vocabularies/ehri-camps/2233>
         a               skos:Concept ;
         rdfs:seeAlso    "http://www.wikidata.org/entity/Q45477694" ;
-        geo:lat         50.900001e0 ;
-        geo:long        14.833299e0 ;
+        geo:lat         50.900001 ;
+        geo:long        14.833299 ;
         skos:altLabel   "Klein-Schönau concentration camp"@en ;
         skos:broader    <vocabularies/ehri-camps/433> ;
         skos:inScheme   <vocabularies/ehri-camps> ;

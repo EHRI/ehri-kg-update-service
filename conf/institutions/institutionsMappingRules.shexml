@@ -366,10 +366,10 @@ ehri:InstitutionLocation ehri_institutions:[transformers.combinedPathInstitution
 ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] { 
 	a ehri:InstitutionAddress ;
 	rico:hasOrHadCoordinates @ehri:Coordinates ;
-	schema:postalCode [organization.descriptions.addresses.postalCode] ;
+	schema:postalCode [organization.descriptions.addresses.postalCode] xsd:string ;
 	rico:name [organization.descriptions.addresses.street] ;
-	schema:faxNumber [organization.descriptions.addresses.fax] ;
-  	schema:telephone [organization.descriptions.addresses.telephone] ;
+	schema:faxNumber [organization.descriptions.addresses.fax] xsd:string ;
+  	schema:telephone [organization.descriptions.addresses.telephone] xsd:string ;
 	schema:email [organization.descriptions.addresses.email] ;
 	ehri:contactPerson [organization.descriptions.addresses.contactPerson] ;
 	schema:contactType [organization.descriptions.addresses.addressName] ;
@@ -378,8 +378,8 @@ ehri:InstitutionAddress ehri_institutions:[transformers.combinedPathInstitutionA
 
 ehri:Coordinates ehri_institutions:[transformers.combinedPathInstitutionCoordinates(organization.descriptions.addresses.repository_id) IF validators.nonEmpty(organization.descriptions.addresses.lat)] {
 	a rico:Coordinates ;
-	rico:latitude [organization.descriptions.addresses.lat] ;
-	rico:longitude [organization.descriptions.addresses.long] ;
+	rico:latitude [organization.descriptions.addresses.lat] xsd:decimal ;
+	rico:longitude [organization.descriptions.addresses.long] xsd:decimal ;
 	rico:isOrWasCoordinatesOf ehri_institutions:[transformers.combinedPathInstitutionAddress(organization.descriptions.addresses.repository_id, organization.descriptions.addresses.repository_id.index())] ; 
 }
 

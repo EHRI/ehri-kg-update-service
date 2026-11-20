@@ -303,8 +303,8 @@ ehri:Concept ehri_vocabs:[transformers.generateVocabUri(concept.vocabulary_id, c
   skos:narrower ehri_vocabs:[transformers.generateVocabUri(concept.narrower.vocabulary_set, concept.narrower.id)] ;
   rdfs:seeAlso [concept.see_also] ;
   skos:inScheme ehri_vocabs:[concept.vocabulary_id] ;
-  geo:lat [concept.latitude] xsd:double ;
-  geo:long [concept.longitude] xsd:double ;
+  geo:lat [concept.latitude] xsd:decimal ;
+  geo:long [concept.longitude] xsd:decimal ;
   skos:scopeNote [concept.descriptions.scope_note] @[concept.descriptions.langcode MATCHING langcode_two_digit_equivalent] ;
   # This cannot be generated at the moment, JSONPath functions are not supported in ShExML
   #skos:topConceptOf ehri_vocabs:[concept.vocabulary_id IF validators.greaterThanZero(concept.broader_length)] ;
