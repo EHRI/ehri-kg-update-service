@@ -39,7 +39,6 @@
       publicAreas
       rulesAndConventions
       status
-      datesOfDescriptions
       maintenanceNotes
       otherFormsOfName
       parallelFormsOfName

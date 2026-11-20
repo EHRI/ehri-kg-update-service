@@ -43,10 +43,8 @@ class EHRIUpdatesProcessor(val config: Config) {
                     return emptyEventReport
                 } else {
                     previousEventErroredOrNotProcessed = true
-                    val graphQLContent = downloadContents(event)
                     val dataBefore = getDataStatus(event)
-                    val turtleResult = transformToRDF(graphQLContent)
-                    val executedQueries = update(event, turtleResult)
+                    val executedQueries = process(event)
                     val dataAfter = getDataStatus(event)
                     val dataDiff = compareGraphs(dataBefore, dataAfter)
                     return EHRIUpdateReport(event, executedQueries, dataDiff)
@@ -68,6 +66,7 @@ class EHRIUpdatesProcessor(val config: Config) {
             "Link" -> EHRITypes.LINK
             "HistoricalAgent" -> id?.let {
                 if(it.startsWith("ehri_cb")) EHRITypes.CORPORATE_BODY
+                else if(it.startsWith("ehri_fm")) EHRITypes.FAMILY
                 else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
                 else null
             } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
@@ -77,19 +76,21 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     private fun getEventTypeAndId(dataset: Dataset): List<EHRIEvent> {
         logger.info { "Extracting event information" }
-        val sparqlQuery = SourceHelper.readFile(eventDetailsSparqlQuery)
-        val resultSet = SparqlDatasetQueryProcessor(dataset).query(sparqlQuery)
-        val events = resultSet.asSequence().toList().map {
-            EHRIEvent(
-                it.getResource("eventId").localName,
-                it.getLiteral("eventType").string,
-                it.getLiteral("date").string,
-                it.getLiteral("ids").string,
-                it.getLiteral("types").string,
-            )
-        }
-        return events
+        return extractEvents(dataset, SourceHelper.readFile(eventDetailsSparqlQuery))
             .ifEmpty { emptyList<EHRIEvent>().also { logger.debug { "Empty event received or impossible to extract its information" } } }
+    }
+
+    companion object {
+        fun extractEvents(dataset: Dataset, eventDetailsSparqlQuery: String): List<EHRIEvent> =
+            SparqlDatasetQueryProcessor(dataset).query(eventDetailsSparqlQuery).asSequence().toList().map {
+                EHRIEvent(
+                    it.getLiteral("eventId").string,
+                    it.getLiteral("eventType").string,
+                    it.getLiteral("date").string,
+                    it.getLiteral("ids").string,
+                    it.getLiteral("types").string,
+                )
+            }
     }
 }
 

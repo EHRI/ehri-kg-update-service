@@ -25,7 +25,6 @@
       biographicalHistory
       conditionsOfAccess
       conditionsOfReproduction
-      datesOfDescriptions
       extentAndMedium
       levelOfDescription
       relatedUnitsOfDescription
