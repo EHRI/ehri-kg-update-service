@@ -6,7 +6,10 @@ import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
 import org.apache.jena.atlas.lib.DateTimeUtils
 import org.apache.jena.query.Dataset
+import org.apache.jena.query.DatasetFactory
+import org.apache.jena.riot.Lang
 import org.apache.jena.riot.RDFDataMgr
+import org.apache.jena.riot.RDFParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
@@ -49,6 +52,13 @@ class ArchivalDescriptionsTest : EntityTest() {
             "delete-event",
             DateTimeUtils.nowAsString(),
             "nl-002896-mf1014417",
+            "DocumentaryUnit"
+        ))
+        updatesProcessor.delete(EHRIEvent(
+            "dummy",
+            "delete-event",
+            DateTimeUtils.nowAsString(),
+            "gb-003348-wl3000_9_1",
             "DocumentaryUnit"
         ))
     }
@@ -156,6 +166,42 @@ class ArchivalDescriptionsTest : EntityTest() {
         assertStatementsExist(niodCollectionDataStatements, niodCollectionPersistedData)
 
         Assertions.assertTrue { niodCollectionData.defaultModel.listStatements().toList().size == niodCollectionPersistedData.size }
+    }
+
+    @Test
+    @DisplayName("Updating a unit keeps the links to its child units")
+    fun testParentUpdateKeepsChildren() {
+        val parent = "http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1"
+        val child = "http://lod.ehri-project-test.eu/units/gb-003348-wl3000_9_1-1"
+        fun parentIncludesChild() = retrieveEntityTriples("gb-003348-wl3000_9_1-1").any {
+            it.subject.uri == parent && it.predicate.uri == "https://www.ica.org/standards/RiC/ontology#includesOrIncluded" &&
+                it.`object`.asResource().uri == child
+        }
+
+        // The child's mapping links its parent to it
+        updatesProcessor.update(EHRIEvent(
+            "dummy",
+            "update-event",
+            DateTimeUtils.nowAsString(),
+            "gb-003348-wl3000_9_1-1",
+            "DocumentaryUnit"
+        ), updatesProcessor.transformToRDF(wienerLibraryCollectionJsonGraphQLData))
+        Assertions.assertTrue { parentIncludesChild() }
+
+        val parentData = DatasetFactory.create().also {
+            RDFParser.fromString("""
+                <$parent> a <http://lod.ehri-project-test.eu/ontology#RecordSet> ;
+                    <https://www.ica.org/standards/RiC/ontology#title> "Parent" .
+            """.trimIndent()).lang(Lang.TURTLE).parse(it)
+        }
+        updatesProcessor.update(EHRIEvent(
+            "dummy",
+            "update-event",
+            DateTimeUtils.nowAsString(),
+            "gb-003348-wl3000_9_1",
+            "DocumentaryUnit"
+        ), parentData)
+        Assertions.assertTrue { parentIncludesChild() }
     }
 
 }

@@ -12,7 +12,8 @@ DELETE {
             && ?p != rico:hasOrHadSubject
             && ?p != rico:thingIsTargetOfRelation
             && ?p != rico:thingIsSourceOfRelation
-            && ?p != rico:hasCreator)
+            && ?p != rico:hasCreator
+            && ?p != rico:includesOrIncluded)
     }
     UNION
     {
