@@ -21,6 +21,13 @@ data class EHRIEvent(
     val id: String,
     val type: String)
 
+/** The Portal's event types, as in EHRIEvent.eventType */
+object EHRIEventTypes {
+    const val CREATE = "create-event"
+    const val UPDATE = "update-event"
+    const val DELETE = "delete-event"
+}
+
 enum class EHRITypes {
     COUNTRY, INSTITUTION, ARCHIVAL_DESCRIPTION, VOCABULARY, CORPORATE_BODY, PERSON, LINK
 }

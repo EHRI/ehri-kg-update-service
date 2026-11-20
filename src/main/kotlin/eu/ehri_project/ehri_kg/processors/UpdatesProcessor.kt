@@ -4,6 +4,7 @@ import eu.ehri_project.ehri_kg.graphql.GraphQLQueryProcessor
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
+import eu.ehri_project.ehri_kg.model.EHRIEventTypes
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.shexml.ShExMLMappingLauncherProxy
 import eu.ehri_project.ehri_kg.sparql.SparqlEndpointQueryProcessor
@@ -148,11 +149,20 @@ abstract class UpdatesProcessor(config: Config) {
 
     fun update(event: EHRIEvent, newContent: Dataset): List<String> {
         return when(event.eventType) {
-            "create-event" -> create(newContent)
-            "delete-event" -> delete(event)
-            "update-event" -> delete(event) + create(newContent)
+            EHRIEventTypes.CREATE -> create(newContent)
+            EHRIEventTypes.DELETE -> delete(event)
+            EHRIEventTypes.UPDATE -> delete(event) + create(newContent)
             else -> error("Event ${event.eventType} not supported")
         }
+    }
+
+    fun fetch(event: EHRIEvent): Dataset = transformToRDF(downloadContents(event))
+
+    /** Applies an event to the KG. A deleted entity has nothing to fetch; otherwise the entity is fetched, which fails
+     * on a failed request, before anything is deleted */
+    fun process(event: EHRIEvent): List<String> = when (event.eventType) {
+        EHRIEventTypes.DELETE -> delete(event)
+        else -> update(event, fetch(event))
     }
 
     fun compareGraphs(before: Model, after: Model): List<String> {

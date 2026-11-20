@@ -43,10 +43,8 @@ class EHRIUpdatesProcessor(val config: Config) {
                     return emptyEventReport
                 } else {
                     previousEventErroredOrNotProcessed = true
-                    val graphQLContent = downloadContents(event)
                     val dataBefore = getDataStatus(event)
-                    val turtleResult = transformToRDF(graphQLContent)
-                    val executedQueries = update(event, turtleResult)
+                    val executedQueries = process(event)
                     val dataAfter = getDataStatus(event)
                     val dataDiff = compareGraphs(dataBefore, dataAfter)
                     return EHRIUpdateReport(event, executedQueries, dataDiff)
