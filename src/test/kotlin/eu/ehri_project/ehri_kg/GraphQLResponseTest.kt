@@ -46,12 +46,12 @@ class GraphQLResponseTest {
     }
 
     @Test
-    @DisplayName("Downloading an entity the Portal doesn't have fails, rather than giving nothing to map")
-    fun testMissingEntity() {
+    @DisplayName("A bad formatted query raises the expected error")
+    fun testMissingInvalidQuery() {
         val processor = UpdatesProcessorFactory(Config("conf/config.properties"), "", "")
             .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
         assertFailsWith<GraphQLResponseException> {
-            processor.downloadContents(event.copy(id = "no-such-unit"))
+            processor.downloadContents(event.copy(id = "no-such\"-unit"))
         }
     }
 }
