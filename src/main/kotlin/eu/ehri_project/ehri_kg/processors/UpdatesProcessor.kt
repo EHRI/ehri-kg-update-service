@@ -129,30 +129,24 @@ abstract class UpdatesProcessor(config: Config) {
 
     fun create(newContent: Dataset): List<String> {
         logger.info { "Launching INSERT query against the SPARQL endpoint" }
-        val outputStream = ByteArrayOutputStream()
-        RDFDataMgr.write(outputStream, newContent.defaultModel, RDFLanguages.nameToLang("N-Triples"))
-        val nTriplesNewContent = outputStream.toString("UTF-8")
-        outputStream.close()
-        val insertQuery = SourceHelper.readFile(insertSparqlQuery)
-            .replace("<\$ntriplesNewContent>", nTriplesNewContent)
-        logger.debug { "Insert query: $insertQuery" }
-        SparqlEndpointQueryProcessor(updateSparqlEndpoint).update(insertQuery)
-        return listOf(insertQuery)
+        return execute(insertQuery(newContent))
     }
 
     fun delete(event: EHRIEvent): List<String> {
         logger.info { "Launching DELETE query against the SPARQL endpoint" }
-        val deleteQuery = replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
-        logger.debug { "Delete query: $deleteQuery" }
-        SparqlEndpointQueryProcessor(updateSparqlEndpoint).update(deleteQuery)
-        return listOf(deleteQuery)
+        return execute(deleteQuery(event))
+    }
+
+    fun replace(event: EHRIEvent, newContent: Dataset): List<String> {
+        logger.info { "Launching DELETE and INSERT query against the SPARQL endpoint" }
+        return execute("${deleteQuery(event)} ;\n${insertQuery(newContent)}")
     }
 
     fun update(event: EHRIEvent, newContent: Dataset): List<String> {
         return when(event.eventType) {
             EHRIEventTypes.CREATE -> create(newContent)
             EHRIEventTypes.DELETE -> delete(event)
-            EHRIEventTypes.UPDATE -> delete(event) + create(newContent)
+            EHRIEventTypes.UPDATE -> replace(event, newContent)
             else -> error("Event ${event.eventType} not supported")
         }
     }
@@ -164,6 +158,24 @@ abstract class UpdatesProcessor(config: Config) {
     fun process(event: EHRIEvent): List<String> = when (event.eventType) {
         EHRIEventTypes.DELETE -> delete(event)
         else -> update(event, fetch(event))
+    }
+
+    private fun insertQuery(newContent: Dataset): String {
+        val nTriplesNewContent = ByteArrayOutputStream().use {
+            RDFDataMgr.write(it, newContent.defaultModel, RDFLanguages.nameToLang("N-Triples"))
+            it.toString("UTF-8")
+        }
+        return SourceHelper.readFile(insertSparqlQuery)
+            .replace("<\$ntriplesNewContent>", nTriplesNewContent)
+    }
+
+    private fun deleteQuery(event: EHRIEvent): String =
+        replaceEntityId(event, SourceHelper.readFile(deleteSparqlQuery))
+
+    private fun execute(query: String): List<String> {
+        logger.debug { "Update query: $query" }
+        SparqlEndpointQueryProcessor(updateSparqlEndpoint).update(query)
+        return listOf(query)
     }
 
     fun compareGraphs(before: Model, after: Model): List<String> {
