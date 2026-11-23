@@ -14,7 +14,7 @@ import kotlin.test.Test
 class CountryTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.COUNTRY)
     override val getTriplesSparqlPath = "src/test/resources/countries/getAllCountriesTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/countries/getAllCountriesIds.rq"

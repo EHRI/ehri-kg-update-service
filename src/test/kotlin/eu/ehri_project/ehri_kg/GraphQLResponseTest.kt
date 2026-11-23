@@ -8,6 +8,7 @@ import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRIEventTypes
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
+import io.ktor.client.HttpClient
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -48,10 +49,14 @@ class GraphQLResponseTest {
     @Test
     @DisplayName("Downloading an entity the Portal doesn't have fails, rather than giving nothing to map")
     fun testMissingEntity() {
-        val processor = UpdatesProcessorFactory(Config("conf/config.properties"), "", "")
-            .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
-        assertFailsWith<GraphQLResponseException> {
-            processor.downloadContents(event.copy(id = "no-such-unit"))
+        val config = Config("conf/config.properties")
+        HttpClient().use { httpClient ->
+            val graphQLClient = GraphQLQueryProcessor(config.get("graphQLEndpoint"), httpClient)
+            val processor = UpdatesProcessorFactory(config, graphQLClient, "", "")
+                .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
+            assertFailsWith<GraphQLResponseException> {
+                processor.downloadContents(event.copy(id = "no-such-unit"))
+            }
         }
     }
 }

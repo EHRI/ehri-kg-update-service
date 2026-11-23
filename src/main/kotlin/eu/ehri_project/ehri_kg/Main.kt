@@ -14,6 +14,7 @@ import eu.ehri_project.ehri_kg.helpers.KafkaEmitter
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.processors.EHRIUpdatesProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.client.HttpClient
 import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>) {
@@ -40,21 +41,23 @@ class EhriKgUpdateService : CliktCommand() {
         val lastEventId = config.get("resumeFromEventId").ifEmpty { null }
         val observable = EHRISSEConsumer(mappingFile, lastEventId = lastEventId).processEvents()
         val database = DatabaseManager(config)
-        EHRIUpdatesProcessor(config)
-            .process(observable)
-            .blockingGet()
-            .blockingForEach { eventReport ->
-                val jsonReport = Json.encodeToString(eventReport)
-                logger.info { "Report for the processed event:\n${jsonReport}" }
-                if (eventReport.receivedEvent.eventId.isNotEmpty()) {
-                    outputToFile?.let {
-                        val filteredJsonReport = Json.encodeToString(listOf(eventReport))
-                        SourceHelper.writeToFile(it, "${filteredJsonReport}\n")
+        HttpClient().use { httpClient ->
+            EHRIUpdatesProcessor(config, httpClient)
+                .process(observable)
+                .blockingGet()
+                .blockingForEach { eventReport ->
+                    val jsonReport = Json.encodeToString(eventReport)
+                    logger.info { "Report for the processed event:\n${jsonReport}" }
+                    if (eventReport.receivedEvent.eventId.isNotEmpty()) {
+                        outputToFile?.let {
+                            val filteredJsonReport = Json.encodeToString(listOf(eventReport))
+                            SourceHelper.writeToFile(it, "${filteredJsonReport}\n")
+                        }
+                        database.insertReport(eventReport)
                     }
-                    database.insertReport(eventReport)
+                    kafkaEmitter?.sendMessage(jsonReport)
                 }
-                kafkaEmitter?.sendMessage(jsonReport)
-            }
+        }
     }
 }
 

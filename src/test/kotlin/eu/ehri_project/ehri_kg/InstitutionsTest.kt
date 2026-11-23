@@ -14,7 +14,7 @@ import kotlin.test.Test
 class InstitutionsTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.INSTITUTION)
     override val getTriplesSparqlPath = "src/test/resources/institutions/getAllInstitutionsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/institutions/getAllInstitutionsIds.rq"
@@ -97,7 +97,7 @@ class InstitutionsTest : EntityTest() {
         doTestUpdate(updatedData)
         // This forces the deletion of UK's data to avoid collisions with countries tests.
         // In particular, these mapping rules generate the rdf:type property again which collides with the test under CountryTest.
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.COUNTRY)
                 .delete(EHRIEvent(
                     "dummy",
