@@ -1,5 +1,5 @@
-{"query": "{query:
-  Repository(id: \"<id>\") {
+{"query": "{repositories(ids: \"<id>\") {
+  items {
     id
     type
     identifier
@@ -49,4 +49,5 @@
     country {
       id
     }
-  } }" }
+  }
+} }" }
