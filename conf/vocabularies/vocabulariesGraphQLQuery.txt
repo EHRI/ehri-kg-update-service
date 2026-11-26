@@ -1,5 +1,5 @@
-{"query": "{query:
-  CvocConcept(id: \"<id>\") {
+{"query": "{concepts(ids: \"<id>\") {
+  items {
     id
     type
     identifier
@@ -37,4 +37,4 @@
       identifier
     }
   }
-}" }
+} }" }
