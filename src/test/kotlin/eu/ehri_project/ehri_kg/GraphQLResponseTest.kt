@@ -45,9 +45,9 @@ class GraphQLResponseTest {
             assertFailsWith<GraphQLResponseException>(body) { GraphQLQueryProcessor.checkResponse(event, body) }
         }
     }
-
+ 
     @Test
-    @DisplayName("Downloading an entity the Portal doesn't have fails, rather than giving nothing to map")
+    @DisplayName("A bad formatted query raises the expected erro")
     fun testMissingEntity() {
         val config = Config("conf/config.properties")
         HttpClient().use { httpClient ->
@@ -55,7 +55,7 @@ class GraphQLResponseTest {
             val processor = UpdatesProcessorFactory(config, graphQLClient, "", "")
                 .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
             assertFailsWith<GraphQLResponseException> {
-                processor.downloadContents(event.copy(id = "no-such-unit"))
+                processor.downloadContents(event.copy(id = "no-such\"-unit"))
             }
         }
     }

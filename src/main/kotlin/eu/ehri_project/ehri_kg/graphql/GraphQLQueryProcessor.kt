@@ -44,8 +44,8 @@ class GraphQLQueryProcessor(val endpoint: String, private val client: HttpClient
             if (errors != null && errors != JsonNull) {
                 throw GraphQLResponseException("GraphQL response for ${event.id} has errors: $errors")
             }
-            val entity = (response["data"] as? JsonObject)?.get("query")
-            if (entity == null || entity == JsonNull) {
+            val entity = (response["data"] as? JsonObject)?.entries
+            if (entity.isNullOrEmpty() || entity.all { it.value is JsonNull}) {
                 throw GraphQLResponseException("GraphQL response for ${event.id} has no data for it: $body")
             }
         }

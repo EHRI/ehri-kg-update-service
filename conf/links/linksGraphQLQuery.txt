@@ -1,5 +1,5 @@
-{"query": "{query:
-  Link(id: \"<id>\") {
+{"query": "{links(ids: \"<id>\") {
+  items {
     id
     type
     description
@@ -18,4 +18,4 @@
       type
     }
   }
-}" }
+} }" }
