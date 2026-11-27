@@ -7,6 +7,7 @@ import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
+import eu.ehri_project.ehri_kg.model.UnsupportedEntityTypeException
 import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
@@ -54,7 +55,8 @@ class EHRIUpdatesProcessor(val config: Config, httpClient: HttpClient) {
                     return EHRIUpdateReport(event, executedQueries, dataDiff)
                 }
             }
-        } catch (_: IllegalStateException) {
+        } catch (e: UnsupportedEntityTypeException) {
+            logger.debug { "Skipping event ${event.eventId}: ${e.message}" }
             return emptyEventReport
         } catch (e: Exception) {
             return EHRIUpdateReport(event, emptyList(), emptyList(), e.stackTraceToString())
@@ -73,8 +75,8 @@ class EHRIUpdatesProcessor(val config: Config, httpClient: HttpClient) {
                 else if(it.startsWith("ehri_fm")) EHRITypes.FAMILY
                 else if(id.startsWith("ehri_pers")) EHRITypes.PERSON
                 else null
-            } ?: throw Exception("Unknown or unsupported Historical Agent type for id $id")
-            else -> error("Unknown or unsupported type $type")
+            } ?: throw UnsupportedEntityTypeException("Unknown or unsupported Historical Agent type for id $id")
+            else -> throw UnsupportedEntityTypeException("Unknown or unsupported type $type")
         }
     }
 

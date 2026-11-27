@@ -21,6 +21,9 @@ data class EHRIEvent(
     val id: String,
     val type: String)
 
+/** An entity type the service doesn't map, whose events are skipped */
+class UnsupportedEntityTypeException(message: String) : Exception(message)
+
 /** The Portal's event types, as in EHRIEvent.eventType */
 object EHRIEventTypes {
     const val CREATE = "create-event"
