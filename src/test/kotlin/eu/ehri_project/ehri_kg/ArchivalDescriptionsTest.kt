@@ -17,7 +17,7 @@ import kotlin.test.Test
 class ArchivalDescriptionsTest : EntityTest() {
 
     override val updatesProcessor =
-        UpdatesProcessorFactory(config, queryEndpoint, updateEndpoint)
+        UpdatesProcessorFactory(config, graphQLClient, queryEndpoint, updateEndpoint)
             .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
     override val getTriplesSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsTriples.rq"
     override val getAllIdsSparqlPath = "src/test/resources/archivalDescriptions/getAllArchivalDescriptionsIds.rq"

@@ -14,13 +14,12 @@ import kotlinx.serialization.json.jsonObject
 
 class GraphQLResponseException(message: String) : Exception(message)
 
-class GraphQLQueryProcessor(val endpoint: String) {
+class GraphQLQueryProcessor(val endpoint: String, private val client: HttpClient) {
 
     private val logger = KotlinLogging.logger {}
 
     suspend fun download(event: EHRIEvent, query: String): String {
         logger.info { "Downloading data from the GraphQL endpoint for the entity with id ${event.id}" }
-        val client = HttpClient()
         val response = client.post(endpoint) {
             contentType(ContentType.Application.Json)
             setBody(query)

@@ -1,6 +1,7 @@
 package eu.ehri_project.ehri_kg.processors
 
 import eu.ehri_project.ehri_kg.database.DatabaseManager
+import eu.ehri_project.ehri_kg.graphql.GraphQLQueryProcessor
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.model.EHRIEvent
@@ -8,11 +9,14 @@ import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.model.EHRIUpdateReport
 import eu.ehri_project.ehri_kg.sparql.SparqlDatasetQueryProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.client.HttpClient
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import org.apache.jena.query.Dataset
 
-class EHRIUpdatesProcessor(val config: Config) {
+class EHRIUpdatesProcessor(val config: Config, httpClient: HttpClient) {
+
+    private val graphQLClient = GraphQLQueryProcessor(config.get("graphQLEndpoint"), httpClient)
 
     val eventDetailsSparqlQuery = config.get("eventDetailsSparqlQuery")
     val emptyEventReport = EHRIUpdateReport(EHRIEvent("", "", "", "", ""), emptyList(), emptyList())
@@ -37,7 +41,7 @@ class EHRIUpdatesProcessor(val config: Config) {
 
     fun processEvent(event: EHRIEvent): EHRIUpdateReport {
         try {
-            with(UpdatesProcessorFactory(config).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
+            with(UpdatesProcessorFactory(config, graphQLClient).createUpdateProcessor(selectEntityTypeCase(event.type, event.id))) {
                 if(!previousEventErroredOrNotProcessed && database.checkIfSuccessfullyProcessed(event)) {
                     logger.info { "Skipping the event as it was already successfully processed in a previous run: $event" }
                     return emptyEventReport

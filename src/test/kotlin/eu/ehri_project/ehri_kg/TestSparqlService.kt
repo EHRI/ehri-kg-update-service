@@ -1,10 +1,13 @@
 package eu.ehri_project.ehri_kg
 
+import eu.ehri_project.ehri_kg.graphql.GraphQLQueryProcessor
 import eu.ehri_project.ehri_kg.helpers.Config
 import eu.ehri_project.ehri_kg.helpers.SourceHelper
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessor
 import eu.ehri_project.ehri_kg.sparql.SparqlEndpointQueryProcessor
 import org.apache.jena.rdf.model.Statement
+import io.ktor.client.HttpClient
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -77,6 +80,7 @@ abstract class EntityTest : TestSparqlService {
     protected val config = Config("conf/config.properties")
     protected val queryEndpoint: String = "http://localhost:7878/query"
     protected val updateEndpoint: String = "http://localhost:7878/update"
+    protected val graphQLClient = GraphQLQueryProcessor(config.get("graphQLEndpoint"), httpClient)
     protected abstract val updatesProcessor: UpdatesProcessor
     protected abstract val getTriplesSparqlPath: String
     protected abstract val getAllIdsSparqlPath: String
@@ -112,5 +116,13 @@ abstract class EntityTest : TestSparqlService {
 
     protected fun retrieveAllEntityIds(): List<String> {
         return retrieveAllEntityIds(queryEndpoint, getAllIdsSparqlPath)
+    }
+
+    companion object {
+        private val httpClient = HttpClient()
+
+        @JvmStatic
+        @AfterAll
+        fun closeHttpClient() = httpClient.close()
     }
 }

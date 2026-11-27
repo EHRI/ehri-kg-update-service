@@ -8,6 +8,7 @@ import eu.ehri_project.ehri_kg.model.EHRIEvent
 import eu.ehri_project.ehri_kg.model.EHRIEventTypes
 import eu.ehri_project.ehri_kg.model.EHRITypes
 import eu.ehri_project.ehri_kg.processors.UpdatesProcessorFactory
+import io.ktor.client.HttpClient
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -44,14 +45,18 @@ class GraphQLResponseTest {
             assertFailsWith<GraphQLResponseException>(body) { GraphQLQueryProcessor.checkResponse(event, body) }
         }
     }
-
+ 
     @Test
-    @DisplayName("A bad formatted query raises the expected error")
-    fun testMissingInvalidQuery() {
-        val processor = UpdatesProcessorFactory(Config("conf/config.properties"), "", "")
-            .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
-        assertFailsWith<GraphQLResponseException> {
-            processor.downloadContents(event.copy(id = "no-such\"-unit"))
+    @DisplayName("A bad formatted query raises the expected erro")
+    fun testMissingEntity() {
+        val config = Config("conf/config.properties")
+        HttpClient().use { httpClient ->
+            val graphQLClient = GraphQLQueryProcessor(config.get("graphQLEndpoint"), httpClient)
+            val processor = UpdatesProcessorFactory(config, graphQLClient, "", "")
+                .createUpdateProcessor(EHRITypes.ARCHIVAL_DESCRIPTION)
+            assertFailsWith<GraphQLResponseException> {
+                processor.downloadContents(event.copy(id = "no-such\"-unit"))
+            }
         }
     }
 }
