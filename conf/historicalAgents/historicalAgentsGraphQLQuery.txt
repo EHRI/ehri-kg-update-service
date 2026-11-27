@@ -1,5 +1,5 @@
-{"query": "{query:
-  HistoricalAgent(id: \"<id>\") {
+{"query": "{historicalAgents(ids: \"<id>\") {
+  items {
     id
     identifier
     description {
@@ -33,4 +33,4 @@
       }
     }
   }
-}" }
+} }" }
